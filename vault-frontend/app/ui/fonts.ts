@@ -1,5 +1,5 @@
-import { Inter } from 'next/font/google';
-import { Lusitana } from 'next/font/google';
+import { DM_Sans } from 'next/font/google';
+import { Outfit } from 'next/font/google';
 
-export const inter = Inter({ subsets: ['latin'] });
-export const lusitana = Lusitana({ weight: ['400', '700'], subsets: ['latin'] });
+export const dmSans = DM_Sans({ weight: ['400', '500', '600', '700'],  subsets: ['latin'] });
+export const outfit = Outfit({ weight: ['400', '500', '600', '700'], subsets: ['latin'] });

@@ -1,19 +1,24 @@
 import clsx from 'clsx';
+import { dmSans } from '@/app/ui/fonts';
+import Link from 'next/link';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps {
   children: React.ReactNode;
+  href: string;
+  className?: string;
 }
 
-export function Button({ children, className, ...rest }: ButtonProps) {
+export function Button({ children, href, className, ...rest }: ButtonProps) {
   return (
-    <button
+    <Link
+      href={href}
       {...rest}
       className={clsx(
-        'flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
+        `${dmSans.className} tracking-tight flex h-12 items-center px-10 text-2xl font-bold text-white text-center rounded-3xl hover:shadow-lg transition-all duration-150 ease-in-out bg-primary hover:bg-primary_hover focus:bg-primary_hover active:bg-primary_click focus:outline-none transition-colors aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
         className,
       )}
     >
       {children}
-    </button>
+    </Link>
   );
 }
