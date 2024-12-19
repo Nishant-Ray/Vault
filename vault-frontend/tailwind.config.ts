@@ -7,8 +7,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'off_white': '#eeeeee',
-        'off_black': '#1d1e2c',
+        'off_white': '#f3f4f6',
+        'off_black': '#25264F',
         'primary': '#b91c1c',
         'primary_hover': '#dc2626',
         'primary_click': '#7f1d1d',
