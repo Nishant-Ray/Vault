@@ -5,7 +5,7 @@ import Image from 'next/image';
 export default function Page() {
   return (
     <main className="flex flex-row">
-      <div className="pl-16  w-full h-screen flex items-center justify-center">
+      <div className="pl-16 bg-white w-full h-screen flex items-center justify-center">
         <Image
           src="/landing.png"
           width={1479}
@@ -15,9 +15,9 @@ export default function Page() {
           unoptimized={true}
         />
       </div>
-      <div className="w-full h-screen flex items-center justify-center p-24">
+      <div className="bg-white w-full h-screen flex items-center justify-center p-24">
         <div className="flex flex-col gap-y-4">
-          <h1 className={`${dmSans.className} tracking-tighter text-8xl font-semibold text-off_black`}>Welcome to <span className="text-primary drop-shadow-xl">Vault</span></h1>
+          <h1 className={`${dmSans.className} antialiased tracking-tighter text-8xl font-semibold text-off_black`}>Welcome to <span className="text-primary drop-shadow-xl">Vault</span></h1>
           
           <h6 className="text-2xl font-medium text-off_black">Track spendings and invest smartly to secure your financial future.</h6>
           

@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { dmSans } from '@/app/ui/fonts';
-import Link from 'next/link';
 
 interface AuthButtonProps {
   children: React.ReactNode;

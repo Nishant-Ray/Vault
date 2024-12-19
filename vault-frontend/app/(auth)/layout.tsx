@@ -1,7 +1,6 @@
-import { Button } from '@/app/ui/button';
 import Image from 'next/image';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-row">
       <div className="bg-white w-full h-screen flex items-center justify-center">{children}</div>
