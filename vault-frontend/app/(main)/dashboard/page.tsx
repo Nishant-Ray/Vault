@@ -1,23 +1,32 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { dmSans } from '@/app/ui/fonts';
 import Card from '@/app/ui/card';
 import clsx from 'clsx';
+import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchRecentTransactions } from '@/app/lib/data';
+import { Transaction } from '@/app/lib/definitions';
 
 export default function Page() {
-  const name = 'John';
-
-  const monthlySpending = '$1,522.76';
+  const [name, setName] = useState<string>('');
   const currMonth = 'Dec 2024';
   const prevMonth = 'Nov 2024';
-  const percentChange = '↑16.3%';
-  const positive = percentChange.charAt(0) === '↓';  // vs ↑
-
+  const [monthlySpending, setMonthlySpending] = useState<string>('');
+  const [percentChange, setPercentChange] = useState<string>('');
+  const positive = percentChange.charAt(0) === '↓';
   const currYear = '2024';
+  const [transactions, setTransactions] = useState<Array<Transaction>>([]);
 
-  const transactions = [
-    {cardName: 'BoFA', date: '12/06/24', amount: '$56.01', description: 'UCLA STORE: THANK YOU FOR SHOPPING!'},
-    {cardName: 'Amex', date: '12/02/24', amount: '$1.79', description: 'Amazon.com'},
-    {cardName: 'Amex', date: '12/01/24', amount: '$233.34', description: 'In n Out'},
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setName(await fetchName());
+      setMonthlySpending(await fetchMonthlySpending(currMonth));
+      setPercentChange(await fetchPercentChange(currMonth));
+      setTransactions(await fetchRecentTransactions());
+    };
+
+    fetchDashboardData();
+  }, []);
 
   return (
     <main>
