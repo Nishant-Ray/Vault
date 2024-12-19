@@ -19,13 +19,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div>
       <div className="flex flex-row">
-        <div className="bg-white w-80 h-screen px-3 py-4 flex flex-col">
+        <div className="sticky top-0 left-0 bg-white w-80 h-screen px-3 py-4 flex flex-col">
           <SideNav/>
         </div>
 
         <div className="flex flex-col w-full">
           
-          <div className="w-full flex flex-row h-20 items-center px-5 bg-white">
+          <div className="sticky top-0 left-0 w-full flex flex-row h-20 items-center px-5 bg-white">
             <div className="w-full h-full flex justify-start items-center">
               <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-4xl font-bold`}>{titles[pathname]}</h1>
             </div>
