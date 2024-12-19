@@ -12,6 +12,10 @@ const config: Config = {
         'primary': '#b91c1c',
         'primary_hover': '#dc2626',
         'primary_click': '#7f1d1d',
+        'positive': '#eaf7f0',
+        'positive_text': '#2baa63',
+        'negative': '#fdeded',
+        'negative_text': '#eb605e'
       }
     }
   }
