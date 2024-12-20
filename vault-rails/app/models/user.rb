@@ -8,4 +8,5 @@ class User < ApplicationRecord
 
   has_many :monthly_spendings
   has_many :accounts
+  has_many :transactions
 end

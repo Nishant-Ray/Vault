@@ -20,6 +20,23 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :accounts, only: [] do
+    collection do
+      get :get_all
+      post "add/:nickname/:last_digits/:is_credit_card", to: "accounts#add"
+      delete "remove/:id", to: "accounts#remove"
+    end
+  end
+
+  resources :transactions, only: [] do
+    collection do
+      get "get_recent", to: "transactions#get_recent"
+      get "get_by_month/:month", to: "transactions#get_by_month"
+      post "add/:account_id/:date/:amount/:category/:description", to: "transactions#add"
+      delete "remove/:id", to: "transactions#remove"
+    end
+  end
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
