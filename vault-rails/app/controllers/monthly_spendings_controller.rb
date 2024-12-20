@@ -1,5 +1,3 @@
-require "bigdecimal"
-
 class MonthlySpendingsController < ApplicationController
   def get
     if request.headers["Authorization"].present?

@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
+  get "/get_current_user_name", to: "user#get_current_user_name"
+
   resources :monthly_spendings, only: [] do
     collection do
       get "get/:month", to: "monthly_spendings#get"
