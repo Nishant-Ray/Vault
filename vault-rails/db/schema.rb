@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_19_232513) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_20_081711) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "accounts", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "nickname", null: false
+    t.integer "last_digits", null: false
+    t.boolean "is_credit_card", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "monthly_spendings", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -37,5 +46,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_19_232513) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "accounts", "users"
   add_foreign_key "monthly_spendings", "users"
 end
