@@ -36,7 +36,7 @@ export default function Page() {
         <Card>
           <div className="flex flex-row gap-16">
             <h3 className="text-lg font-medium text-off_black">Monthly Spending</h3>
-            <h3 className="text-lg font-normal text-gray-500">{currMonth}</h3>
+            <h3 className="text-lg font-normal text-off_gray">{currMonth}</h3>
           </div>
           
           <h2 className={`${dmSans.className} antialiased tracking-tight text-4xl font-semibold my-4`}>{monthlySpending}</h2>
@@ -52,7 +52,7 @@ export default function Page() {
         <Card>
           <div className="flex flex-row gap-72">
             <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
-            <h3 className="text-lg font-normal text-gray-500">{currYear}</h3>
+            <h3 className="text-lg font-normal text-off_gray">{currYear}</h3>
           </div>
           
           <div className="w-full h-72 mt-4 bg-gray-300"></div>

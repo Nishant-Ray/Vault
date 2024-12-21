@@ -1,10 +1,17 @@
 'use client';
 
+import { useEffect } from 'react';
 import { dmSans } from '@/app/ui/fonts';
 import SideNav from '@/app/ui/sideNav';
-import { usePathname } from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  // useEffect(() => {
+  //   if(localStorage.getItem('jwt') === null) {
+  //     redirect('/login');
+  //   }
+  // }, []);
+
   const pathname = usePathname();
   const titles: Record<string, string> = {
     '/dashboard': 'Dashboard',

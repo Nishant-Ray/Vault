@@ -6,7 +6,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   def respond_with(current_user, _opts = {}) # responding in case of a signup POST
-    if resource.persisted?
+    if request.method == "POST" && resource.persisted?
       render json: {
         status: { code: 200, message: "Signed up successfully." }
       }

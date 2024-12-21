@@ -45,7 +45,7 @@ export default function SideNav() {
             key={link.name}
             href={link.href}
             className={clsx(
-              "flex flex-row gap-2 text-xl font-medium mb-2 px-1 py-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-all duration-150 ease-in-out",
+              "flex flex-row gap-2 text-xl font-medium mb-2 px-1 py-1.5 rounded-lg text-off_gray hover:bg-gray-100 transition-all duration-150 ease-in-out",
               {
                 "text-off_black bg-gray-100": pathname === link.href
               }

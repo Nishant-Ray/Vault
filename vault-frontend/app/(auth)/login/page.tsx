@@ -1,15 +1,18 @@
+'use client';
+
 import Input from '@/app/ui/input';
 import AuthButton from '@/app/ui/authButton';
 import { dmSans } from '@/app/ui/fonts';
 import Link from 'next/link';
+import { login } from '@/app/lib/auth';
 
 export default function Page() {
   return (
     <main className="bg-white-400 w-1/2">
       <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-5xl font-bold`}>Login</h1>
-      <p className="text-xl text-gray-500 font-medium mt-4 mb-10">Sign into your existing account.</p>
+      <p className="text-xl text-off_gray font-medium mt-4 mb-10">Sign into your existing account.</p>
 
-      <form>
+      <form onSubmit={login}>
         <Input id="email" type="email" label="Email" placeholder="johndoe@gmail.com"/>
         <Input id="password" type="password" label="Password" placeholder="secure_password_123"/>
         

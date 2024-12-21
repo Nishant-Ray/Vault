@@ -9,6 +9,7 @@ const config: Config = {
       colors: {
         'off_white': '#f3f4f6',
         'off_black': '#25264F',
+        'off_gray': '#6b7280',
         'primary': '#b91c1c',
         'primary_hover': '#dc2626',
         'primary_click': '#7f1d1d',

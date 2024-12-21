@@ -1,4 +1,9 @@
 class UserController < ApplicationController
+  before_action :authenticate_user! # ensures only see 200 response if have valid JWT in  headers; otherwise, should return 401
+  def index
+    render json: UserSerializer.new(current_user).serializable_hash[:data][:attributes], status: :ok
+  end
+
   def get_current_user_name
     if request.headers["Authorization"].present?
       jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
