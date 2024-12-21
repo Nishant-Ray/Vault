@@ -1,4 +1,4 @@
-class TransactionController < ApplicationController
+class TransactionsController < ApplicationController
   def get_recent
     if request.headers["Authorization"].present?
       jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
@@ -31,7 +31,7 @@ class TransactionController < ApplicationController
       end_date = (params[:month] + "31").to_i # 20241231
 
       render json: {
-        status: { code: 200, message: "Successfully retrieved monthly transactions." },
+        status: { code: 200, message: "Successfully retrieved monthly transactions. #{params[:month]}, #{start_date}" },
         data: { monthly_transactions: Transaction.where(user_id: current_user.id).where("date >= ? AND date <= ?", start_date, end_date).order(date: :desc) }
       }, status: :ok
     else
@@ -51,7 +51,7 @@ class TransactionController < ApplicationController
     end
 
     if current_user
-      new_transaction = Transaction.create(user_id: current_user.id, account_id: params[:account_id], date: params[:date], amount: params[:amount], category: params[:amount], description: params[:description])
+      new_transaction = Transaction.create(user_id: current_user.id, account_id: params[:account_id], date: params[:date], amount: params[:amount], category: params[:category], description: params[:description])
       render json: {
         status: { code: 200, message: "Successfully added transaction." },
         data: { transaction_id: new_transaction.id }

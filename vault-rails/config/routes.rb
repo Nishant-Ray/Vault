@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   resources :accounts, only: [] do
     collection do
       get :get_all
-      post "add/:nickname/:last_digits/:is_credit_card", to: "accounts#add"
+      post "add/:last_digits/:is_credit_card/:nickname", to: "accounts#add", constraints: { nickname: /[^\/]+/ }
       delete "remove/:id", to: "accounts#remove"
     end
   end
@@ -32,7 +32,7 @@ Rails.application.routes.draw do
     collection do
       get "get_recent", to: "transactions#get_recent"
       get "get_by_month/:month", to: "transactions#get_by_month"
-      post "add/:account_id/:date/:amount/:category/:description", to: "transactions#add"
+      post "add/:account_id/:date/:amount/:category/:description", to: "transactions#add", constraints: { amount: /[.\d]+/, description: /[^\/]+/ }
       delete "remove/:id", to: "transactions#remove"
     end
   end
