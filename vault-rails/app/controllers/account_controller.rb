@@ -6,7 +6,10 @@ class AccountController < ApplicationController
     end
 
     if current_user
-      
+      render json: {
+        status: { code: 200, message: "Successfully retrieved user's accounts." },
+        data: { accounts: Account.where(user_id: current_user.id).order(created_at: :asc) }
+      }, status: :ok
     else
       render json: {
         status: {
@@ -24,7 +27,11 @@ class AccountController < ApplicationController
     end
 
     if current_user
-      
+      new_account = Account.create(user_id: current_user.id, nickname: params[:nickname], last_digits: params[:last_digits], is_credit_card: params[:is_credit_card])
+      render json: {
+        status: { code: 200, message: "Successfully added account." },
+        data: { account_id: new_account.id }
+      }
     else
       render json: {
         status: {
@@ -42,7 +49,10 @@ class AccountController < ApplicationController
     end
 
     if current_user
-      
+      Account.find(params[:id]).destroy
+      render json: {
+        status: { code: 200, message: "Successfully removed account." }
+      }
     else
       render json: {
         status: {
