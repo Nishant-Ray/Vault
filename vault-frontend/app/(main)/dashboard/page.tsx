@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { dmSans } from '@/app/ui/fonts';
 import Card from '@/app/ui/card';
 import clsx from 'clsx';
-import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchRecentTransactions } from '@/app/lib/data';
-import { getCurrentMonth, getPreviousMonth, formatDollarAmount, formatMonth } from '@/app/lib/utils';
-import { Transaction } from '@/app/lib/definitions';
+import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchYearlySpending, fetchRecentTransactions } from '@/app/lib/data';
+import { getCurrentMonth, getPreviousMonth, getCurrentYear, formatDollarAmount, formatMonth, formatDate, formatMonthName } from '@/app/lib/utils';
+import { Transaction, YearlySpending } from '@/app/lib/definitions';
 
 export default function Page() {
   const [name, setName] = useState<string>('');
@@ -15,7 +15,8 @@ export default function Page() {
   const [monthlySpending, setMonthlySpending] = useState<string>('');
   const [percentChange, setPercentChange] = useState<string>('');
   const [positive, setPositive] = useState<boolean>(true);
-  const currYear = '2024';
+  const currYear = getCurrentYear();
+  const [yearlySpending, setYearlySpending] = useState<Array<YearlySpending>>([]);
   const [transactions, setTransactions] = useState<Array<Transaction>>([]);
 
   useEffect(() => {
@@ -31,7 +32,12 @@ export default function Page() {
         setPercentChange(fetchedPercentChange);
         setPositive(fetchedPercentChange.charAt(0) === '↓');
       }
-      setTransactions(await fetchRecentTransactions());
+
+      const fetchedYearlySpending = await fetchYearlySpending(currYear);
+      if (fetchedYearlySpending) setYearlySpending(fetchedYearlySpending);
+
+      const fetchedTransactions = await fetchRecentTransactions();
+      if (fetchedTransactions) setTransactions(fetchedTransactions);
     };
 
     fetchDashboardData();
@@ -63,8 +69,15 @@ export default function Page() {
             <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
             <h3 className="text-lg font-normal text-off_gray">{currYear}</h3>
           </div>
-          
-          <div className="w-full h-72 mt-4 bg-gray-300"></div>
+
+          {yearlySpending.map((yearlySpending) => {
+              return (
+                <div key={yearlySpending.month} className="flex flex-row items-center gap-8">
+                  <h4 className="text-off_black font-normal text-md">{formatMonthName(yearlySpending.month)}</h4>
+                  <h4 className="text-off_black font-normal text-md">{formatDollarAmount(yearlySpending.total)}</h4>
+                </div>
+              );
+            })}
         </Card>
 
         <Card>
@@ -73,18 +86,18 @@ export default function Page() {
           <div className="mt-2 flex flex-col">
             <div className="flex flex-row items-center gap-16 mt-4">
               <h4 className="w-12 text-gray-400 font-normal text-md">Card</h4>
-              <h4 className="w-16 text-gray-400 font-normal text-md">Date</h4>
-              <h4 className="w-16 text-gray-400 font-normal text-md">Amount</h4>
-              <h4 className="w-32 text-gray-400 font-normal text-md">Description</h4>
+              <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
+              <h4 className="w-16 text-gray-400 font-normal text-md text-right">Amount</h4>
+              <h4 className="w-42 text-gray-400 font-normal text-md">Description</h4>
             </div>
 
             {transactions.map((transaction, i) => {
               return (
                 <div key={i} className="flex flex-row items-center gap-16 border-t-2 border-gray-200 my-2 pt-4">
-                  <h4 className="w-12 text-off_black font-normal text-md">{transaction.cardName}</h4>
-                  <h4 className="w-16 text-off_black font-normal text-md">{transaction.date}</h4>
-                  <h4 className="w-16 text-off_black font-semibold text-md">{transaction.amount}</h4>
-                  <h4 className="w-32 text-off_black font-normal text-md truncate">{transaction.description}</h4>
+                  <h4 className="w-12 text-off_black font-normal text-md">{transaction.account_id}</h4>
+                  <h4 className="w-24 text-off_black font-normal text-md">{formatDate(transaction.date)}</h4>
+                  <h4 className="w-16 text-off_black font-semibold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
+                  <h4 className="w-42 text-off_black font-normal text-md truncate">{transaction.description}</h4>
                 </div>
               );
             })}

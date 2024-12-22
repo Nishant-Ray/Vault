@@ -8,7 +8,7 @@ class TransactionsController < ApplicationController
     if current_user
       render json: {
         status: { code: 200, message: "Successfully retrieved recent transactions." },
-        data: { recent_transactions: Transaction.where(user_id: current_user.id).order(date: :desc).first(5) }
+        data: { transactions: Transaction.where(user_id: current_user.id).order(date: :desc).first(5) }
       }, status: :ok
     else
       render json: {
@@ -31,8 +31,8 @@ class TransactionsController < ApplicationController
       end_date = (params[:month] + "31").to_i # 20241231
 
       render json: {
-        status: { code: 200, message: "Successfully retrieved monthly transactions. #{params[:month]}, #{start_date}" },
-        data: { monthly_transactions: Transaction.where(user_id: current_user.id).where("date >= ? AND date <= ?", start_date, end_date).order(date: :desc) }
+        status: { code: 200, message: "Successfully retrieved monthly transactions." },
+        data: { transactions: Transaction.where(user_id: current_user.id).where("date >= ? AND date <= ?", start_date, end_date).order(date: :desc) }
       }, status: :ok
     else
       render json: {

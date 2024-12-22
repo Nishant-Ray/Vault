@@ -47,9 +47,27 @@ export type MonthlySpendingData = {
   total: number;
 }
 
+export type YearlySpending = {
+  month: number;
+  total: number;
+}
+
+export type YearlySpendingData = {
+  yearly_spending: YearlySpending[];
+}
+
 export type Transaction = {
-  cardName: string;
-  date: string;
-  amount: string;
+  id: number;
+  user_id: number;
+  account_id: number;
+  date: number;
+  amount: number;
   description: string;
+  category: string;
+  created_at: string;
+  updated_at: string;
 };
+
+export type TransactionsData = {
+  transactions: Transaction[];
+}

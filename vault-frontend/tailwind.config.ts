@@ -16,7 +16,8 @@ const config: Config = {
         'positive': '#eaf7f0',
         'positive_text': '#2baa63',
         'negative': '#fdeded',
-        'negative_text': '#eb605e'
+        'negative_text': '#eb605e',
+        'accent': '#3da8e6'
       }
     }
   }

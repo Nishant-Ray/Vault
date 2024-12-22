@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :monthly_spendings, only: [] do
     collection do
       get "get/:month", to: "monthly_spendings#get"
+      get "get_by_year/:year", to: "monthly_spendings#get_by_year"
       patch "add/:month/:amount", to: "monthly_spendings#add_to_total", constraints: { amount: /[.\d]+/ }
       patch "subtract/:month/:amount", to: "monthly_spendings#subtract_from_total", constraints: { amount: /[.\d]+/ }
     end
