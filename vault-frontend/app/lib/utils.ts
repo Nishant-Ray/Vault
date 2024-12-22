@@ -1,53 +1,47 @@
-import { AuthRequestJSON, AuthResponse } from './definitions';
-import { redirect } from 'next/navigation';
+import { months } from "@/app/lib/constants";
 
-export async function jwtRequest(jwt: string): Promise<number> {
-  const response = await fetch('http://localhost:3001/current_user', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': jwt
-    }
-  });
+export function formatDollarAmount(amount: number): string {
+  const originalAmount = String(amount);
+  let formattedAmount = [];
+  let seenDecimal = false;
+  let count = 0;
 
-  return response.status;
-}
+  for (let i = originalAmount.length - 1; i >= 0; i--) { // 1234.56
+    const c = originalAmount.charAt(i);
 
-export async function authRequest(url: string, requestJSON: AuthRequestJSON): Promise<AuthResponse> {
-  try {
-    const response = await fetch(`http://localhost:3001/${url}`, {
-      method: 'POST',
-      body: JSON.stringify(requestJSON),
-      headers: {
-        'Content-Type': 'application/json'
+    if (!seenDecimal) {
+      if (c === '.') seenDecimal = true;
+      formattedAmount.push(c);
+    } else {
+      if (count == 3) {
+        formattedAmount.push(',');
+        count = 0;
       }
-    });
-
-    if (response.status === 200) return { success: true, jwt: response.headers.get('authorization') };
-    return { success: false };
-
-  } catch (error) {
-    return { success: false };
+      formattedAmount.push(c);
+      count++;
+    }
   }
+
+  formattedAmount.push('$');
+  return formattedAmount.reverse().join('');
 }
 
-export async function request<TResponse>(url: string, method: string): Promise<TResponse> {
-  const jwt = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('jwt='))
-    ?.split('=')[1];
+export function getCurrentMonth(): number {
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const currMonth = month < 10 ? `0${month}` : month;
+  return Number(`${today.getFullYear()}${currMonth}`);
+}
 
-  if (!jwt) redirect('/login');
+export function getPreviousMonth(): number {
+  const today = new Date();
+  const prevMonthDate = new Date(today.getFullYear(), today.getMonth() - 1);
+  const month = prevMonthDate.getMonth() + 1;
+  const prevMonth = month < 10 ? `0${month}` : month;
+  return Number(`${prevMonthDate.getFullYear()}${prevMonth}`);
+}
 
-  const response = await fetch(`http://localhost:3001/${url}`, {
-    method: method,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': jwt
-    }
-  });
-
-  if (response.status === 401) redirect('/login');
-
-  return response.json();
+export function formatMonth(month: number): string {
+  const monthString = String(month);
+  return `${months[Number(monthString.substring(4))]} ${monthString.substring(0, 4)}`;
 }

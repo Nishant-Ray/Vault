@@ -11,7 +11,7 @@ class MonthlySpendingsController < ApplicationController
       if monthly_spending
         render json: {
           status: { code: 200, message: "Retrieved monthly spending successfully." },
-          data: { monthly_spending: MonthlySpendingSerializer.new(monthly_spending).serializable_hash[:data][:attributes] }
+          data: { total: monthly_spending.total }
         }, status: :ok
       else
         render json: {

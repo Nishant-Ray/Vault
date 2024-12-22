@@ -1,5 +1,5 @@
 import { LoginFormElement } from '@/app/lib/definitions';
-import { authRequest } from './utils';
+import { authRequest } from '@/app/lib/api';
 
 export async function login(event: React.FormEvent<LoginFormElement>): Promise<boolean> {
   const email = event.currentTarget.elements.email.value;

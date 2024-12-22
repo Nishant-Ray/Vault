@@ -1,5 +1,5 @@
 class UserController < ApplicationController
-  before_action :authenticate_user! # ensures only see 200 response if have valid JWT in  headers; otherwise, should return 401
+  before_action :authenticate_user! # ensures only see 200 response if have valid JWT in headers; otherwise, should return 401
   def index
     render json: UserSerializer.new(current_user).serializable_hash[:data][:attributes], status: :ok
   end
@@ -13,7 +13,7 @@ class UserController < ApplicationController
     if current_user
       render json: {
         status: { code: 200, message: "Retrieved current user's name successfully." },
-        data: { user_id: current_user.name }
+        data: { name: current_user.name }
       }, status: :ok
     else
       render json: {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { jwtRequest } from './app/lib/utils';
+import { jwtRequest } from '@/app/lib/api';
 
 export async function middleware(request: NextRequest) {
   const publicPaths = new Set<string>(['/', '/login', '/signup']);

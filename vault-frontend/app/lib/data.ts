@@ -1,20 +1,21 @@
+import { request } from '@/app/lib/api';
+import { NameData, MonthlySpendingData } from '@/app/lib/definitions';
+
 export async function fetchName() {
   try {
-
-    const data = await "John";
-    return data;
+    const response = await request<NameData>('get_current_user_name', 'GET');
+    return response.data?.name;
 
   } catch (error) {
     console.error('Server error:', error);
-    throw new Error('Failed to fetch name.');
+    throw new Error('Failed to fetch user name.');
   }
 }
 
-export async function fetchMonthlySpending(month: string) {
+export async function fetchMonthlySpending(month: number) {
   try {
-
-    const data = await (month === 'Dec 2024' ? '$1,522.76' : '$0');
-    return data;
+    const response = await request<MonthlySpendingData>(`monthly_spendings/get/${month}`, 'GET');
+    return response.data?.total;
 
   } catch (error) {
     console.error('Server error:', error);
@@ -22,11 +23,26 @@ export async function fetchMonthlySpending(month: string) {
   }
 }
 
-export async function fetchPercentChange(month: string) {
+export async function fetchPercentChange(currMonth: number, prevMonth: number) {
   try {
+    const currResponse = await request<MonthlySpendingData>(`monthly_spendings/get/${currMonth}`, 'GET');
+    const currSpending = currResponse.data?.total;
 
-    const data = await (month === 'Dec 2024' ? '↑16.3%' : '↓16.3%');
-    return data;
+    const prevResponse = await request<MonthlySpendingData>(`monthly_spendings/get/${prevMonth}`, 'GET');
+    const prevSpending = prevResponse.data?.total;
+
+    let positive = true
+
+    if (currSpending && prevSpending) {
+      if (currSpending <= prevSpending) {
+        positive = false;
+      }
+
+      const percentChange = Math.round((Math.abs(currSpending - prevSpending) / prevSpending) * 1000) / 10;
+      return positive ? `↑${percentChange}%` : `↓{percentChange}%`;
+    }
+    
+    return undefined;
 
   } catch (error) {
     console.error('Server error:', error);
@@ -36,13 +52,12 @@ export async function fetchPercentChange(month: string) {
 
 export async function fetchRecentTransactions() {
   try {
-
-    const data = await [
+    const response = await [
       {cardName: 'BoFA', date: '12/06/24', amount: '$56.01', description: 'UCLA STORE: THANK YOU FOR SHOPPING!'},
       {cardName: 'Amex', date: '12/02/24', amount: '$1.79', description: 'Amazon.com'},
       {cardName: 'Amex', date: '12/01/24', amount: '$233.34', description: 'In n Out'},
     ];
-    return data;
+    return response;
 
   } catch (error) {
     console.error('Server error:', error);
