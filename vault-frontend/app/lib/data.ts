@@ -1,5 +1,5 @@
 import { request } from '@/app/lib/api';
-import { NameData, MonthlySpendingData, YearlySpendingData, TransactionsData } from '@/app/lib/definitions';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, TransactionsData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -39,14 +39,14 @@ export async function fetchPercentChange(currMonth: number, prevMonth: number) {
       }
 
       const percentChange = Math.round((Math.abs(currSpending - prevSpending) / prevSpending) * 1000) / 10;
-      return positive ? `↑${percentChange}%` : `↓{percentChange}%`;
+      return positive ? `↑ ${percentChange}%` : `↓ {percentChange}%`;
     }
     
     return undefined;
 
   } catch (error) {
     console.error('Server error:', error);
-    throw new Error('Failed to fetch monthly spending.');
+    throw new Error('Failed to fetch monthly spending percent change.');
   }
 }
 
@@ -57,7 +57,18 @@ export async function fetchYearlySpending(year: number) {
 
   } catch (error) {
     console.error('Server error:', error);
-    throw new Error('Failed to fetch monthly spending.');
+    throw new Error('Failed to fetch yearly spending.');
+  }
+}
+
+export async function fetchAccounts() {
+  try {
+    const response = await request<AccountsData>('accounts/get_all', 'GET');
+    return response.data?.accounts;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch accounts.');
   }
 }
 
@@ -68,6 +79,6 @@ export async function fetchRecentTransactions() {
 
   } catch (error) {
     console.error('Server error:', error);
-    throw new Error('Failed to fetch monthly spending.');
+    throw new Error('Failed to fetch recent transactions.');
   }
 }

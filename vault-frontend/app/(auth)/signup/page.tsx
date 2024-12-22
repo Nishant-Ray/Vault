@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <main className="bg-white-400 w-1/2">
       <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-5xl font-bold`}>Sign Up</h1>
-      <p className="text-xl text-off_gray font-medium mt-4 mb-10">Create a new account.</p>
+      <p className="text-xl text-gray font-medium mt-4 mb-10">Create a new account.</p>
 
       <form>
         <Input id="email" type="email" label="Email" placeholder="johndoe@gmail.com"/>

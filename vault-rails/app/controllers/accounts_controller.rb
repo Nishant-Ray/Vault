@@ -8,7 +8,7 @@ class AccountsController < ApplicationController
     if current_user
       render json: {
         status: { code: 200, message: "Successfully retrieved user's accounts." },
-        data: { accounts: Account.where(user_id: current_user.id).order(created_at: :asc) }
+        data: { accounts: Account.where(user_id: current_user.id).order(created_at: :desc) }
       }, status: :ok
     else
       render json: {
