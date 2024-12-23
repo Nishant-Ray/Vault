@@ -48,7 +48,7 @@ class BillsController < ApplicationController
     end
 
     if current_user
-      new_bill = Bill.create(user_id: current_user.id, due_date: params[:due_date], shared: params[:shared], category: params[:category], name: params[:name])
+      new_bill = Bill.create(user_id: current_user.id, due_date: params[:due_date], amount: params[:amount], shared: params[:shared], category: params[:category], name: params[:name])
       render json: {
         status: { code: 200, message: "Successfully added bill." },
         data: { bill_id: new_bill.id }

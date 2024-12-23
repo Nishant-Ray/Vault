@@ -5,9 +5,8 @@ import { dmSans } from '@/app/ui/fonts';
 import Card from '@/app/ui/card';
 import clsx from 'clsx';
 import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills } from '@/app/lib/data';
-import { getCurrentMonth, getPreviousMonth, getCurrentYear, formatDollarAmount, formatMonth, formatDate, formatMonthName } from '@/app/lib/utils';
-import { Account, Transaction, Bill } from '@/app/lib/definitions';
-import { CreditCardIcon, BuildingLibraryIcon } from '@heroicons/react/24/solid';
+import { getCurrentMonth, getPreviousMonth, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
+import { Transaction, Bill } from '@/app/lib/definitions';
 import Button from '@/app/ui/button';
 import SpendingGraph from '@/app/ui/spendingGraph';
 import { billCategoryColors } from '@/app/lib/colors';
@@ -20,7 +19,6 @@ export default function Page() {
   const [percentChange, setPercentChange] = useState<string>('↓ 0%');
   const [positive, setPositive] = useState<boolean>(true);
   const currYear = getCurrentYear();
-  const [accounts, setAccounts] = useState<Array<Account>>([]);
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
   const [transactions, setTransactions] = useState<Array<Transaction>>([]);
   const [bills, setBills] = useState<Array<Bill>>([]);
@@ -41,8 +39,6 @@ export default function Page() {
 
       const fetchedAccounts = await fetchAccounts();
       if (fetchedAccounts) {
-        setAccounts(fetchedAccounts);
-
         for (let i = 0; i < fetchedAccounts.length; i++) {
           const account = fetchedAccounts[i];
           setAccountIDsToNicknames((prevState) => ({
@@ -93,37 +89,6 @@ export default function Page() {
         </Card>
 
         <Card>
-          <h3 className="text-lg font-medium text-off_black">Wallet</h3>
-
-          <div className="flex flex-col text-off_black pt-4 pb-6 gap-3">
-            {accounts.length ? (accounts.map((account, i) => {
-              if (account.is_credit_card) {
-                return (
-                  <div key={i} className="flex flex-row items-center gap-4 px-2 py-1 bg-gray-100 rounded-lg shadow-sm">
-                    <CreditCardIcon className="w-8"/>
-                    <h4 className="w-48 truncate text-off_black font-medium text-lg">{account.nickname}</h4>
-                  </div>
-                );
-              } else {
-                return (
-                  <div key={i} className="flex flex-row items-center gap-4 px-2 py-1 bg-gray-100 rounded-lg shadow-sm">
-                    <BuildingLibraryIcon className="w-8"/>
-                    <h4 className="w-48 truncate text-off_black font-medium text-lg">{account.nickname}</h4>
-                  </div>
-                );
-              }
-              
-            })) : (
-              <p className="text-sm font-normal text-off_gray">Wallet is empty!</p>
-            )}
-          </div>
-
-          <div className="flex flex-row justify-center">
-            <Button href="/wallet" size="sm">Manage Wallet</Button>
-          </div>
-        </Card>
-
-        <Card>
           <h3 className="text-lg font-medium text-off_black">Recent Transactions</h3>
             <div className="my-6 flex flex-col">
               {transactions.length ? (
@@ -163,22 +128,27 @@ export default function Page() {
                 <>
                   <div className="flex flex-row items-center gap-16 mb-2">
                     <h4 className="w-24 text-gray-400 font-normal text-md">Due Date</h4>
+                    <h4 className="w-16 text-gray-400 font-normal text-md text-right">Total</h4>
                     <h4 className="w-24 text-gray-400 font-normal text-md">Category</h4>
                     <h4 className="w-36 text-gray-400 font-normal text-md">Name</h4>
                   </div>
 
                   {bills.map((bill, i) => {
-                    console.log(billCategoryColors[bill.category][0]);
-                    console.log(billCategoryColors[bill.category][1]);
-                    return (
-                      <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                        <h4 className="w-24 text-red-700 font-medium text-md">{formatDate(bill.due_date)}</h4>
-                        <div className="w-24">
-                          <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${billCategoryColors[bill.category][0]}] text-[${billCategoryColors[bill.category][1]}]`}>{bill.category}</h4>
+                    const billCategoryColorArr = billCategoryColors.get(bill.category);
+                    if (billCategoryColorArr) {
+                      const bgColor = billCategoryColorArr[0];
+                      const textColor = billCategoryColorArr[1];
+                      return (
+                        <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
+                          <h4 className="w-24 text-red-700 font-medium text-md">{formatDate(bill.due_date)}</h4>
+                          <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(bill.total)}</h4>
+                          <div className="w-24">
+                            <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
+                          </div>
+                          <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
                         </div>
-                        <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
-                      </div>
-                    );
+                      );
+                    }
                   })}
                 </>
               ) : (
@@ -189,6 +159,18 @@ export default function Page() {
             <div className="flex flex-row justify-center">
               <Button href="/bills" size="sm">See Bills</Button>
             </div>
+        </Card>
+
+        <Card>
+          <h3 className="text-lg font-medium text-off_black">Residence</h3>
+        </Card>
+
+        <Card>
+          <h3 className="text-lg font-medium text-off_black">Chatbot</h3>
+          <p className="text-md font-normal text-off_gray mt-4 my-6">Have a specific question about your personal finances?</p>
+          <div className="flex flex-row justify-center">
+            <Button href="/chatbot" size="sm">Ask a Question</Button>
+          </div>
         </Card>
       </div>
 

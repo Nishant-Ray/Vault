@@ -94,6 +94,8 @@ export type Bill = {
   shared: boolean;
   created_at: string;
   updated_at: string;
+  residence_id: number | 'nil';
+  total: number;
 };
 
 export type BillsData = {

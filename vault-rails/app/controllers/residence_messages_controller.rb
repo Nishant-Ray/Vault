@@ -1,0 +1,2 @@
+class ResidenceMessagesController < ApplicationController
+end

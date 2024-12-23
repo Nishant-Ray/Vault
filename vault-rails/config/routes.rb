@@ -43,10 +43,12 @@ Rails.application.routes.draw do
     collection do
       get :get_all
       get :get_upcoming
-      post "add/:due_date/:shared/:category/:name", to: "bills#add", constraints: { name: /[^\/]+/ }
+      post "add/:due_date/:amount/:shared/:category/:name", to: "bills#add", constraints: { amount: /[.\d]+/, name: /[^\/]+/ }
       delete "remove/:id", to: "transactions#remove"
     end
   end
+
+  get "residences/index"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

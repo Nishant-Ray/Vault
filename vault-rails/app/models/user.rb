@@ -6,8 +6,11 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :jwt_authenticatable, jwt_revocation_strategy: self
 
-  has_many :monthly_spendings
-  has_many :accounts
-  has_many :transactions
+  has_many :monthly_spendings, dependent: :nullify
+  has_many :accounts, dependent: :nullify
+  has_many :transactions, dependent: :nullify
   has_many :bills
+  has_many :residence_messages
+
+  belongs_to :residence, optional: true
 end

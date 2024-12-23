@@ -23,21 +23,6 @@ export const months: Record<number, string> = {
   12: 'Dec'
 }
 
-export const fullMonths: Record<string, string> = {
-  'Jan': 'January',
-  'Feb': 'February',
-  'Mar': 'March',
-  'Apr': 'April',
-  'May': 'May',
-  'Jun': 'June',
-  'Jul': 'July',
-  'Aug': 'August',
-  'Sep': 'September',
-  'Oct': 'October',
-  'Nov': 'November',
-  'Dec': 'December'
-}
-
 const transactionCategories = [];
 
 export const billCategories = ['Credit Card', 'Rent', 'Utilities', 'Wi-Fi', 'Cellular', 'Insurance', 'Medical', 'Entertainment', 'Transportation', 'Medical', 'Fitness', 'Misc.'];

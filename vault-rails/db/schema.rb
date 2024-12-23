@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_23_014859) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_23_091629) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -30,12 +30,33 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_23_014859) do
     t.boolean "shared"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "residence_id"
+    t.float "total"
+    t.index ["residence_id"], name: "index_bills_on_residence_id"
   end
 
   create_table "monthly_spendings", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "month", null: false
     t.decimal "total", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "residence_messages", force: :cascade do |t|
+    t.string "content"
+    t.boolean "is_update"
+    t.integer "time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "residence_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["residence_id"], name: "index_residence_messages_on_residence_id"
+    t.index ["user_id"], name: "index_residence_messages_on_user_id"
+  end
+
+  create_table "residences", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -61,14 +82,20 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_23_014859) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.string "jti", null: false
+    t.bigint "residence_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["residence_id"], name: "index_users_on_residence_id"
   end
 
   add_foreign_key "accounts", "users"
+  add_foreign_key "bills", "residences"
   add_foreign_key "bills", "users"
   add_foreign_key "monthly_spendings", "users"
+  add_foreign_key "residence_messages", "residences"
+  add_foreign_key "residence_messages", "users"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "users"
+  add_foreign_key "users", "residences"
 end

@@ -37,7 +37,7 @@ export default function SideNav() {
   const pathname = usePathname();
   return (
     <div className="flex flex-col">
-      <Link href={"/"} className={`${dmSans.className} antialiased tracking-tighter mb-4 text-primary font-bold text-5xl`}>Vault</Link>
+      <Link href={"/"} className={`${dmSans.className} antialiased tracking-tighter mb-4 text-primary font-bold text-5xl focus:outline-none hover:drop-shadow-md focus:drop-shadow-md transition-all duration-150 ease-in-out`}>Vault</Link>
       {links.map((link) => {
         const LinkIcon = pathname === link.href ? link.solidIcon : link.icon;
         return (
@@ -45,9 +45,10 @@ export default function SideNav() {
             key={link.name}
             href={link.href}
             className={clsx(
-              "flex flex-row gap-2 text-xl font-medium mb-2 px-1 py-1.5 rounded-lg text-off_gray hover:bg-gray-100 transition-all duration-150 ease-in-out",
+              "flex flex-row gap-2 text-xl font-medium mb-2 px-1 py-1.5 rounded-lg hover:text-off_black hover:bg-gray-100 transition-all duration-150 ease-in-out",
               {
-                "text-off_black bg-gray-100": pathname === link.href
+                "text-off_black bg-gray-100": pathname === link.href,
+                "text-off_gray": pathname !== link.href,
               }
             )}
           >
