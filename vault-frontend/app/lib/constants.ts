@@ -37,3 +37,7 @@ export const fullMonths: Record<string, string> = {
   'Nov': 'November',
   'Dec': 'December'
 }
+
+const transactionCategories = [];
+
+export const billCategories = ['Credit Card', 'Rent', 'Utilities', 'Wi-Fi', 'Cellular', 'Insurance', 'Medical', 'Entertainment', 'Transportation', 'Medical', 'Fitness', 'Misc.'];

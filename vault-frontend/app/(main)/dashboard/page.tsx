@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import { dmSans } from '@/app/ui/fonts';
 import Card from '@/app/ui/card';
 import clsx from 'clsx';
-import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions } from '@/app/lib/data';
+import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills } from '@/app/lib/data';
 import { getCurrentMonth, getPreviousMonth, getCurrentYear, formatDollarAmount, formatMonth, formatDate, formatMonthName } from '@/app/lib/utils';
-import { Account, Transaction } from '@/app/lib/definitions';
+import { Account, Transaction, Bill } from '@/app/lib/definitions';
 import { CreditCardIcon, BuildingLibraryIcon } from '@heroicons/react/24/solid';
 import Button from '@/app/ui/button';
 import SpendingGraph from '@/app/ui/spendingGraph';
+import { billCategoryColors } from '@/app/lib/colors';
 
 export default function Page() {
   const [name, setName] = useState<string>('');
@@ -22,6 +23,7 @@ export default function Page() {
   const [accounts, setAccounts] = useState<Array<Account>>([]);
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
   const [transactions, setTransactions] = useState<Array<Transaction>>([]);
+  const [bills, setBills] = useState<Array<Bill>>([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -52,6 +54,9 @@ export default function Page() {
 
       const fetchedTransactions = await fetchRecentTransactions();
       if (fetchedTransactions) setTransactions(fetchedTransactions);
+
+      const fetchedBills = await fetchUpcomingBills();
+      if (fetchedBills) setBills(fetchedBills);
     };
 
     fetchDashboardData();
@@ -72,7 +77,7 @@ export default function Page() {
 
           <div className="flex flex-row items-center gap-2">
             <div className={clsx("rounded-3xl flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
-              <p className={clsx("text-md font-medium", { "text-positive_text": positive, "text-negative_text": !positive })}>{percentChange}</p>
+              <p className={clsx("text-md font-semibold", { "text-positive_text": positive, "text-negative_text": !positive })}>{percentChange}</p>
             </div>
             <h4 className="text-md font-normal text-gray-400">Compared to {formatMonth(prevMonth)}</h4>
           </div>
@@ -94,16 +99,16 @@ export default function Page() {
             {accounts.length ? (accounts.map((account, i) => {
               if (account.is_credit_card) {
                 return (
-                  <div key={i} className="flex flex-row items-center gap-4 px-2 py-1 bg-gray-100 rounded-lg">
+                  <div key={i} className="flex flex-row items-center gap-4 px-2 py-1 bg-gray-100 rounded-lg shadow-sm">
                     <CreditCardIcon className="w-8"/>
-                    <h4 className="w-48 truncate text-off_black font-normal text-lg">{account.nickname}</h4>
+                    <h4 className="w-48 truncate text-off_black font-medium text-lg">{account.nickname}</h4>
                   </div>
                 );
               } else {
                 return (
-                  <div key={i} className="flex flex-row items-center gap-4 px-2 py-1 bg-gray-100 rounded-lg">
+                  <div key={i} className="flex flex-row items-center gap-4 px-2 py-1 bg-gray-100 rounded-lg shadow-sm">
                     <BuildingLibraryIcon className="w-8"/>
-                    <h4 className="w-48 truncate text-off_black font-normal text-lg">{account.nickname}</h4>
+                    <h4 className="w-48 truncate text-off_black font-medium text-lg">{account.nickname}</h4>
                   </div>
                 );
               }
@@ -120,10 +125,10 @@ export default function Page() {
 
         <Card>
           <h3 className="text-lg font-medium text-off_black">Recent Transactions</h3>
-            <div className="mt-2 flex flex-col">
+            <div className="my-6 flex flex-col">
               {transactions.length ? (
                 <>
-                  <div className="flex flex-row items-center gap-16 mt-4">
+                  <div className="flex flex-row items-center gap-16 mb-2">
                     <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
                     <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
                     <h4 className="w-16 text-gray-400 font-normal text-md text-right">Amount</h4>
@@ -132,11 +137,11 @@ export default function Page() {
 
                   {transactions.map((transaction, i) => {
                     return (
-                      <div key={i} className="flex flex-row items-center gap-16 border-t-2 border-gray-200 my-2 pt-4">
-                        <h4 className="w-24 text-off_black font-normal text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
-                        <h4 className="w-24 text-off_black font-normal text-md">{formatDate(transaction.date)}</h4>
-                        <h4 className="w-16 text-off_black font-semibold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
-                        <h4 className="w-36 text-off_black font-normal text-md truncate">{transaction.description}</h4>
+                      <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
+                        <h4 className="w-24 text-off_black font-medium text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
+                        <h4 className="w-24 text-off_black font-medium text-md">{formatDate(transaction.date)}</h4>
+                        <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
+                        <h4 className="w-36 text-off_black font-medium text-md truncate">{transaction.description}</h4>
                       </div>
                     );
                   })}
@@ -144,6 +149,45 @@ export default function Page() {
               ) : (
                 <p className="text-sm font-normal text-off_gray">No recent transactions!</p>
               )}
+            </div>
+
+            <div className="flex flex-row justify-center">
+              <Button href="/spending" size="sm">See Transactions</Button>
+            </div>
+        </Card>
+
+        <Card>
+          <h3 className="text-lg font-medium text-off_black">Upcoming Bills</h3>
+            <div className="my-6 flex flex-col">
+              {bills.length ? (
+                <>
+                  <div className="flex flex-row items-center gap-16 mb-2">
+                    <h4 className="w-24 text-gray-400 font-normal text-md">Due Date</h4>
+                    <h4 className="w-24 text-gray-400 font-normal text-md">Category</h4>
+                    <h4 className="w-36 text-gray-400 font-normal text-md">Name</h4>
+                  </div>
+
+                  {bills.map((bill, i) => {
+                    console.log(billCategoryColors[bill.category][0]);
+                    console.log(billCategoryColors[bill.category][1]);
+                    return (
+                      <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
+                        <h4 className="w-24 text-red-700 font-medium text-md">{formatDate(bill.due_date)}</h4>
+                        <div className="w-24">
+                          <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${billCategoryColors[bill.category][0]}] text-[${billCategoryColors[bill.category][1]}]`}>{bill.category}</h4>
+                        </div>
+                        <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                <p className="text-sm font-normal text-off_gray">No upcoming bills!</p>
+              )}
+            </div>
+
+            <div className="flex flex-row justify-center">
+              <Button href="/bills" size="sm">See Bills</Button>
             </div>
         </Card>
       </div>

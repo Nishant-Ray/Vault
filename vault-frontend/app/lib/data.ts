@@ -1,5 +1,5 @@
 import { request } from '@/app/lib/api';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, TransactionsData } from '@/app/lib/definitions';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, TransactionsData, BillsData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -80,5 +80,16 @@ export async function fetchRecentTransactions() {
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to fetch recent transactions.');
+  }
+}
+
+export async function fetchUpcomingBills() {
+  try {
+    const response = await request<BillsData>('bills/get_upcoming', 'GET');
+    return response.data?.bills;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch upcoming bills.');
   }
 }

@@ -8,7 +8,7 @@ class BillsController < ApplicationController
     if current_user
       render json: {
         status: { code: 200, message: "Successfully retrieved all bills." },
-        data: { bills: Bill.where(user_id: current_user.id).order(date: :asc) }
+        data: { bills: Bill.where(user_id: current_user.id).order(due_date: :asc) }
       }, status: :ok
     else
       render json: {
@@ -29,7 +29,7 @@ class BillsController < ApplicationController
     if current_user
       render json: {
         status: { code: 200, message: "Successfully retrieved upcoming bills." },
-        data: { bills: Bill.where(user_id: current_user.id).order(date: :asc).first(3) }
+        data: { bills: Bill.where(user_id: current_user.id).order(due_date: :asc).first(3) }
       }, status: :ok
     else
       render json: {

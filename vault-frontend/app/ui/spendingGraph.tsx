@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchYearlySpending } from '@/app/lib/data';
 import { YearlySpending } from '@/app/lib/definitions';
 import { formatMonthName } from '@/app/lib/utils';
+import { colors } from '@/app/lib/colors';
 import { Bar } from 'react-chartjs-2';
 import { Chart, LinearScale, CategoryScale, BarElement, BarController, Tooltip, ChartData, TooltipItem, ChartOptions } from 'chart.js';
 Chart.register(LinearScale, CategoryScale, BarElement, BarController, Tooltip);
@@ -60,7 +61,7 @@ export default function SpendingGraph({ year }: SpendingGraphProps) {
           datasets: [{
             label: 'Total Spent',
             data: newData,
-            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            backgroundColor: colors['accent']
           }]
         };
 

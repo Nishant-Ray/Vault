@@ -84,3 +84,18 @@ export type Transaction = {
 export type TransactionsData = {
   transactions: Transaction[];
 };
+
+export type Bill = {
+  id: number;
+  user_id: number;
+  name: string;
+  category: string;
+  due_date: number;
+  shared: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type BillsData = {
+  bills: Bill[];
+};
