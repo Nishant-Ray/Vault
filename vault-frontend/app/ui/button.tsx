@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { dmSans } from '@/app/ui/fonts';
 import Link from 'next/link';
 
-interface ButtonProps {
+type ButtonProps = {
   children: React.ReactNode;
   href: string;
   size?: string;

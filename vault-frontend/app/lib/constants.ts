@@ -22,3 +22,18 @@ export const months: Record<number, string> = {
   11: 'Nov',
   12: 'Dec'
 }
+
+export const fullMonths: Record<string, string> = {
+  'Jan': 'January',
+  'Feb': 'February',
+  'Mar': 'March',
+  'Apr': 'April',
+  'May': 'May',
+  'Jun': 'June',
+  'Jul': 'July',
+  'Aug': 'August',
+  'Sep': 'September',
+  'Oct': 'October',
+  'Nov': 'November',
+  'Dec': 'December'
+}

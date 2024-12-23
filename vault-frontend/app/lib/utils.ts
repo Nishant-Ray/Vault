@@ -1,4 +1,4 @@
-import { months } from "@/app/lib/constants";
+import { months, fullMonths } from "@/app/lib/constants";
 
 export function formatDollarAmount(amount: number): string {
   const originalAmount = String(amount);

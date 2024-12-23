@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_22_054030) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_23_014859) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -18,6 +18,16 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_22_054030) do
     t.integer "user_id", null: false
     t.string "nickname", null: false
     t.boolean "is_credit_card", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "bills", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "name"
+    t.string "category"
+    t.integer "due_date"
+    t.boolean "shared"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -57,6 +67,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_22_054030) do
   end
 
   add_foreign_key "accounts", "users"
+  add_foreign_key "bills", "users"
   add_foreign_key "monthly_spendings", "users"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "users"
