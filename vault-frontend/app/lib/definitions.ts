@@ -101,3 +101,27 @@ export type Bill = {
 export type BillsData = {
   bills: Bill[];
 };
+
+type User = {
+  id: number;
+  name: string;
+};
+
+export type ResidenceInfoData = {
+  name: string;
+  users: User[];
+}
+
+export type ResidenceMessage = {
+  content: string;
+  is_update: boolean;
+  time: number;
+  created_at: string;
+  updated_at: string;
+  residence_id: number;
+  user_id: number;
+};
+
+export type ResidenceMessagesData = {
+  messages: ResidenceMessage[];
+}

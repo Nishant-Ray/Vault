@@ -1,5 +1,5 @@
 import { request } from '@/app/lib/api';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, TransactionsData, BillsData } from '@/app/lib/definitions';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, TransactionsData, BillsData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -91,5 +91,27 @@ export async function fetchUpcomingBills() {
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to fetch upcoming bills.');
+  }
+}
+
+export async function fetchResidenceName() {
+  try {
+    const response = await request<ResidenceInfoData>('residences/get_info', 'GET');
+    return response.data?.name;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch residence name.');
+  }
+}
+
+export async function fetchRecentResidenceMessages() {
+  try {
+    const response = await request<ResidenceMessagesData>('residence_messages/get_recent', 'GET');
+    return response.data?.messages;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch recent residence messages.');
   }
 }

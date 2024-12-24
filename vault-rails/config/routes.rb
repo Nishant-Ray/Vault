@@ -48,7 +48,24 @@ Rails.application.routes.draw do
     end
   end
 
-  get "residences/index"
+  resources :residences, only: [] do
+    collection do
+      get :get_info
+      post "create/:name", constraints: { name: /[^\/]+/ }
+      delete "delete"
+      post "invite_resident/:email"
+      patch "remove_resident/:id"
+      patch "change_name/:name", constraints: { name: /[^\/]+/ }
+    end
+  end
+
+  resources :residence_messages, only: [] do
+    collection do
+      get :get_recent
+      get :get_all
+      post "create/:time/:is_update/:content", constraints: { content: /[^\/]+/ }
+    end
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

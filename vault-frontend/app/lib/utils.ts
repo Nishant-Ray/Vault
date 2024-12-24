@@ -58,3 +58,14 @@ export function formatDate(date: number): string { // 20241203
 export function formatMonthName(month: number): string {
   return `${months[Number(String(month).substring(4))]}`;
 }
+
+export function formatTime(dateTime: number): string {
+  const dateTimeString = String(dateTime);
+  const date = dateTimeString.substring(0, 8);
+  const time = dateTimeString.substring(8);
+  let hour = '';
+  if (Number(time.substring(0, 2)) >= 13) hour = `${Number(time.substring(0, 2)) - 12}`;
+  else hour = time.substring(0, 2);
+
+  return `${hour}:${time.substring(2)} on ${formatDate(Number(dateTimeString.substring(0, 8)))}`
+}

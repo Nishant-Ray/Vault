@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { dmSans } from '@/app/ui/fonts';
 import Card from '@/app/ui/card';
 import clsx from 'clsx';
-import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills } from '@/app/lib/data';
-import { getCurrentMonth, getPreviousMonth, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
-import { Transaction, Bill } from '@/app/lib/definitions';
+import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills, fetchResidenceName, fetchRecentResidenceMessages } from '@/app/lib/data';
+import { getCurrentMonth, getPreviousMonth, getCurrentYear, formatDollarAmount, formatMonth, formatDate, formatTime } from '@/app/lib/utils';
+import { Transaction, Bill, ResidenceMessage } from '@/app/lib/definitions';
 import Button from '@/app/ui/button';
 import SpendingGraph from '@/app/ui/spendingGraph';
 import { billCategoryColors } from '@/app/lib/colors';
@@ -22,6 +22,8 @@ export default function Page() {
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
   const [transactions, setTransactions] = useState<Array<Transaction>>([]);
   const [bills, setBills] = useState<Array<Bill>>([]);
+  const [residenceName, setResidenceName] = useState<string>('');
+  const [residenceMessages, setResidenceMessages] = useState<Array<ResidenceMessage>>([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -53,6 +55,13 @@ export default function Page() {
 
       const fetchedBills = await fetchUpcomingBills();
       if (fetchedBills) setBills(fetchedBills);
+
+      const fetchedResidenceName = await fetchResidenceName();
+      if (fetchedResidenceName) {
+        setResidenceName(fetchedResidenceName);
+        const fetchedResidenceMessages = await fetchRecentResidenceMessages();
+        if (fetchedResidenceMessages) setResidenceMessages(fetchedResidenceMessages);
+      }
     };
 
     fetchDashboardData();
@@ -163,6 +172,36 @@ export default function Page() {
 
         <Card>
           <h3 className="text-lg font-medium text-off_black">Residence</h3>
+          <div className="my-6 flex flex-col">
+            {residenceName ? (
+              <>
+                <h4 className="text-md font-medium text-off_gray">Recent Messages From {residenceName}</h4>
+                <div className="bg-off_white">
+                  {residenceMessages.length ? (
+                    <>
+                      {residenceMessages.map((message, i) => {
+                        return (
+                          <p key={i}>{formatTime(message.time)}: {message.user_id} said {message.content}</p>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <p className="text-sm font-normal text-off_gray">No recent messages</p>
+                  )}
+                </div>
+                
+              </>
+            ) : (
+              <p className="text-sm font-normal text-off_gray">Not part of a residence!</p>
+            )}
+          </div>
+
+          <div className="flex flex-row justify-center">
+            {residenceName ?
+              <Button href="/residence" size="sm">Manage Residence</Button> :
+              <Button href="/residence" size="sm">Create Residence</Button>
+            }
+          </div>
         </Card>
 
         <Card>
