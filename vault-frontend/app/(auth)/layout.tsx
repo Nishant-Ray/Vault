@@ -7,8 +7,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="bg-primary w-full h-screen flex items-center justify-center">
         <Image
           src="/auth.png"
-          width={480}
-          height={480}
+          width={600}
+          height={600}
           alt="Vault auth graphic"
           className="pointer-events-none"
           unoptimized={true}

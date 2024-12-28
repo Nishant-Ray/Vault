@@ -51,11 +51,11 @@ Rails.application.routes.draw do
   resources :residences, only: [] do
     collection do
       get :get_info
-      post "create/:name", constraints: { name: /[^\/]+/ }
-      delete "delete"
-      post "invite_resident/:email"
-      patch "remove_resident/:id"
-      patch "change_name/:name", constraints: { name: /[^\/]+/ }
+      post "create/:name", to: "residences#create", constraints: { name: /[^\/]+/ }
+      delete "delete", to: "residences#delete"
+      post "invite_resident/:email", to: "residences#invite_resident"
+      patch "remove_resident/:id", to: "residences#remove_resident"
+      patch "change_name/:name", to: "residences#change_name", constraints: { name: /[^\/]+/ }
     end
   end
 
@@ -63,7 +63,7 @@ Rails.application.routes.draw do
     collection do
       get :get_recent
       get :get_all
-      post "create/:time/:is_update/:content", constraints: { content: /[^\/]+/ }
+      post "create/:is_update/:content", to: "residence_messages#create", constraints: { content: /[^\/]+/ }
     end
   end
 

@@ -9,7 +9,7 @@ class ResidenceMessagesController < ApplicationController
       if current_user.residence
         render json: {
           status: { code: 200, message: "Successfully retrieved residence messages." },
-          data: { messages: current_user.residence.residence_messages.order(time: :asc).last(5) } # least recent first in array
+          data: { messages: current_user.residence.residence_messages.order(created_at: :asc).last(5) } # least recent first in array
         }, status: :ok
       else
         render json: {
@@ -36,7 +36,7 @@ class ResidenceMessagesController < ApplicationController
       if current_user.residence
         render json: {
           status: { code: 200, message: "Successfully retrieved residence messages." },
-          data: { messages: current_user.residence.residence_messages.order(time: :asc).last(50) } # least recent first in array
+          data: { messages: current_user.residence.residence_messages.order(created_at: :asc).last(50) } # least recent first in array
         }, status: :ok
       else
         render json: {
@@ -61,12 +61,12 @@ class ResidenceMessagesController < ApplicationController
 
     if current_user
       if current_user.residence
-        new_message = ResidenceMessage.create(time: params[:time], is_update: params[:is_update], content: params[:content])
+        new_message = ResidenceMessage.create(is_update: params[:is_update], content: params[:content])
         new_message.user = current_user
         new_message.residence = current_user.residence
+        new_message.save
         render json: {
-          status: { code: 200, message: "Successfully created residence message." },
-          data: { name: current_user.residence.name, users: current_user.residence.users }
+          status: { code: 200, message: "Successfully created residence message." }
         }, status: :ok
       else
         render json: {

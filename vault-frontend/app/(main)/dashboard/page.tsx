@@ -149,7 +149,7 @@ export default function Page() {
                       const textColor = billCategoryColorArr[1];
                       return (
                         <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                          <h4 className="w-24 text-red-700 font-medium text-md">{formatDate(bill.due_date)}</h4>
+                          <h4 className="w-24 text-red-700 font-semibold text-md">{formatDate(bill.due_date)}</h4>
                           <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(bill.total)}</h4>
                           <div className="w-24">
                             <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
@@ -172,24 +172,24 @@ export default function Page() {
 
         <Card>
           <h3 className="text-lg font-medium text-off_black">Residence</h3>
-          <div className="my-6 flex flex-col">
+          <div className="mt-4 mb-6 flex flex-col">
             {residenceName ? (
               <>
-                <h4 className="text-md font-medium text-off_gray">Recent Messages From {residenceName}</h4>
-                <div className="bg-off_white">
-                  {residenceMessages.length ? (
-                    <>
-                      {residenceMessages.map((message, i) => {
-                        return (
-                          <p key={i}>{formatTime(message.time)}: {message.user_id} said {message.content}</p>
-                        );
-                      })}
-                    </>
-                  ) : (
-                    <p className="text-sm font-normal text-off_gray">No recent messages</p>
-                  )}
-                </div>
-                
+                <h4 className="text-md font-medium text-off_gray">Recent Messages</h4>
+                {residenceMessages.length ? (
+                  <div className="bg-off_white px-4 py-2 rounded-lg">
+                    {residenceMessages.map((message, i) => {
+                      return (
+                        <div key={i}>
+                          <p className="ml-3 mb-1 text-xs font-normal text-off_gray">User {message.user_id}</p>
+                          <h6 className="bg-white max-w-fit rounded-3xl px-3 py-1 text-md font-normal text-off_black">{message.content}</h6>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-sm font-normal text-off_gray">No recent messages</p>
+                )}
               </>
             ) : (
               <p className="text-sm font-normal text-off_gray">Not part of a residence!</p>

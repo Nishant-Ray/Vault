@@ -115,7 +115,6 @@ export type ResidenceInfoData = {
 export type ResidenceMessage = {
   content: string;
   is_update: boolean;
-  time: number;
   created_at: string;
   updated_at: string;
   residence_id: number;
