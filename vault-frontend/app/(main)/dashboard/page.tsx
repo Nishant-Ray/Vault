@@ -71,146 +71,149 @@ export default function Page() {
     <main>
       <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-2xl font-semibold mb-6`}>Welcome, {name}!</h1>
       
-      <div className="flex flex-row flex-wrap items-start gap-8">
-        <Card>
-          <div className="flex flex-row gap-16">
-            <h3 className="text-lg font-medium text-off_black">Monthly Spending</h3>
-            <h3 className="text-lg font-normal text-off_gray">{formatMonth(currMonth)}</h3>
-          </div>
-
-          <h2 className={`${dmSans.className} antialiased tracking-tight text-4xl font-semibold my-4`}>{monthlySpending}</h2>
-
-          <div className="flex flex-row items-center gap-2">
-            <div className={clsx("rounded-3xl flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
-              <p className={clsx("text-md font-semibold", { "text-positive_text": positive, "text-negative_text": !positive })}>{percentChange}</p>
+      <div className="flex flex-row gap-8">
+        <div className="flex flex-col gap-8 w-2/5">
+          <Card>
+            <div className="flex flex-row justify-between">
+              <h3 className="text-lg font-medium text-off_black">Monthly Spending</h3>
+              <h3 className="text-lg font-normal text-off_gray">{formatMonth(currMonth)}</h3>
             </div>
-            <h4 className="text-md font-normal text-gray-400">Compared to {formatMonth(prevMonth)}</h4>
-          </div>
-        </Card>
 
-        <Card>
-          <div className="flex flex-row gap-72 mb-6">
-            <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
-            <h3 className="text-lg font-normal text-off_gray">{currYear}</h3>
-          </div>
+            <h2 className={`${dmSans.className} antialiased tracking-tight text-4xl font-semibold my-4`}>{monthlySpending}</h2>
 
-          <SpendingGraph year={currYear}/>
-        </Card>
+            <div className="flex flex-row items-center gap-2">
+              <div className={clsx("rounded-3xl flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
+                <p className={clsx("text-md font-semibold", { "text-positive_text": positive, "text-negative_text": !positive })}>{percentChange}</p>
+              </div>
+              <h4 className="text-md font-normal text-gray-400">Compared to {formatMonth(prevMonth)}</h4>
+            </div>
+          </Card>
 
-        <Card>
-          <h3 className="text-lg font-medium text-off_black">Recent Transactions</h3>
-            <div className="my-6 flex flex-col">
-              {transactions.length ? (
+          <Card>
+            <div className="flex flex-row justify-between mb-6">
+              <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
+              <h3 className="text-lg font-normal text-off_gray">{currYear}</h3>
+            </div>
+
+            <SpendingGraph year={currYear}/>
+          </Card>
+
+          <Card>
+            <h3 className="text-lg font-medium text-off_black">Recent Residence Messages</h3>
+            <div className="mt-2 mb-4 flex flex-col">
+              {residenceName ? (
                 <>
-                  <div className="flex flex-row items-center gap-16 mb-2">
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
-                    <h4 className="w-16 text-gray-400 font-normal text-md text-right">Amount</h4>
-                    <h4 className="w-36 text-gray-400 font-normal text-md">Description</h4>
-                  </div>
-
-                  {transactions.map((transaction, i) => {
-                    return (
-                      <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                        <h4 className="w-24 text-off_black font-medium text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
-                        <h4 className="w-24 text-off_black font-medium text-md">{formatDate(transaction.date)}</h4>
-                        <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
-                        <h4 className="w-36 text-off_black font-medium text-md truncate">{transaction.description}</h4>
-                      </div>
-                    );
-                  })}
+                  {residenceMessages.length ? (
+                    <div className="bg-off_white px-4 py-2 rounded-lg flex flex-col gap-4">
+                      {residenceMessages.map((message, i) => {
+                        return (
+                          <div key={i}>
+                            <p className="ml-3 mb-1 text-xs font-normal text-off_gray">User {message.user_id}</p>
+                            <h6 className="bg-white max-w-fit rounded-3xl px-3 py-1 text-md font-normal text-off_black">{message.content}</h6>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm font-normal text-off_gray">No recent messages</p>
+                  )}
                 </>
               ) : (
-                <p className="text-sm font-normal text-off_gray">No recent transactions!</p>
+                <p className="text-sm font-normal text-off_gray">Not part of a residence!</p>
               )}
             </div>
 
             <div className="flex flex-row justify-center">
-              <Button href="/spending" size="sm">See Transactions</Button>
+              {residenceName ?
+                <Button href="/residence" size="sm">Manage Residence</Button> :
+                <Button href="/residence" size="sm">Create Residence</Button>
+              }
             </div>
-        </Card>
+          </Card>
+        </div>
 
-        <Card>
-          <h3 className="text-lg font-medium text-off_black">Upcoming Bills</h3>
-            <div className="my-6 flex flex-col">
-              {bills.length ? (
-                <>
-                  <div className="flex flex-row items-center gap-16 mb-2">
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Due Date</h4>
-                    <h4 className="w-16 text-gray-400 font-normal text-md text-right">Total</h4>
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Category</h4>
-                    <h4 className="w-36 text-gray-400 font-normal text-md">Name</h4>
-                  </div>
+        <div className="flex flex-col gap-8 w-3/5">
+          <Card>
+            <h3 className="text-lg font-medium text-off_black">Recent Transactions</h3>
+              <div className="my-6 flex flex-col">
+                {transactions.length ? (
+                  <>
+                    <div className="flex flex-row items-center gap-16 mb-2">
+                      <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
+                      <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
+                      <h4 className="w-16 text-gray-400 font-normal text-md text-right">Amount</h4>
+                      <h4 className="w-36 text-gray-400 font-normal text-md">Description</h4>
+                    </div>
 
-                  {bills.map((bill, i) => {
-                    const billCategoryColorArr = billCategoryColors.get(bill.category);
-                    if (billCategoryColorArr) {
-                      const bgColor = billCategoryColorArr[0];
-                      const textColor = billCategoryColorArr[1];
+                    {transactions.map((transaction, i) => {
                       return (
                         <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                          <h4 className="w-24 text-red-700 font-semibold text-md">{formatDate(bill.due_date)}</h4>
-                          <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(bill.total)}</h4>
-                          <div className="w-24">
-                            <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
-                          </div>
-                          <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
-                        </div>
-                      );
-                    }
-                  })}
-                </>
-              ) : (
-                <p className="text-sm font-normal text-off_gray">No upcoming bills!</p>
-              )}
-            </div>
-
-            <div className="flex flex-row justify-center">
-              <Button href="/bills" size="sm">See Bills</Button>
-            </div>
-        </Card>
-
-        <Card>
-          <h3 className="text-lg font-medium text-off_black">Residence</h3>
-          <div className="mt-4 mb-6 flex flex-col">
-            {residenceName ? (
-              <>
-                <h4 className="text-md font-medium text-off_gray">Recent Messages</h4>
-                {residenceMessages.length ? (
-                  <div className="bg-off_white px-4 py-2 rounded-lg">
-                    {residenceMessages.map((message, i) => {
-                      return (
-                        <div key={i}>
-                          <p className="ml-3 mb-1 text-xs font-normal text-off_gray">User {message.user_id}</p>
-                          <h6 className="bg-white max-w-fit rounded-3xl px-3 py-1 text-md font-normal text-off_black">{message.content}</h6>
+                          <h4 className="w-24 text-off_black font-medium text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
+                          <h4 className="w-24 text-off_black font-medium text-md">{formatDate(transaction.date)}</h4>
+                          <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
+                          <h4 className="w-36 text-off_black font-medium text-md truncate">{transaction.description}</h4>
                         </div>
                       );
                     })}
-                  </div>
+                  </>
                 ) : (
-                  <p className="text-sm font-normal text-off_gray">No recent messages</p>
+                  <p className="text-sm font-normal text-off_gray">No recent transactions!</p>
                 )}
-              </>
-            ) : (
-              <p className="text-sm font-normal text-off_gray">Not part of a residence!</p>
-            )}
-          </div>
+              </div>
 
-          <div className="flex flex-row justify-center">
-            {residenceName ?
-              <Button href="/residence" size="sm">Manage Residence</Button> :
-              <Button href="/residence" size="sm">Create Residence</Button>
-            }
-          </div>
-        </Card>
+              <div className="flex flex-row justify-center">
+                <Button href="/spending" size="sm">See Transactions</Button>
+              </div>
+          </Card>
 
-        <Card>
-          <h3 className="text-lg font-medium text-off_black">Chatbot</h3>
-          <p className="text-md font-normal text-off_gray mt-4 my-6">Have a specific question about your personal finances?</p>
-          <div className="flex flex-row justify-center">
-            <Button href="/chatbot" size="sm">Ask a Question</Button>
-          </div>
-        </Card>
+          <Card>
+            <h3 className="text-lg font-medium text-off_black">Upcoming Bills</h3>
+              <div className="my-6 flex flex-col">
+                {bills.length ? (
+                  <>
+                    <div className="flex flex-row items-center gap-16 mb-2">
+                      <h4 className="w-24 text-gray-400 font-normal text-md">Due Date</h4>
+                      <h4 className="w-16 text-gray-400 font-normal text-md text-right">Total</h4>
+                      <h4 className="w-24 text-gray-400 font-normal text-md">Category</h4>
+                      <h4 className="w-36 text-gray-400 font-normal text-md">Name</h4>
+                    </div>
+
+                    {bills.map((bill, i) => {
+                      const billCategoryColorArr = billCategoryColors.get(bill.category);
+                      if (billCategoryColorArr) {
+                        const bgColor = billCategoryColorArr[0];
+                        const textColor = billCategoryColorArr[1];
+                        return (
+                          <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
+                            <h4 className="w-24 text-red-700 font-semibold text-md">{formatDate(bill.due_date)}</h4>
+                            <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(bill.total)}</h4>
+                            <div className="w-24">
+                              <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
+                            </div>
+                            <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
+                          </div>
+                        );
+                      }
+                    })}
+                  </>
+                ) : (
+                  <p className="text-sm font-normal text-off_gray">No upcoming bills!</p>
+                )}
+              </div>
+
+              <div className="flex flex-row justify-center">
+                <Button href="/bills" size="sm">See Bills</Button>
+              </div>
+          </Card>
+
+          <Card>
+            <h3 className="text-lg font-medium text-off_black">Chatbot</h3>
+            <p className="text-lg font-normal text-off_gray mt-4 my-6">Have a specific question about your personal finances?</p>
+            <div className="flex flex-row justify-center">
+              <Button href="/chatbot" size="sm">Ask a Question</Button>
+            </div>
+          </Card>
+        </div>
       </div>
 
     </main>

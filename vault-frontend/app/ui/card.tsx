@@ -10,7 +10,7 @@ export default function Card({ children, className, ...rest }: CardProps) {
     <div
       {...rest}
       className={clsx(
-        "inline-block bg-white rounded-xl p-5 shadow-sm",
+        "inline-block bg-white rounded-xl p-5 shadow-sm w-full",
         className,
       )}
     >
