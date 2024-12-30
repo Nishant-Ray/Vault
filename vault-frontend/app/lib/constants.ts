@@ -1,7 +1,7 @@
 export const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
-  '/spending': 'Spending',
   '/wallet': 'Wallet',
+  '/spending': 'Spending',
   '/bills': 'Bills',
   '/residence': 'Residence',
   '/chatbot': 'Chatbot',

@@ -51,7 +51,14 @@ class TransactionsController < ApplicationController
     end
 
     if current_user
-      new_transaction = Transaction.create(user_id: current_user.id, account_id: params[:account_id], date: params[:date], amount: params[:amount], category: params[:category], description: params[:description])
+      new_transaction = Transaction.create(user_id: current_user.id, account_id: params[:account_id], date: params[:date], amount: params[:amount].to_f, category: params[:category], description: params[:description])
+      calculated_month = params[:date].to_s[0, 6].to_i
+      relevant_monthly_spending = MonthlySpending.where(user_id: current_user.id, month: calculated_month).take
+      if !relevant_monthly_spending
+        relevant_monthly_spending = MonthlySpending.create(user_id: current_user.id, month: calculated_month, total: params[:amount].to_f)
+      end
+      new_transaction.monthly_spending = relevant_monthly_spending
+      new_transaction.save
       render json: {
         status: { code: 200, message: "Successfully added transaction." },
         data: { transaction_id: new_transaction.id }
