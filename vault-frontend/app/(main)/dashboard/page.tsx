@@ -20,10 +20,10 @@ export default function Page() {
   const [positive, setPositive] = useState<boolean>(true);
   const currYear = getCurrentYear();
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
-  const [transactions, setTransactions] = useState<Array<Transaction>>([]);
-  const [bills, setBills] = useState<Array<Bill>>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [bills, setBills] = useState<Bill[]>([]);
   const [residenceName, setResidenceName] = useState<string>('');
-  const [residenceMessages, setResidenceMessages] = useState<Array<ResidenceMessage>>([]);
+  const [residenceMessages, setResidenceMessages] = useState<ResidenceMessage[]>([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {

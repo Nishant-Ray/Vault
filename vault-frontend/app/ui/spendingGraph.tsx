@@ -38,7 +38,7 @@ export default function SpendingGraph({ year }: SpendingGraphProps) {
     }
   };
 
-  const [yearlySpending, setYearlySpending] = useState<Array<YearlySpending>>([]);
+  const [yearlySpending, setYearlySpending] = useState<YearlySpending[]>([]);
   const [barData, setBarData] = useState<ChartData<'bar'>>({labels: [], datasets: []});
 
   useEffect(() => {
