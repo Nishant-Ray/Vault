@@ -69,6 +69,23 @@ export type AccountsData = {
   accounts: Account[];
 };
 
+export const ACCOUNT_NICKNAME_MODAL_TYPE = 0;
+export const ACCOUNT_REMOVE_MODAL_TYPE = 1;
+export const ACCOUNT_ADD_MODAL_TYPE = 2;
+
+export type AccountNicknameModalData = {
+  nickname: string;
+};
+
+export type AccountAddModalData = {
+  nickname: string;
+  account_type: string;
+}
+
+export type AccountData = {
+  account: Account;
+};
+
 export type Transaction = {
   id: number;
   user_id: number;

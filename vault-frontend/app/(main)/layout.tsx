@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         <div className="flex flex-col w-full">
           
-          <div className="sticky top-0 left-0 w-full flex flex-row h-20 items-center px-5 bg-white shadow-sm z-0">
+          <div className="z-50 sticky top-0 left-0 w-full flex flex-row h-20 items-center px-5 bg-white shadow-sm z-0">
             <div className="w-full h-full flex justify-start items-center">
               <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-3xl font-bold`}>{pathname.slice(1).charAt(0).toUpperCase() + pathname.slice(2)}</h1>
             </div>

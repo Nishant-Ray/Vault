@@ -5,7 +5,7 @@ import { LoginFormElement } from '@/app/lib/definitions';
 import { login } from '@/app/lib/auth';
 import { redirect } from 'next/navigation';
 import Input from '@/app/ui/input';
-import AuthButton from '@/app/ui/authButton';
+import Button from '@/app/ui/button';
 import { dmSans } from '@/app/ui/fonts';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -32,10 +32,10 @@ export default function Page() {
       <p className={clsx("font-medium text-lg text-negative_text bg-negative text-center rounded-md py-2", { "visible mt-6 mb-6": loginFailed, "invisible m-0": !loginFailed })}>Incorrect email or password!</p>
 
       <form onSubmit={handleLogin}>
-        <Input id="email" type="email" label="Email" placeholder="johndoe@gmail.com"/>
-        <Input id="password" type="password" label="Password" placeholder="secure_password_123"/>
+        <Input id="email" name="email" type="email" label="Email" placeholder="johndoe@gmail.com"/>
+        <Input id="password" name="password" type="password" label="Password" placeholder="secure_password_123"/>
         
-        <AuthButton type="submit">Login</AuthButton>
+        <Button type="submit" size="lg" buttonType="auth">Login</Button>
 
         <p className="text-md text-off_black font-medium">Don't have an account? <Link href={"/signup"} className="text-primary hover:underline focus:underline focus:outline-none">Sign up</Link></p>
       </form>

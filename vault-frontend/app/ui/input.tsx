@@ -2,28 +2,58 @@ import clsx from 'clsx';
 import { HTMLInputTypeAttribute } from 'react';
 
 interface InputProps {
+  onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   id: string;
+  name: string;
   type: HTMLInputTypeAttribute;
-  label: string;
+  label?: string;
   placeholder?: string;
+  value?: string;
+  checked?: boolean;
+  radioLabel?: string;
+  standalone?: boolean;
   className?: string;
 }
 
-export default function Input({ id, type, label, placeholder, className, ...rest }: InputProps) {
+export default function Input({ onChange, id, name, type, value, checked, label, placeholder, radioLabel, standalone = true, className, ...rest }: InputProps) {
   return (
-    <div className="mb-5">
-      <label htmlFor={id} className="block mb-2 text-sm font-medium text-off_black pl-2">{label}</label>
-      <input
-        {...rest}
-        type={type}
-        id={id}
-        placeholder={placeholder}
-        required
-        className={clsx(
-          "shadow-sm bg-gray-200 text-off_black text-sm font-medium rounded-3xl w-full px-4 py-3 focus:outline-none",
-          className
-        )}
-      />
+    <div className={clsx({ "mb-5": standalone })}>
+      { label && <label htmlFor={id} className="block mb-2 text-lg font-medium text-off_black pl-2">{label}</label> }
+      { type === 'radio' ? (
+        <label className="font-normal text-off_black flex">
+          <input
+            {...rest}
+            onChange={onChange}
+            type={type}
+            id={id}
+            name={name}
+            value={value}
+            placeholder={placeholder}
+            required
+            checked={checked}
+            className={clsx(
+              "focus:outline-none mr-2",
+              className
+            )}
+          />
+          {radioLabel}
+        </label>
+      ) : (
+        <input
+          {...rest}
+          onChange={onChange}
+          type={type}
+          id={id}
+          name={name}
+          value={value}
+          placeholder={placeholder}
+          required
+          className={clsx(
+            "focus:outline-none w-full px-4 py-3 shadow-sm bg-gray-200 text-off_black text-sm font-medium rounded-3xl",
+            className
+          )}
+        />
+      )}
     </div>
   );
 }

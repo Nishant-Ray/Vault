@@ -25,8 +25,9 @@ Rails.application.routes.draw do
   resources :accounts, only: [] do
     collection do
       get :get_all
-      post "add/:last_digits/:is_credit_card/:nickname", to: "accounts#add", constraints: { nickname: /[^\/]+/ }
+      post "add/:is_credit_card/:nickname", to: "accounts#add", constraints: { nickname: /[^\/]+/ }
       delete "remove/:id", to: "accounts#remove"
+      patch "change_nickname/:id/:nickname", to: "accounts#change_nickname", constraints: { nickname: /[^\/]+/ }
     end
   end
 

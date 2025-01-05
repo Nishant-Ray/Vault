@@ -1,5 +1,5 @@
 import { request } from '@/app/lib/api';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, TransactionsData, BillsData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionsData, BillsData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -65,6 +65,37 @@ export async function fetchAccounts() {
   try {
     const response = await request<AccountsData>('accounts/get_all', 'GET');
     return response.data?.accounts;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch accounts.');
+  }
+}
+
+export async function changeAccountNickname(id: number, newNickname: string) {
+  try {
+    await request<null>(`accounts/change_nickname/${id}/${encodeURIComponent(newNickname)}`, 'PATCH');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch accounts.');
+  }
+}
+
+export async function removeAccount(id: Number) {
+  try {
+    await request<null>(`accounts/remove/${id}`, 'DELETE');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch accounts.');
+  }
+}
+
+export async function addAccount(accountData: AccountAddModalData) {
+  try {
+    const response = await request<AccountData>(`accounts/add/${accountData.account_type === 'credit_card'}/${encodeURIComponent(accountData.nickname)}`, 'POST');
+    return response.data?.account;
 
   } catch (error) {
     console.error('Server error:', error);

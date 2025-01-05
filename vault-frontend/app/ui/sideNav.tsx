@@ -6,16 +6,6 @@ import { pages } from '@/app/lib/constants';
 import { dmSans } from '@/app/ui/fonts';
 import clsx from 'clsx';
 
-// const links = [
-//   { name: "Dashboard", href: "/dashboard", icon: Squares2X2Icon, solidIcon: SolidSquares2X2Icon },
-//   { name: "Spending", href: "/spending", icon: BanknotesIcon, solidIcon: SolidBanknotesIcon },
-//   { name: "Wallet", href: "/wallet", icon: CreditCardIcon, solidIcon: SolidCreditCardIcon },
-//   { name: "Bills", href: "/bills", icon: DocumentCurrencyDollarIcon, solidIcon: SolidDocumentCurrencyDollarIcon },
-//   { name: "Residence", href: "/residence", icon: HomeIcon, solidIcon: SolidHomeIcon },
-//   { name: "Chatbot", href: "/chatbot", icon: ChatBubbleLeftEllipsisIcon, solidIcon: SolidChatBubbleLeftEllipsisIcon },
-//   { name: "Settings", href: "/settings", icon: Cog8ToothIcon, solidIcon: SolidCog8ToothIcon }
-// ];
-
 export default function SideNav() {
   const pathname = usePathname();
   return (
