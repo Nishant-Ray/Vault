@@ -1,10 +1,21 @@
-interface FormElements extends HTMLFormControlsCollection {
+interface LoginFormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
   password: HTMLInputElement;
 };
 
 export interface LoginFormElement extends HTMLFormElement {
-  readonly elements: FormElements;
+  readonly elements: LoginFormElements;
+};
+
+interface SignUpFormElements extends HTMLFormControlsCollection {
+  email: HTMLInputElement;
+  name: HTMLInputElement;
+  password: HTMLInputElement;
+  repeatPassword: HTMLInputElement;
+};
+
+export interface SignUpFormElement extends HTMLFormElement {
+  readonly elements: SignUpFormElements;
 };
 
 type LoginRequestBody = {
