@@ -48,7 +48,7 @@ export default function Page() {
 
   return (
     <main>
-      <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-2xl font-semibold mb-6`}>Your Accounts</h1>
+      <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-2xl font-semibold mb-6`}>My Accounts</h1>
       <Card>
         <AccountModal modalType={ACCOUNT_ADD_MODAL_TYPE} isOpen={isAddAccountModalOpen} onAddSubmit={handleAccountAddFormSubmit} onClose={handleAccountAddModalClose}></AccountModal>
 

@@ -66,11 +66,13 @@ export default function SpendingGraph({ year }: SpendingGraphProps) {
         };
 
         setBarData(newBarData);
+      } else {
+        setYearlySpending([]);
       }
     }
 
     fetchGraphData();
-  }, []);
+  }, [year]);
 
   return yearlySpending.length ? <Bar data={barData} options={barOptions} /> : <p className="text-sm font-normal text-off_gray">No yearly spending data available!</p>;
 }

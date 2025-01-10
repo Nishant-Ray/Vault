@@ -21,16 +21,16 @@ export default function AccountCard({ name, id, nickname, isCredit, onRemove, ..
   const [isAccountModalOpen, setIsAccountModalOpen] = useState<boolean>(false);
   const [nicknameModal, setNicknameModal] = useState<boolean>(true);
 
-  const handleOptionsClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleOptionsClick = () => {
     setOptionsClicked(true);
   };
 
-  const handleNicknameClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleNicknameClick = () => {
     setIsAccountModalOpen(true);
     setNicknameModal(true);
   };
 
-  const handleRemoveClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleRemoveClick = () => {
     setIsAccountModalOpen(true);
     setNicknameModal(false);
   };

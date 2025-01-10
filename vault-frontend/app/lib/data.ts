@@ -34,6 +34,7 @@ export async function fetchPercentChange(currMonth: number, prevMonth: number) {
     let positive = true
 
     if (currSpending && prevSpending) {
+
       if (currSpending <= prevSpending) {
         positive = false;
       }
