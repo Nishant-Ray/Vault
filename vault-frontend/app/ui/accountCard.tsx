@@ -26,13 +26,13 @@ export default function AccountCard({ name, id, nickname, isCredit, onRemove, ..
   };
 
   const handleNicknameClick = () => {
-    setIsAccountModalOpen(true);
     setNicknameModal(true);
+    setIsAccountModalOpen(true);
   };
 
   const handleRemoveClick = () => {
-    setIsAccountModalOpen(true);
     setNicknameModal(false);
+    setIsAccountModalOpen(true);
   };
 
   const handleAccountModalClose = () => {
@@ -68,7 +68,7 @@ export default function AccountCard({ name, id, nickname, isCredit, onRemove, ..
     <Tilt scale={1.04} tiltMaxAngleX={5} tiltMaxAngleY={5} {...rest} className="z-0 w-[20.25rem] h-[12.75rem]">
       { !isCredit && <svg className="absolute mt-3 size-44" version="1.1" viewBox="0.0 0.0 696.6089238845144 672.8818897637796" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" xmlns="http://www.w3.org/2000/svg"><clipPath id="p.0"><path d="m0 0l696.60895 0l0 672.8819l-696.60895 0l0 -672.8819z" clipRule="nonzero"/></clipPath><g clipPath="url(#p.0)"><path fill="#000000" fillOpacity="0.0" d="m0 0l696.60895 0l0 672.8819l-696.60895 0z" fillRule="evenodd"/><path fill="#ffffff" fillOpacity="0.2532" d="m-123.648285 619.956l606.86615 0l0 52.91339l-606.86615 0z" fillRule="evenodd"/><path fill="#ffffff" fillOpacity="0.2532" d="m-172.9055 133.92126l352.69293 -133.92126l352.69293 133.92126z" fillRule="evenodd"/><path fill="#ffffff" fillOpacity="0.2532" d="m-172.88094 133.94234l705.3858 0l0 14.1102295l-705.3858 0z" fillRule="evenodd"/><path fill="#ffffff" fillOpacity="0.2532" d="m295.93625 251.27837l113.38583 0l0 343.52753l-113.38583 0z" fillRule="evenodd"/><path fill="#ffffff" fillOpacity="0.2532" d="m123.10159 251.27837l113.38583 0l0 343.52753l-113.38583 0z" fillRule="evenodd"/><path fill="#ffffff" fillOpacity="0.2532" d="m-49.733063 251.27837l113.38583 0l0 343.52753l-113.38583 0z" fillRule="evenodd"/><path fill="#ffffff" fillOpacity="0.2532" d="m-123.607086 173.20155l606.86615 0l0 52.913376l-606.86615 0z" fillRule="evenodd"/></g></svg> }
       
-      <AccountModal modalType={nicknameModal ? ACCOUNT_NICKNAME_MODAL_TYPE : ACCOUNT_REMOVE_MODAL_TYPE} isOpen={isAccountModalOpen} onNicknameSubmit={handleAccountNicknameFormSubmit} onRemove={handleAccountRemove} onClose={handleAccountModalClose}></AccountModal>
+      <AccountModal modalType={nicknameModal ? ACCOUNT_NICKNAME_MODAL_TYPE : ACCOUNT_REMOVE_MODAL_TYPE} isOpen={isAccountModalOpen} onNicknameSubmit={handleAccountNicknameFormSubmit} onRemove={handleAccountRemove} onClose={handleAccountModalClose}/>
 
       <div className={clsx(
         "bg-gradient-to-r text-white rounded-2xl hover:shadow-md p-6 w-full h-full flex flex-col justify-between",

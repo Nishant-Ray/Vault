@@ -113,6 +113,14 @@ export type TransactionsData = {
   transactions: Transaction[];
 };
 
+export type TransactionAddManualModalData = {
+  nickname: string;
+};
+
+export type TransactionAddDocumentModalData = {
+  nickname: string;
+}
+
 export type Bill = {
   id: number;
   user_id: number;

@@ -13,19 +13,19 @@ const initialAddModalData: AccountAddModalData = {
   account_type: 'credit_card'
 };
 
-type AccountBaseModalProps = {
+type AccountModalBaseProps = {
   modalType: number;
   isOpen: boolean;
   onClose: () => void;
 }
 
-type AccountOptionsModalProps = AccountBaseModalProps & {
+type AccountOptionsModalProps = AccountModalBaseProps & {
   onNicknameSubmit: (data: AccountNicknameModalData) => void;
   onRemove: () => void;
   onAddSubmit?: never;
 }
 
-type AccountAddModalProps = AccountBaseModalProps & {
+type AccountAddModalProps = AccountModalBaseProps & {
   onNicknameSubmit?: never;
   onRemove?: never;
   onAddSubmit: (data: AccountAddModalData) => void;

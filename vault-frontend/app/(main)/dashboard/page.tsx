@@ -169,75 +169,75 @@ export default function Page() {
         <div className="flex flex-col gap-8 w-3/5">
           <Card>
             <h3 className="text-lg font-medium text-off_black">Recent Transactions</h3>
-              <div className="my-6 flex flex-col">
-                {transactions.length ? (
-                  <>
-                    <div className="flex flex-row items-center gap-16 mb-2">
-                      <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
-                      <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
-                      <h4 className="w-16 text-gray-400 font-normal text-md text-right">Amount</h4>
-                      <h4 className="w-36 text-gray-400 font-normal text-md">Description</h4>
-                    </div>
+            <div className="my-6 flex flex-col">
+              {transactions.length ? (
+                <>
+                  <div className="flex flex-row items-center gap-16 mb-2">
+                    <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
+                    <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
+                    <h4 className="w-16 text-gray-400 font-normal text-md text-right">Amount</h4>
+                    <h4 className="w-36 text-gray-400 font-normal text-md">Description</h4>
+                  </div>
 
-                    {transactions.map((transaction, i) => {
-                      return (
-                        <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                          <h4 className="w-24 text-off_black font-medium text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
-                          <h4 className="w-24 text-off_black font-medium text-md">{formatDate(transaction.date)}</h4>
-                          <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
-                          <h4 className="w-36 text-off_black font-medium text-md truncate">{transaction.description}</h4>
-                        </div>
-                      );
-                    })}
-                  </>
-                ) : (
-                  <p className="text-sm font-normal text-off_gray">No recent transactions!</p>
-                )}
-              </div>
+                  {transactions.map((transaction, i) => {
+                    return (
+                      <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
+                        <h4 className="w-24 text-off_black font-medium text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
+                        <h4 className="w-24 text-off_black font-medium text-md">{formatDate(transaction.date)}</h4>
+                        <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
+                        <h4 className="w-36 text-off_black font-medium text-md truncate">{transaction.description}</h4>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                <p className="text-sm font-normal text-off_gray">No recent transactions!</p>
+              )}
+            </div>
 
-              <div className="flex flex-row justify-center">
-                <Button href="/spending" size="sm">See Transactions</Button>
-              </div>
+            <div className="flex flex-row justify-center">
+              <Button href="/spending" size="sm">All Transactions</Button>
+            </div>
           </Card>
 
           <Card>
             <h3 className="text-lg font-medium text-off_black">Upcoming Bills</h3>
-              <div className="my-6 flex flex-col">
-                {bills.length ? (
-                  <>
-                    <div className="flex flex-row items-center gap-16 mb-2">
-                      <h4 className="w-24 text-gray-400 font-normal text-md">Due Date</h4>
-                      <h4 className="w-16 text-gray-400 font-normal text-md text-right">Total</h4>
-                      <h4 className="w-24 text-gray-400 font-normal text-md">Category</h4>
-                      <h4 className="w-36 text-gray-400 font-normal text-md">Name</h4>
-                    </div>
+            <div className="my-6 flex flex-col">
+              {bills.length ? (
+                <>
+                  <div className="flex flex-row items-center gap-16 mb-2">
+                    <h4 className="w-24 text-gray-400 font-normal text-md">Due Date</h4>
+                    <h4 className="w-16 text-gray-400 font-normal text-md text-right">Total</h4>
+                    <h4 className="w-24 text-gray-400 font-normal text-md">Category</h4>
+                    <h4 className="w-36 text-gray-400 font-normal text-md">Name</h4>
+                  </div>
 
-                    {bills.map((bill, i) => {
-                      const billCategoryColorArr = billCategoryColors.get(bill.category);
-                      if (billCategoryColorArr) {
-                        const bgColor = billCategoryColorArr[0];
-                        const textColor = billCategoryColorArr[1];
-                        return (
-                          <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                            <h4 className="w-24 text-red-700 font-semibold text-md">{formatDate(bill.due_date)}</h4>
-                            <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(bill.total)}</h4>
-                            <div className="w-24">
-                              <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
-                            </div>
-                            <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
+                  {bills.map((bill, i) => {
+                    const billCategoryColorArr = billCategoryColors.get(bill.category);
+                    if (billCategoryColorArr) {
+                      const bgColor = billCategoryColorArr[0];
+                      const textColor = billCategoryColorArr[1];
+                      return (
+                        <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
+                          <h4 className="w-24 text-red-700 font-semibold text-md">{formatDate(bill.due_date)}</h4>
+                          <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(bill.total)}</h4>
+                          <div className="w-24">
+                            <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
                           </div>
-                        );
-                      }
-                    })}
-                  </>
-                ) : (
-                  <p className="text-sm font-normal text-off_gray">No upcoming bills!</p>
-                )}
-              </div>
+                          <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
+                        </div>
+                      );
+                    }
+                  })}
+                </>
+              ) : (
+                <p className="text-sm font-normal text-off_gray">No upcoming bills!</p>
+              )}
+            </div>
 
-              <div className="flex flex-row justify-center">
-                <Button href="/bills" size="sm">See Bills</Button>
-              </div>
+            <div className="flex flex-row justify-center">
+              <Button href="/bills" size="sm">All Bills</Button>
+            </div>
           </Card>
 
           <Card>

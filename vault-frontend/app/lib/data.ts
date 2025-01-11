@@ -115,6 +115,17 @@ export async function fetchRecentTransactions() {
   }
 }
 
+export async function fetchMonthlyTransactions(month: number) {
+  try {
+    const response = await request<TransactionsData>(`transactions/get_by_month/${month}`, 'GET');
+    return response.data?.transactions;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch monthly transactions.');
+  }
+}
+
 export async function fetchUpcomingBills() {
   try {
     const response = await request<BillsData>('bills/get_upcoming', 'GET');

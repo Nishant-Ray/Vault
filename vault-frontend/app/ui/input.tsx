@@ -49,7 +49,7 @@ export default function Input({ onChange, id, name, type, value, checked, label,
           placeholder={placeholder}
           required
           className={clsx(
-            "focus:outline-none w-full px-4 py-3 shadow-sm bg-gray-200 text-off_black text-sm font-medium rounded-3xl",
+            "w-full px-4 py-3 bg-gray-200 text-off_black text-sm font-medium rounded-3xl focus:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 ",
             className
           )}
         />

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { dmSans } from '@/app/ui/fonts';
 import Link from 'next/link';
+import React from 'react';
 
 type BaseButtonProps = {
   children: React.ReactNode;
@@ -29,7 +30,7 @@ type FormButtonProps = BaseButtonProps & {
 
 type ButtonProps = LinkButtonProps | ActionButtonProps | FormButtonProps;
 
-export default function Button({ children, href, onClick, size = 'xl', buttonType = 'action', type, className, ...rest }: ButtonProps) {
+const Button = React.forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(({ children, href, onClick, size = 'xl', buttonType = 'action', type, className, ...rest }, ref) => {
   const buttonClasses = clsx(
     `${dmSans.className} tracking-tight flex items-center justify-center font-bold rounded-3xl hover:shadow-sm transition-all duration-150 ease-in-out focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
     {
@@ -47,7 +48,7 @@ export default function Button({ children, href, onClick, size = 'xl', buttonTyp
 
   if (href) {
     return (
-      <Link href={href} {...rest} className={buttonClasses}>
+      <Link ref={ref as React.Ref<HTMLAnchorElement>} href={href} {...rest} className={buttonClasses}>
         {children}
       </Link>
     );
@@ -55,15 +56,17 @@ export default function Button({ children, href, onClick, size = 'xl', buttonTyp
 
   if (type) {
     return (
-      <button type={type} {...rest} className={buttonClasses}>
+      <button ref={ref as React.Ref<HTMLButtonElement>} type={type} {...rest} className={buttonClasses}>
         {children}
       </button>
     );
   }
 
   return (
-    <button onClick={onClick} {...rest} className={buttonClasses}>
+    <button ref={ref as React.Ref<HTMLButtonElement>} onClick={onClick} {...rest} className={buttonClasses}>
       {children}
     </button>
   );
-}
+});
+
+export default Button;
