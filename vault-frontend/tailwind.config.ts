@@ -19,6 +19,13 @@ const config: Config = {
         'negative_text': '#eb605e',
         'accent': '#3da8e6'
       }
+    },
+    keyframes: {
+      shimmer: {
+        '100%': {
+          transform: 'translateX(100%)',
+        }
+      }
     }
   }
 };

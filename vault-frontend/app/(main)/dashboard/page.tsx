@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { dmSans } from '@/app/ui/fonts';
+import Loading from '@/app/ui/loading';
 import Card from '@/app/ui/card';
 import Dropdown from '@/app/ui/dropdown';
 import Button from '@/app/ui/button';
@@ -13,6 +14,7 @@ import SpendingGraph from '@/app/ui/spendingGraph';
 import { billCategoryColors } from '@/app/lib/colors';
 
 export default function Page() {
+  const [loading, setLoading] = useState<boolean>(true);
   const [name, setName] = useState<string>('');
   const last12Months = getLast12Months();
   const currMonth = getCurrentMonth();
@@ -53,6 +55,8 @@ export default function Page() {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      setLoading(true);
+
       const fetchedName = await fetchName();
       if (fetchedName) setName(fetchedName);
 
@@ -88,10 +92,14 @@ export default function Page() {
         const fetchedResidenceMessages = await fetchRecentResidenceMessages();
         if (fetchedResidenceMessages) setResidenceMessages(fetchedResidenceMessages);
       }
+
+      setLoading(false);
     };
 
     fetchDashboardData();
   }, []);
+
+  if (loading) return <Loading/>;
 
   return (
     <main>

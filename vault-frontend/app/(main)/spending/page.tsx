@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { dmSans } from '@/app/ui/fonts';
+import Loading from '@/app/ui/loading';
 import Card from '@/app/ui/card';
 import Dropdown from '@/app/ui/dropdown';
 import Button from '@/app/ui/button';
@@ -12,6 +13,7 @@ import { Transaction } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
 
 export default function Page() {
+  const [loading, setLoading] = useState<boolean>(true);
   const last12Months = getLast12Months();
   const currMonth = getCurrentMonth();
   const [prevSelectedMonth, setPrevSelectedMonth] = useState<number>(getPreviousMonth());
@@ -24,30 +26,32 @@ export default function Page() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const onMonthChange = async (monthIndex: number) => {
-      const month = last12Months[monthIndex];
-      const prevMonth = getPreviousMonthFromMonth(month);
-      setPrevSelectedMonth(prevMonth);
-  
-      const fetchedSpending = await fetchMonthlySpending(month);
-      if (fetchedSpending) setMonthlySpending(formatDollarAmount(fetchedSpending));
-      else setMonthlySpending('$0');
-  
-      const fetchedPercentChange = await fetchPercentChange(month, prevMonth);
-      if (fetchedPercentChange) {
-        setPercentChange(fetchedPercentChange);
-        setPositive(fetchedPercentChange.charAt(0) === '↓');
-      } else {
-        setPercentChange('↓ 0%');
-        setPositive(true);
-      }
-    };
-  
-    const onYearChange = (yearIndex: number) => {
-      setSelectedYear(last5Years[yearIndex]);
-    };
+    const month = last12Months[monthIndex];
+    const prevMonth = getPreviousMonthFromMonth(month);
+    setPrevSelectedMonth(prevMonth);
+
+    const fetchedSpending = await fetchMonthlySpending(month);
+    if (fetchedSpending) setMonthlySpending(formatDollarAmount(fetchedSpending));
+    else setMonthlySpending('$0');
+
+    const fetchedPercentChange = await fetchPercentChange(month, prevMonth);
+    if (fetchedPercentChange) {
+      setPercentChange(fetchedPercentChange);
+      setPositive(fetchedPercentChange.charAt(0) === '↓');
+    } else {
+      setPercentChange('↓ 0%');
+      setPositive(true);
+    }
+  };
+
+  const onYearChange = (yearIndex: number) => {
+    setSelectedYear(last5Years[yearIndex]);
+  };
 
   useEffect(() => {
     const fetchSpendingData = async () => {
+      setLoading(true);
+      
       const fetchedSpending = await fetchMonthlySpending(currMonth);
       if (fetchedSpending) setMonthlySpending(formatDollarAmount(fetchedSpending));
 
@@ -70,10 +74,14 @@ export default function Page() {
 
       const fetchedTransactions = await fetchRecentTransactions();
       if (fetchedTransactions) setTransactions(fetchedTransactions);
+
+      setLoading(false);
     };
 
     fetchSpendingData();
   }, []);
+    
+  if (loading) return <Loading/>;
 
   return (
     <main>
