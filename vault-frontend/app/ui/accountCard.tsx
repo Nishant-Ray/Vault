@@ -12,7 +12,7 @@ interface AccountCardProps {
   nickname: string;
   isCredit: boolean;
   onRemove: (id: number) => void;
-}
+};
 
 export default function AccountCard({ name, id, nickname, isCredit, onRemove, ...rest }: AccountCardProps) {
   const [newNickname, setNewNickname] = useState<string>(nickname);
