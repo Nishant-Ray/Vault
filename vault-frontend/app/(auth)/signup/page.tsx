@@ -21,7 +21,7 @@ export default function Page() {
 
     const password1 = event.currentTarget.elements.password.value;
     const password2 = event.currentTarget.elements.repeatPassword.value;
-    console.log(password1, password2);
+
     if (password1 !== password2) {
       setSignUpFailed(true);
       setPasswordMatch(false);

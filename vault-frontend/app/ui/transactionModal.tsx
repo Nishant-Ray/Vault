@@ -6,8 +6,8 @@ import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
 
 const initialManualModalData: TransactionAddManualModalData = {
-  account: "",
-  date: new Date(),
+  accountID: 0,
+  date: '',
   amount: 0,
   category: 'category1',
   description: ''
@@ -43,7 +43,7 @@ export default function TransactionModal({ isManualModal, isOpen, accounts, onMa
     const { name, value } = event.target;
     setTransactionAddManualFormState((prevFormData) => ({
       ...prevFormData,
-      [name]: value
+      [name]: name === 'accountID' ? Number(value) : value
     }));
 
     if (name === 'category') setCategoryOption(value);
@@ -81,12 +81,12 @@ export default function TransactionModal({ isManualModal, isOpen, accounts, onMa
     <Modal title={ isManualModal ? "Enter Transaction Information" : "Upload Transaction Document" } isOpen={isOpen} onClose={handleClose}>
       { isManualModal ? (
         <form onSubmit={handleTransactionAddManualModalFormSubmit}>
-          <Select onChange={handleTransactionAddManualFormInputChange} id="account" name="account" value={transactionAddManualFormState.account} label="Transaction Account" options={accountOptions}/>
+          <Select onChange={handleTransactionAddManualFormInputChange} value={transactionAddManualFormState.accountID} id="accountID" name="accountID" label="Account Used" options={accountOptions}/>
           <Input onChange={handleTransactionAddManualFormInputChange} value={String(transactionAddManualFormState.date)} id="date" name="date" type="date" label="Date of Transaction"/>
           <Input onChange={handleTransactionAddManualFormInputChange} value={String(Math.round(transactionAddManualFormState.amount * 100) / 100.0)} id="amount" name="amount" type="number" label="Amount ($)" placeholder="Enter transaction amount"/>
           
-          <Input onChange={handleTransactionAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" radioLabel="Category 1" standalone={false} checked={categoryOption == 'category1'}/>
-          <Input onChange={handleTransactionAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" radioLabel="Category 2" standalone={false} checked={categoryOption === 'category2'}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" radioLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" radioLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
           <Input onChange={handleTransactionAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" radioLabel="Category 3" checked={categoryOption === 'category3'}/>
           
           <Input onChange={handleTransactionAddManualFormInputChange} value={transactionAddManualFormState.description} id="description" name="description" type="text" label="Description" placeholder="Enter transaction description"/>

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { SelectOption } from '@/app/lib/definitions';
 import clsx from 'clsx';
 
@@ -7,7 +8,7 @@ type BaseSelectProps = {
 };
 
 type FormSelectProps = BaseSelectProps & {
-  value: string;
+  value: number;
   label: string;
   id: string;
   name: string;
@@ -42,9 +43,10 @@ export default function Select({ options, value, label, id, name, onChange, onSe
             "border-r-8 mb-5 w-full px-4 py-3 bg-gray-200 text-off_black text-sm font-medium rounded-3xl focus:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2",
             className
           )}>
+          <option value={0} disabled>Select an account</option>
           
-          { options.map((option, i) => {
-            return <option key={i} value={option.value}>{option.text}</option>;
+          { options.map((option) => {
+            return <option key={option.value} value={option.value}>{option.text}</option>;
           }) }
         </select>
       </div>

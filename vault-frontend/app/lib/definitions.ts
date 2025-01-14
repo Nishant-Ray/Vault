@@ -76,6 +76,10 @@ export type Account = {
   updated_at: string;
 };
 
+export type AccountData = {
+  account: Account;
+};
+
 export type AccountsData = {
   accounts: Account[];
 };
@@ -93,10 +97,6 @@ export type AccountAddModalData = {
   account_type: string;
 }
 
-export type AccountData = {
-  account: Account;
-};
-
 export type Transaction = {
   id: number;
   user_id: number;
@@ -109,13 +109,17 @@ export type Transaction = {
   updated_at: string;
 };
 
+export type TransactionData = {
+  transaction: Transaction;
+};
+
 export type TransactionsData = {
   transactions: Transaction[];
 };
 
 export type TransactionAddManualModalData = {
-  account: string;
-  date: Date;
+  accountID: number;
+  date: string;
   amount: number;
   category: string;
   description: string;

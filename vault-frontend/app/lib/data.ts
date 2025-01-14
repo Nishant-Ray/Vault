@@ -1,5 +1,6 @@
 import { request } from '@/app/lib/api';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionsData, BillsData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { unformatDate } from '@/app/lib/utils';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, BillsData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -15,7 +16,7 @@ export async function fetchName() {
 export async function fetchMonthlySpending(month: number) {
   try {
     const response = await request<MonthlySpendingData>(`monthly_spendings/get/${month}`, 'GET');
-    return response.data?.total;
+    return Number(response.data?.total);
 
   } catch (error) {
     console.error('Server error:', error);
@@ -131,6 +132,17 @@ export async function fetchMonthlyTransactions(month: number) {
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to fetch monthly transactions.');
+  }
+}
+
+export async function addTransaction(transactionData: TransactionAddManualModalData) {
+  try {
+    const response = await request<TransactionData>(`transactions/add/${transactionData.accountID}/${unformatDate(transactionData.date)}/${transactionData.amount}/${transactionData.category}/${encodeURIComponent(transactionData.description)}`, 'POST');
+    return response.data?.transaction;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch accounts.');
   }
 }
 

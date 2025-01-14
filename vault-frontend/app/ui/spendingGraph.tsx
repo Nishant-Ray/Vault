@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchYearlySpending } from '@/app/lib/data';
 import { YearlySpending } from '@/app/lib/definitions';
-import { formatMonthName } from '@/app/lib/utils';
+import { formatDollarAmount, formatMonthName } from '@/app/lib/utils';
 import { colors } from '@/app/lib/colors';
 import { Bar } from 'react-chartjs-2';
 import { Chart, LinearScale, CategoryScale, BarElement, BarController, Tooltip, ChartData, TooltipItem, ChartOptions } from 'chart.js';
@@ -10,17 +10,18 @@ Chart.defaults.font.family = 'Outfit, sans-serif';
 
 type SpendingGraphProps = {
   year: number;
+  flag: number;
 }
 
-export default function SpendingGraph({ year }: SpendingGraphProps) {
+export default function SpendingGraph({ year, flag }: SpendingGraphProps) {
   const barOptions: ChartOptions<'bar'> = {
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
           maxTicksLimit: 8,
-          callback: function(value, index, ticks) {
-            return '$' + value;
+          callback: function(value, _index, _ticks) {
+            return formatDollarAmount(Number(value));
           }
         }
       }
@@ -31,7 +32,7 @@ export default function SpendingGraph({ year }: SpendingGraphProps) {
             label: function (context: TooltipItem<'bar'>) {
                 const label = context.dataset.label || '';
                 const value = context.raw;
-                return `${label}: $${value}`;
+                return `${label}: ${formatDollarAmount(Number(value))}`;
             }
         }
       }
@@ -72,7 +73,7 @@ export default function SpendingGraph({ year }: SpendingGraphProps) {
     }
 
     fetchGraphData();
-  }, [year]);
+  }, [year, flag]);
 
   return yearlySpending.length ? <Bar data={barData} options={barOptions} className="mt-4"/> : <p className="text-md font-normal text-off_gray mt-1">No yearly spending data available!</p>;
 }

@@ -8,7 +8,7 @@ import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
 import TransactionModal from '@/app/ui/transactionModal';
 import clsx from 'clsx';
-import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions } from '@/app/lib/data';
+import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions, addTransaction } from '@/app/lib/data';
 import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
 import { SelectOption, Account, Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
@@ -18,7 +18,7 @@ export default function Page() {
   const last12Months: SelectOption[] = getLast12MonthsAsOptions();
   const currMonth = getCurrentMonth();
   const [prevSelectedMonth, setPrevSelectedMonth] = useState<number>(getPreviousMonth());
-  const [monthlySpending, setMonthlySpending] = useState<string>('$0');
+  const [monthlySpending, setMonthlySpending] = useState<number>(0);
   const [percentChange, setPercentChange] = useState<string>('↓ 0%');
   const [positive, setPositive] = useState<boolean>(true);
   const last5Years: SelectOption[] = getLast5YearsAsOptions();
@@ -36,8 +36,8 @@ export default function Page() {
     setPrevSelectedMonth(prevMonth);
 
     const fetchedSpending = await fetchMonthlySpending(month);
-    if (fetchedSpending) setMonthlySpending(formatDollarAmount(fetchedSpending));
-    else setMonthlySpending('$0');
+    if (fetchedSpending) setMonthlySpending(fetchedSpending);
+    else setMonthlySpending(0);
 
     const fetchedPercentChange = await fetchPercentChange(month, prevMonth);
     if (fetchedPercentChange) {
@@ -73,7 +73,14 @@ export default function Page() {
     setTransactionAddModalOpen(true);
   };
 
-  const handleManualModalSubmit = (data: TransactionAddManualModalData) => {
+  const handleManualModalSubmit = async (data: TransactionAddManualModalData) => {
+    const newTransaction = await addTransaction(data);
+    if (newTransaction) {
+      setTransactions([newTransaction, ...transactions]);
+      const newMonthlySpending = monthlySpending + newTransaction.amount;
+      console.log(newMonthlySpending);
+      setMonthlySpending(newMonthlySpending);
+    }
     setTransactionAddModalOpen(false);
   };
 
@@ -90,7 +97,7 @@ export default function Page() {
       setLoading(true);
       
       const fetchedSpending = await fetchMonthlySpending(currMonth);
-      if (fetchedSpending) setMonthlySpending(formatDollarAmount(fetchedSpending));
+      if (fetchedSpending) setMonthlySpending(fetchedSpending);
 
       const fetchedPercentChange = await fetchPercentChange(currMonth, prevSelectedMonth);
       if (fetchedPercentChange) {
@@ -144,7 +151,7 @@ export default function Page() {
               <Select options={last12Months} onSelect={onSpendingMonthChange}/>
             </div>
 
-            <h2 className={`${dmSans.className} antialiased text-black tracking-tight text-4xl font-semibold my-4`}>{monthlySpending}</h2>
+            <h2 className={`${dmSans.className} antialiased text-black tracking-tight text-4xl font-semibold my-4`}>{formatDollarAmount(monthlySpending)}</h2>
 
             <div className="flex flex-row items-center gap-2">
               <div className={clsx("rounded-3xl flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
@@ -160,7 +167,7 @@ export default function Page() {
               <Select options={last5Years} onSelect={onYearChange}/>
             </div>
 
-            <SpendingGraph year={selectedYear}/>
+            <SpendingGraph year={selectedYear} flag={monthlySpending}/>
           </Card>
         </div>
 
@@ -182,7 +189,7 @@ export default function Page() {
 
                   {transactions.map((transaction, i) => {
                     return (
-                      <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
+                      <div key={transaction.id} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
                         <h4 className="w-24 text-off_black font-medium text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
                         <h4 className="w-24 text-off_black font-medium text-md">{formatDate(transaction.date)}</h4>
                         <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>

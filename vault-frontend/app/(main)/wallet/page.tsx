@@ -30,9 +30,7 @@ export default function Page() {
 
   const handleAccountAddFormSubmit = async (data: AccountAddModalData) => {
     const newAccount = await addAccount(data);
-    if (newAccount) {
-      setAccounts([newAccount, ...accounts]);
-    }
+    if (newAccount) setAccounts([newAccount, ...accounts]);
     setIsAddAccountModalOpen(false);
   };
 

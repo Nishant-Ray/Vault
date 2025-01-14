@@ -7,6 +7,26 @@ export function formatDollarAmount(amount: number): string {
   let seenDecimal = false;
   let count = 0;
 
+  for (let i = 0; i < originalAmount.length; i++) {
+    const c = originalAmount.charAt(i);
+    
+    if (!seenDecimal) {
+      if (c == '.') seenDecimal = true;
+    } else {
+      count++;
+    }
+  }
+
+  if (!seenDecimal) {
+    formattedAmount = ['0', '0', '.'];
+  } else {
+    if (count < 2) {
+      for (let i = 0; i < 2 - count; i++) formattedAmount.push('0');
+    }
+    seenDecimal = false;
+  }
+  count = 0;
+
   for (let i = originalAmount.length - 1; i >= 0; i--) { // 1234.56
     const c = originalAmount.charAt(i);
 
@@ -84,18 +104,27 @@ export function getLast5YearsAsOptions(): SelectOption[] {
   return last5Years;
 }
 
-export function formatMonth(month: number): string {  // Mmm YYYY
+export function formatMonth(month: number): string {  // YYYYMM --> Mmm Yyyy
   const monthString = String(month);
   return `${months[Number(monthString.substring(4))]} ${monthString.substring(0, 4)}`;
 }
 
-export function formatDate(date: number): string { // YYYYMMDD
+export function formatDate(date: number): string { // YYYYMMDD --> Mmm Dd, Yyyy
   const dateString = String(date);
   return `${months[Number(dateString.substring(4, 6))]} ${Number(dateString.substring(6))}, ${dateString.substring(0, 4)}`;
 }
 
-export function formatMonthName(month: number): string { // Mmm
+export function formatMonthName(month: number): string { // YYYYMM --> Mmm
   return `${months[Number(String(month).substring(4))]}`;
+}
+
+export function unformatDate(dateString: string): number { // Date object string --> YYYYMMDD
+  const dateObject = new Date(dateString);
+  const month = dateObject.getUTCMonth() + 1;
+  const currMonth = month < 10 ? `0${month}` : month;
+  const date = dateObject.getUTCDate();
+  const currDate = date < 10 ? `0${date}` : date;
+  return Number(`${dateObject.getUTCFullYear()}${currMonth}${currDate}`);
 }
 
 // export function formatTime(dateTime: number): string {
