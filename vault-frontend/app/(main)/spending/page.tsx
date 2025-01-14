@@ -4,24 +4,24 @@ import { useState, useRef, useEffect } from 'react';
 import { dmSans } from '@/app/ui/fonts';
 import Loading from '@/app/ui/loading';
 import Card from '@/app/ui/card';
-import Dropdown from '@/app/ui/dropdown';
+import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
 import TransactionModal from '@/app/ui/transactionModal';
 import clsx from 'clsx';
 import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions } from '@/app/lib/data';
-import { getLast12Months, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5Years, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
-import { Account, Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData } from '@/app/lib/definitions';
+import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
+import { SelectOption, Account, Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
-  const last12Months = getLast12Months();
+  const last12Months: SelectOption[] = getLast12MonthsAsOptions();
   const currMonth = getCurrentMonth();
   const [prevSelectedMonth, setPrevSelectedMonth] = useState<number>(getPreviousMonth());
   const [monthlySpending, setMonthlySpending] = useState<string>('$0');
   const [percentChange, setPercentChange] = useState<string>('↓ 0%');
   const [positive, setPositive] = useState<boolean>(true);
-  const last5Years = getLast5Years();
+  const last5Years: SelectOption[] = getLast5YearsAsOptions();
   const [selectedYear, setSelectedYear] = useState<number>(getCurrentYear);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
@@ -31,8 +31,7 @@ export default function Page() {
   const [manualModal, setManualModal] = useState<boolean>(true);
   const [transactionAddModalOpen, setTransactionAddModalOpen] = useState<boolean>(false);
 
-  const onSpendingMonthChange = async (monthIndex: number) => {
-    const month = last12Months[monthIndex];
+  const onSpendingMonthChange = async (month: number) => {
     const prevMonth = getPreviousMonthFromMonth(month);
     setPrevSelectedMonth(prevMonth);
 
@@ -50,13 +49,11 @@ export default function Page() {
     }
   };
 
-  const onYearChange = (yearIndex: number) => {
-    setSelectedYear(last5Years[yearIndex]);
+  const onYearChange = (year: number) => {
+    setSelectedYear(year);
   };
 
-  const onTransactionMonthChange = async (monthIndex: number) => {
-    const month = last12Months[monthIndex];
-    
+  const onTransactionMonthChange = async (month: number) => {
     const fetchedTransactions = await fetchMonthlyTransactions(month);
     if (fetchedTransactions) setTransactions(fetchedTransactions);
     else setTransactions([]);
@@ -127,9 +124,9 @@ export default function Page() {
 
     fetchSpendingData();
 
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, []);
     
@@ -143,7 +140,7 @@ export default function Page() {
           <Card className="w-5/12">
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Monthly Spending</h3>
-              <Dropdown list={last12Months.map((month) => formatMonth(month))} onUpdate={onSpendingMonthChange}/>
+              <Select options={last12Months} onSelect={onSpendingMonthChange}/>
             </div>
 
             <h2 className={`${dmSans.className} antialiased text-black tracking-tight text-4xl font-semibold my-4`}>{monthlySpending}</h2>
@@ -159,7 +156,7 @@ export default function Page() {
           <Card className="w-7/12">
             <div className="flex flex-row justify-between mb-6">
               <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
-              <Dropdown list={last5Years.map((year) => String(year))} onUpdate={onYearChange}/>
+              <Select options={last5Years} onSelect={onYearChange}/>
             </div>
 
             <SpendingGraph year={selectedYear}/>
@@ -170,7 +167,8 @@ export default function Page() {
           <Card>
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Transactions</h3>
-              <Dropdown list={last12Months.map((month) => formatMonth(month))} onUpdate={onTransactionMonthChange}/>
+              {/* <Dropdown list={last12Months.map((month) => formatMonth(month))} onUpdate={onTransactionMonthChange}/> */}
+              <Select options={last12Months} onSelect={onTransactionMonthChange}/>
             </div>
             <div className="my-6 flex flex-col">
               {transactions.length ? (

@@ -72,7 +72,7 @@ export default function TransactionModal({ isManualModal, isOpen, accounts, onMa
   useEffect(() => {
     let newAccountOptions: SelectOption[] = [];
     accounts.forEach(account => {
-      newAccountOptions.push({value: String(account.id), text: account.nickname});
+      newAccountOptions.push({value: account.id, text: account.nickname});
     });
     setAccountOptions(newAccountOptions);
   }, [accounts]);

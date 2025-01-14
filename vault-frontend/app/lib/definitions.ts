@@ -166,6 +166,6 @@ export type ResidenceMessagesData = {
 }
 
 export type SelectOption = {
-  value: string;
+  value: number;
   text: string;
 }

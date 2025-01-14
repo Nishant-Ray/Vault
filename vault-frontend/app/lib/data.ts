@@ -33,14 +33,22 @@ export async function fetchPercentChange(currMonth: number, prevMonth: number) {
 
     let positive = true
 
-    if (currSpending && prevSpending) {
+    if (currSpending || prevSpending) {
 
-      if (currSpending <= prevSpending) {
-        positive = false;
+      if (currSpending && !prevSpending) {
+        return '↑ ∞%';
+      } else if (!currSpending && prevSpending) {
+        return '↓ ∞%';
       }
 
-      const percentChange = Math.round((Math.abs(currSpending - prevSpending) / prevSpending) * 1000) / 10;
-      return positive ? `↑ ${percentChange}%` : `↓ {percentChange}%`;
+      if (currSpending && prevSpending) {
+        if (currSpending <= prevSpending) {
+          positive = false;
+        }
+
+        const percentChange = Math.round((Math.abs(currSpending - prevSpending) / prevSpending) * 1000) / 10;
+        return positive ? `↑ ${percentChange}%` : `↓ ${percentChange}%`;
+      }
     }
     
     return undefined;

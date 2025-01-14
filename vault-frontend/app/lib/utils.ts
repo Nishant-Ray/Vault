@@ -1,4 +1,5 @@
-import { months } from "@/app/lib/constants";
+import { months } from '@/app/lib/constants';
+import { SelectOption } from '@/app/lib/definitions';
 
 export function formatDollarAmount(amount: number): string {
   const originalAmount = String(amount);
@@ -26,15 +27,16 @@ export function formatDollarAmount(amount: number): string {
   return formattedAmount.reverse().join('');
 }
 
-export function getLast12Months(): number[] {
+export function getLast12MonthsAsOptions(): SelectOption[] {
   const today = new Date();
-  let last12Months: number[] = [];
+  let last12Months: SelectOption[] = [];
 
   for (let i = 0; i <= 12; i++) {
     const prevMonthDate = new Date(today.getFullYear(), today.getMonth() - i);
     const month = prevMonthDate.getMonth() + 1;
     const prevMonth = month < 10 ? `0${month}` : month;
-    last12Months.push(Number(`${prevMonthDate.getFullYear()}${prevMonth}`));
+    const monthNumber = Number(`${prevMonthDate.getFullYear()}${prevMonth}`);
+    last12Months.push({value: monthNumber, text: formatMonth(monthNumber)});
   }
 
   return last12Months;
@@ -71,18 +73,18 @@ export function getCurrentYear(): number { // YYYY
   return (new Date()).getFullYear();
 }
 
-export function getLast5Years(): number[] {
+export function getLast5YearsAsOptions(): SelectOption[] {
   const thisYear = (new Date()).getFullYear();
-  let last5Years: number[] = [];
+  let last5Years: SelectOption[] = [];
 
   for (let i = 0; i <= 5; i++) {
-    last5Years.push(thisYear - i);
+    last5Years.push({value: thisYear - i, text: String(thisYear - i)});
   }
 
   return last5Years;
 }
 
-export function formatMonth(month: number): string {  // Mmm YY
+export function formatMonth(month: number): string {  // Mmm YYYY
   const monthString = String(month);
   return `${months[Number(monthString.substring(4))]} ${monthString.substring(0, 4)}`;
 }

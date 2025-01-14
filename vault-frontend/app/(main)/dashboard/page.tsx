@@ -4,25 +4,25 @@ import { useEffect, useState } from 'react';
 import { dmSans } from '@/app/ui/fonts';
 import Loading from '@/app/ui/loading';
 import Card from '@/app/ui/card';
-import Dropdown from '@/app/ui/dropdown';
+import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
 import clsx from 'clsx';
 import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills, fetchResidenceName, fetchRecentResidenceMessages } from '@/app/lib/data';
-import { getLast12Months, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5Years, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
-import { Transaction, Bill, ResidenceMessage } from '@/app/lib/definitions';
+import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
+import { SelectOption, Transaction, Bill, ResidenceMessage } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
 import { billCategoryColors } from '@/app/lib/colors';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
   const [name, setName] = useState<string>('');
-  const last12Months = getLast12Months();
+  const last12Months: SelectOption[] = getLast12MonthsAsOptions();
   const currMonth = getCurrentMonth();
   const [prevSelectedMonth, setPrevSelectedMonth] = useState<number>(getPreviousMonth());
   const [monthlySpending, setMonthlySpending] = useState<string>('$0');
   const [percentChange, setPercentChange] = useState<string>('↓ 0%');
   const [positive, setPositive] = useState<boolean>(true);
-  const last5Years = getLast5Years();
+  const last5Years: SelectOption[] = getLast5YearsAsOptions();
   const [selectedYear, setSelectedYear] = useState<number>(getCurrentYear);
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -30,8 +30,7 @@ export default function Page() {
   const [residenceName, setResidenceName] = useState<string>('');
   const [residenceMessages, setResidenceMessages] = useState<ResidenceMessage[]>([]);
 
-  const onMonthChange = async (monthIndex: number) => {
-    const month = last12Months[monthIndex];
+  const onMonthChange = async (month: number) => {
     const prevMonth = getPreviousMonthFromMonth(month);
     setPrevSelectedMonth(prevMonth);
 
@@ -49,8 +48,8 @@ export default function Page() {
     }
   };
 
-  const onYearChange = (yearIndex: number) => {
-    setSelectedYear(last5Years[yearIndex]);
+  const onYearChange = (year: number) => {
+    setSelectedYear(year);
   };
 
   useEffect(() => {
@@ -110,7 +109,7 @@ export default function Page() {
           <Card>
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Monthly Spending</h3>
-              <Dropdown list={last12Months.map((month) => formatMonth(month))} onUpdate={onMonthChange}/>
+              <Select options={last12Months} onSelect={onMonthChange}/>
             </div>
 
             <h2 className={`${dmSans.className} antialiased tracking-tight text-black text-4xl font-semibold my-4`}>{monthlySpending}</h2>
@@ -126,7 +125,7 @@ export default function Page() {
           <Card>
             <div className="flex flex-row justify-between mb-6">
               <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
-              <Dropdown list={last5Years.map((year) => String(year))} onUpdate={onYearChange}/>
+              <Select options={last5Years} onSelect={onYearChange}/>
             </div>
 
             <SpendingGraph year={selectedYear}/>
