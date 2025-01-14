@@ -9,7 +9,7 @@ import Button from '@/app/ui/button';
 import TransactionModal from '@/app/ui/transactionModal';
 import clsx from 'clsx';
 import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions, addTransaction } from '@/app/lib/data';
-import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
+import { formatDollarAmount, getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, getMonthFromDate, formatMonth, formatDate } from '@/app/lib/utils';
 import { SelectOption, Account, Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
 
@@ -27,6 +27,7 @@ export default function Page() {
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const [selectedTransactionMonth, setSelectedTransactionMonth] = useState<number>(currMonth);
   const [transactionAddOptionsOpen, setTransactionAddOptionsOpen] = useState<boolean>(false);
   const [manualModal, setManualModal] = useState<boolean>(true);
   const [transactionAddModalOpen, setTransactionAddModalOpen] = useState<boolean>(false);
@@ -54,6 +55,7 @@ export default function Page() {
   };
 
   const onTransactionMonthChange = async (month: number) => {
+    setSelectedTransactionMonth(month);
     const fetchedTransactions = await fetchMonthlyTransactions(month);
     if (fetchedTransactions) setTransactions(fetchedTransactions);
     else setTransactions([]);
@@ -73,17 +75,22 @@ export default function Page() {
     setTransactionAddModalOpen(true);
   };
 
+  function hopefulTransactionAdd(transaction: Transaction) {
+    if (selectedTransactionMonth === getMonthFromDate(transaction.date)) {
+      setTransactions([transaction, ...transactions]);
+      setMonthlySpending(monthlySpending + transaction.amount);
+    }
+  }
+
   const handleManualModalSubmit = async (data: TransactionAddManualModalData) => {
     const newTransaction = await addTransaction(data);
     if (newTransaction) {
-      setTransactions([newTransaction, ...transactions]);
-      const newMonthlySpending = monthlySpending + newTransaction.amount;
-      setMonthlySpending(newMonthlySpending);
+      hopefulTransactionAdd(newTransaction);
     }
     setTransactionAddModalOpen(false);
   };
 
-  const handleDocumentModalSubmit = (data: TransactionAddDocumentModalData) => {
+  const handleDocumentModalSubmit = (_data: TransactionAddDocumentModalData) => {
     setTransactionAddModalOpen(false);
   };
 

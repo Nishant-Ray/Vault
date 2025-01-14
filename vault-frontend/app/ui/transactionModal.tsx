@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Account, TransactionAddManualModalData, TransactionAddDocumentModalData, SelectOption } from '@/app/lib/definitions';
-import { properDollarAmount } from '@/app/lib/utils';
+import { validDollarAmount } from '@/app/lib/utils';
 import Modal from '@/app/ui/modal';
 import Input from '@/app/ui/input';
 import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
-import clsx from 'clsx';
+import Warning from '@/app/ui/warning';
 
 const initialManualModalData: TransactionAddManualModalData = {
-  accountID: 0,
+  accountID: '',
   date: '',
   amount: 0,
   category: 'category1',
@@ -33,13 +33,13 @@ export default function TransactionModal({ isManualModal, isOpen, accounts, onMa
   const [transactionAddDocumentFormState, setTransactionAddDocumentFormState] = useState<TransactionAddDocumentModalData>(initialDocumentModalData);
   const [accountOptions, setAccountOptions] = useState<SelectOption[]>([]);
   const [categoryOption, setCategoryOption] = useState<string>(initialManualModalData.category);
-  const [improperDollarAmount, setImproperDollarAmount] = useState<boolean>(false);
+  const [invalidDollarAmount, setInvalidDollarAmount] = useState<boolean>(false);
 
   const handleClose = () => {
     setTransactionAddManualFormState(initialManualModalData);
     setTransactionAddDocumentFormState(initialDocumentModalData);
     setCategoryOption(initialManualModalData.category);
-    setImproperDollarAmount(false);
+    setInvalidDollarAmount(false);
     onClose();
   }
 
@@ -64,12 +64,12 @@ export default function TransactionModal({ isManualModal, isOpen, accounts, onMa
   const handleTransactionAddManualModalFormSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
     if (onManualModalSubmit) {
-      if (properDollarAmount(transactionAddManualFormState.amount)) {
+      if (validDollarAmount(transactionAddManualFormState.amount)) {
         onManualModalSubmit(transactionAddManualFormState);
         setTransactionAddManualFormState(initialManualModalData);
-        setImproperDollarAmount(false);
+        setInvalidDollarAmount(false);
       } else {
-        setImproperDollarAmount(true);
+        setInvalidDollarAmount(true);
       }
     }
   };
@@ -103,7 +103,9 @@ export default function TransactionModal({ isManualModal, isOpen, accounts, onMa
           <Input onChange={handleTransactionAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" radioLabel="Category 3" checked={categoryOption === 'category3'}/>
           
           <Input onChange={handleTransactionAddManualFormInputChange} value={transactionAddManualFormState.description} id="description" name="description" type="text" label="Description" placeholder="Enter transaction description"/>
-          <p className={clsx("font-medium text-lg text-negative_text bg-negative text-center rounded-md py-2", { "block mt-6": !improperDollarAmount, "hidden": improperDollarAmount })}>Please enter a valid dollar amount!</p>
+          
+          <Warning isShown={invalidDollarAmount}>Please enter a valid dollar amount!</Warning>
+
           <div className="flex flex-row justify-center mt-8">
             <Button type="submit">Enter</Button> 
           </div>

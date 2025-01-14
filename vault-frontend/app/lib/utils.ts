@@ -50,9 +50,12 @@ export function formatDollarAmount(amount: number): string {
   return formattedAmount.reverse().join('');
 }
 
-export function properDollarAmount(amount: number): boolean {
+export function validDollarAmount(amount: number): boolean {
 
   const numberString = String(amount);
+
+  if (!numberString.length || (numberString.length >= 2 && numberString.charAt(0) === '0')) return false;
+
   let count = 0;
   for (let i = numberString.length - 1; i >= 0; i--) {
     if (numberString.charAt(i) == '.') {
@@ -119,6 +122,10 @@ export function getLast5YearsAsOptions(): SelectOption[] {
   }
 
   return last5Years;
+}
+
+export function getMonthFromDate(date: number): number { // YYYYMMDD --> YYYYMM
+  return Number(String(date).substring(0, 6));
 }
 
 export function formatMonth(month: number): string {  // YYYYMM --> Mmm Yyyy

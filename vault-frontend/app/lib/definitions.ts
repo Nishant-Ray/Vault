@@ -118,7 +118,7 @@ export type TransactionsData = {
 };
 
 export type TransactionAddManualModalData = {
-  accountID: number;
+  accountID: string;
   date: string;
   amount: number;
   category: string;
