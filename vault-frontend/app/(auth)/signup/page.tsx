@@ -6,8 +6,8 @@ import { signUp } from '@/app/lib/auth';
 import { redirect } from 'next/navigation';
 import Input from '@/app/ui/input';
 import Button from '@/app/ui/button';
+import Warning from '@/app/ui/warning';
 import { dmSans } from '@/app/ui/fonts';
-import clsx from 'clsx';
 import Link from 'next/link';
 
 export default function Page() {
@@ -38,9 +38,9 @@ export default function Page() {
   return (
     <main className="bg-white-400 w-1/2">
       <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-5xl font-bold`}>Sign Up</h1>
-      <p className="text-xl text-gray font-medium mt-4">Create a new account.</p>
-
-      <p className={clsx("font-medium text-lg text-negative_text bg-negative text-center rounded-md py-2", { "visible mt-6 mb-6": signUpFailed, "invisible m-0": !signUpFailed })}>{ passwordMatch ? "User already exists with that email!" : "Please ensure passwords match!" }</p>
+      <p className="text-xl text-gray font-medium my-4">Create a new account.</p>
+      
+      <Warning isShown={signUpFailed}>{passwordMatch ? 'User already exists with that email!' : 'Please ensure passwords match!'}</Warning>
 
       <form onSubmit={handleSignUp}>
         <Input id="email" name="email" type="email" label="Email" placeholder="johndoe@gmail.com"/>

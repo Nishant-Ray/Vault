@@ -78,7 +78,6 @@ export default function Page() {
     if (newTransaction) {
       setTransactions([newTransaction, ...transactions]);
       const newMonthlySpending = monthlySpending + newTransaction.amount;
-      console.log(newMonthlySpending);
       setMonthlySpending(newMonthlySpending);
     }
     setTransactionAddModalOpen(false);

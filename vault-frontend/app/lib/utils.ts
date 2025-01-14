@@ -2,7 +2,9 @@ import { months } from '@/app/lib/constants';
 import { SelectOption } from '@/app/lib/definitions';
 
 export function formatDollarAmount(amount: number): string {
-  const originalAmount = String(amount);
+  let negative = false;
+  if (amount < 0) negative = true;
+  const originalAmount = negative ? String(Math.abs(amount)) : String(amount);
   let formattedAmount = [];
   let seenDecimal = false;
   let count = 0;
@@ -44,7 +46,22 @@ export function formatDollarAmount(amount: number): string {
   }
 
   formattedAmount.push('$');
+  if (negative) formattedAmount.push('-');
   return formattedAmount.reverse().join('');
+}
+
+export function properDollarAmount(amount: number): boolean {
+
+  const numberString = String(amount);
+  let count = 0;
+  for (let i = numberString.length - 1; i >= 0; i--) {
+    if (numberString.charAt(i) == '.') {
+      return i != 0 && count <= 2;
+    }
+    count++;
+  }
+
+  return true;
 }
 
 export function getLast12MonthsAsOptions(): SelectOption[] {

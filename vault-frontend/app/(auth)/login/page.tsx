@@ -6,8 +6,8 @@ import { login } from '@/app/lib/auth';
 import { redirect } from 'next/navigation';
 import Input from '@/app/ui/input';
 import Button from '@/app/ui/button';
+import Warning from '@/app/ui/warning';
 import { dmSans } from '@/app/ui/fonts';
-import clsx from 'clsx';
 import Link from 'next/link';
 
 export default function Page() {
@@ -27,9 +27,9 @@ export default function Page() {
   return (
     <main className="bg-white-400 w-1/2">
       <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-5xl font-bold`}>Login</h1>
-      <p className="text-xl text-off_gray font-medium mt-4">Sign into your existing account.</p>
+      <p className="text-xl text-off_gray font-medium my-4">Sign into your existing account.</p>
 
-      <p className={clsx("font-medium text-lg text-negative_text bg-negative text-center rounded-md py-2", { "visible mt-6 mb-6": loginFailed, "invisible m-0": !loginFailed })}>Incorrect email or password!</p>
+      <Warning isShown={loginFailed}>Incorrect email or password!</Warning>
 
       <form onSubmit={handleLogin}>
         <Input id="email" name="email" type="email" label="Email" placeholder="johndoe@gmail.com"/>

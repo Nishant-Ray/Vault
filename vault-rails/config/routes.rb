@@ -35,7 +35,7 @@ Rails.application.routes.draw do
     collection do
       get "get_recent", to: "transactions#get_recent"
       get "get_by_month/:month", to: "transactions#get_by_month"
-      post "add/:account_id/:date/:amount/:category/:description", to: "transactions#add", constraints: { amount: /[.\d]+/, description: /[^\/]+/ }
+      post "add/:account_id/:date/:amount/:category/:description", to: "transactions#add", constraints: { amount: /-?[.\d]+/, description: /[^\/]+/ }
       delete "remove/:id", to: "transactions#remove"
     end
   end
