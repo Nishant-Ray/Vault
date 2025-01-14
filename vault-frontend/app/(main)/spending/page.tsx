@@ -135,9 +135,10 @@ export default function Page() {
   return (
     <main>
       <TransactionModal isManualModal={manualModal} isOpen={transactionAddModalOpen} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onClose={handleTransactionAddModalClose}/>
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-row gap-8">
-          <Card className="w-5/12">
+      
+      <div className="flex flex-row gap-8">
+        <div className="flex flex-col gap-8 w-2/5">
+          <Card>
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Monthly Spending</h3>
               <Select options={last12Months} onSelect={onSpendingMonthChange}/>
@@ -153,8 +154,8 @@ export default function Page() {
             </div>
           </Card>
 
-          <Card className="w-7/12">
-            <div className="flex flex-row justify-between mb-6">
+          <Card>
+            <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
               <Select options={last5Years} onSelect={onYearChange}/>
             </div>
@@ -163,16 +164,15 @@ export default function Page() {
           </Card>
         </div>
 
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 w-3/5">
           <Card>
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Transactions</h3>
-              {/* <Dropdown list={last12Months.map((month) => formatMonth(month))} onUpdate={onTransactionMonthChange}/> */}
               <Select options={last12Months} onSelect={onTransactionMonthChange}/>
             </div>
-            <div className="my-6 flex flex-col">
+            <div className="flex flex-col">
               {transactions.length ? (
-                <>
+                <div className="my-3">
                   <div className="flex flex-row items-center gap-16 mb-2">
                     <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
                     <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
@@ -190,9 +190,9 @@ export default function Page() {
                       </div>
                     );
                   })}
-                </>
+                </div>
               ) : (
-                <p className="text-sm font-normal text-off_gray">No transactions!</p>
+                <p className="text-md font-normal text-off_gray mt-1 mb-4">No transactions!</p>
               )}
             </div>
 

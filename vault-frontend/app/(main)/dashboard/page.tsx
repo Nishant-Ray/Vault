@@ -123,7 +123,7 @@ export default function Page() {
           </Card>
 
           <Card>
-            <div className="flex flex-row justify-between mb-6">
+            <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
               <Select options={last5Years} onSelect={onYearChange}/>
             </div>
@@ -168,9 +168,9 @@ export default function Page() {
         <div className="flex flex-col gap-8 w-3/5">
           <Card>
             <h3 className="text-lg font-medium text-off_black">Recent Transactions</h3>
-            <div className="my-6 flex flex-col">
+            <div className="flex flex-col">
               {transactions.length ? (
-                <>
+                <div className="my-3">
                   <div className="flex flex-row items-center gap-16 mb-2">
                     <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
                     <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
@@ -188,9 +188,9 @@ export default function Page() {
                       </div>
                     );
                   })}
-                </>
+                </div>
               ) : (
-                <p className="text-sm font-normal text-off_gray">No recent transactions!</p>
+                <p className="text-md font-normal text-off_gray mt-1 mb-4">No recent transactions!</p>
               )}
             </div>
 
@@ -241,7 +241,7 @@ export default function Page() {
 
           <Card>
             <h3 className="text-lg font-medium text-off_black">Chatbot</h3>
-            <p className="text-lg font-normal text-off_gray mt-4 my-6">Have a specific question about your personal finances?</p>
+            <p className="text-md font-normal text-off_gray mt-1 mb-4">Have a specific question about your personal finances?</p>
             <div className="flex flex-row justify-center">
               <Button href="/chatbot" size="sm">Ask a Question</Button>
             </div>
