@@ -114,7 +114,11 @@ export type TransactionsData = {
 };
 
 export type TransactionAddManualModalData = {
-  nickname: string;
+  account: string;
+  date: Date;
+  amount: number;
+  category: string;
+  description: string;
 };
 
 export type TransactionAddDocumentModalData = {
@@ -159,4 +163,9 @@ export type ResidenceMessage = {
 
 export type ResidenceMessagesData = {
   messages: ResidenceMessage[];
+}
+
+export type SelectOption = {
+  value: string;
+  text: string;
 }

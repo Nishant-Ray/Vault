@@ -10,7 +10,7 @@ import TransactionModal from '@/app/ui/transactionModal';
 import clsx from 'clsx';
 import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions } from '@/app/lib/data';
 import { getLast12Months, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5Years, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
-import { Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData } from '@/app/lib/definitions';
+import { Account, Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
 
 export default function Page() {
@@ -23,6 +23,7 @@ export default function Page() {
   const [positive, setPositive] = useState<boolean>(true);
   const last5Years = getLast5Years();
   const [selectedYear, setSelectedYear] = useState<number>(getCurrentYear);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -102,6 +103,7 @@ export default function Page() {
 
       const fetchedAccounts = await fetchAccounts();
       if (fetchedAccounts) {
+        setAccounts(fetchedAccounts);
         for (let i = 0; i < fetchedAccounts.length; i++) {
           const account = fetchedAccounts[i];
           setAccountIDsToNicknames((prevState) => ({
@@ -135,10 +137,10 @@ export default function Page() {
 
   return (
     <main>
-      <TransactionModal isManualModal={manualModal} isOpen={transactionAddModalOpen} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onClose={handleTransactionAddModalClose}/>
-      <div className="flex flex-row gap-8">
-        <div className="flex flex-col gap-8 w-2/5">
-          <Card>
+      <TransactionModal isManualModal={manualModal} isOpen={transactionAddModalOpen} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onClose={handleTransactionAddModalClose}/>
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-row gap-8">
+          <Card className="w-5/12">
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Monthly Spending</h3>
               <Dropdown list={last12Months.map((month) => formatMonth(month))} onUpdate={onSpendingMonthChange}/>
@@ -154,7 +156,7 @@ export default function Page() {
             </div>
           </Card>
 
-          <Card>
+          <Card className="w-7/12">
             <div className="flex flex-row justify-between mb-6">
               <h3 className="text-lg font-medium text-off_black">Yearly Spending</h3>
               <Dropdown list={last5Years.map((year) => String(year))} onUpdate={onYearChange}/>
@@ -164,7 +166,7 @@ export default function Page() {
           </Card>
         </div>
 
-        <div className="flex flex-col gap-8 w-3/5">
+        <div className="flex flex-col gap-8">
           <Card>
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Transactions</h3>

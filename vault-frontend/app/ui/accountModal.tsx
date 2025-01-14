@@ -41,7 +41,7 @@ export default function AccountModal({ modalType, isOpen, onNicknameSubmit, onRe
   const handleClose = () => {
     setNicknameFormState(initialNicknameModalData);
     setAddFormState(initialAddModalData);
-    setAddAccountType(addFormState.account_type);
+    setAddAccountType(initialAddModalData.account_type);
     onClose();
   }
 
@@ -59,9 +59,8 @@ export default function AccountModal({ modalType, isOpen, onNicknameSubmit, onRe
       ...prevFormData,
       [name]: value
     }));
-    if (name === 'account_type') {
-      setAddAccountType(value);
-    }
+
+    if (name === 'account_type') setAddAccountType(value);
   };
 
   const handleNicknameModalFormSubmit = (event: React.FormEvent): void => {
