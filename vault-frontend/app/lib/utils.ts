@@ -29,14 +29,14 @@ export function formatDollarAmount(amount: number): string {
   }
   count = 0;
 
-  for (let i = originalAmount.length - 1; i >= 0; i--) { // 1234.56
+  for (let i = originalAmount.length - 1; i >= 0; i--) {
     const c = originalAmount.charAt(i);
 
     if (!seenDecimal) {
       if (c === '.') seenDecimal = true;
       formattedAmount.push(c);
     } else {
-      if (count == 3) {
+      if (count === 3) {
         formattedAmount.push(',');
         count = 0;
       }

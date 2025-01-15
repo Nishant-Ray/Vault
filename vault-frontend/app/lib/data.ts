@@ -27,12 +27,12 @@ export async function fetchMonthlySpending(month: number) {
 export async function fetchPercentChange(currMonth: number, prevMonth: number) {
   try {
     const currResponse = await request<MonthlySpendingData>(`monthly_spendings/get/${currMonth}`, 'GET');
-    const currSpending = currResponse.data?.total;
+    const currSpending = Number(currResponse.data?.total);
 
     const prevResponse = await request<MonthlySpendingData>(`monthly_spendings/get/${prevMonth}`, 'GET');
-    const prevSpending = prevResponse.data?.total;
+    const prevSpending = Number(prevResponse.data?.total);
 
-    let positive = true
+    let positive = true;
 
     if (currSpending || prevSpending) {
 
@@ -43,9 +43,7 @@ export async function fetchPercentChange(currMonth: number, prevMonth: number) {
       }
 
       if (currSpending && prevSpending) {
-        if (currSpending <= prevSpending) {
-          positive = false;
-        }
+        if (currSpending <= prevSpending) positive = false;
 
         const percentChange = Math.round((Math.abs(currSpending - prevSpending) / prevSpending) * 1000) / 10;
         return positive ? `↑ ${percentChange}%` : `↓ ${percentChange}%`;

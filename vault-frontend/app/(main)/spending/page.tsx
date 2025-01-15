@@ -78,6 +78,12 @@ export default function Page() {
   function hopefulTransactionAdd(transaction: Transaction) {
     if (selectedTransactionMonth === getMonthFromDate(transaction.date)) {
       setTransactions([transaction, ...transactions]);
+      const newTransactions = [...transactions];
+      const index = newTransactions.findIndex(item => item.date < transaction.date);
+      if (index === -1) newTransactions.push(transaction);
+      else newTransactions.splice(index, 0, transaction);
+      setTransactions(newTransactions);
+
       setMonthlySpending(monthlySpending + transaction.amount);
     }
   }
