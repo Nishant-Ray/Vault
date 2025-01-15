@@ -65,7 +65,7 @@ export default function Select({ options, value, label, id, name, onChange, onSe
         onChange={onOptionSelect}
         required
         className={clsx(
-          "bg-white border-white border-r-8 px-3 py-1 text-off_black text-md font-normal text-off_gray rounded-full focus:outline-none cursor-pointer ring-1 ring-gray-100 hover:shadow-sm hover:ring-gray-200 transition-all duration-150 ease-in-out",
+          "bg-white border-white border-r-8 px-3 py-1 text-off_black text-md font-normal text-off_gray rounded-full focus:outline-none cursor-pointer ring-1 ring-gray-200 hover:shadow-sm hover:ring-gray-300 transition-all duration-150 ease-in-out",
           className
         )}>
         

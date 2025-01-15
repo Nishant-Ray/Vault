@@ -85,7 +85,7 @@ export default function AccountCard({ name, id, nickname, isCredit, onRemove, ..
               <EllipsisVerticalIcon className="w-full"/>
             </div>
             { optionsClicked && (
-              <div className="-translate-x-40 absolute w-44 flex flex-col border border-gray-100 bg-white text-off_black text-md font-normal rounded-md shadow-sm">
+              <div className="-translate-x-40 absolute w-44 flex flex-col border border-gray-100 bg-white text-off_black text-md font-normal rounded-md shadow-lg">
                 <p onClick={handleNicknameClick} className="px-4 py-2 rounded-t-md hover:bg-gray-100 transition-all duration-150 ease-in-out">Change nickname</p>
                 <p onClick={handleRemoveClick} className="px-4 py-2 rounded-b-md hover:bg-gray-100 transition-all duration-150 ease-in-out">Delete</p>
               </div>

@@ -6,7 +6,9 @@ import Loading from '@/app/ui/loading';
 import Card from '@/app/ui/card';
 import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
+import IconButton from '@/app/ui/iconButton';
 import TransactionModal from '@/app/ui/transactionModal';
+import { PlusIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions, addTransaction } from '@/app/lib/data';
 import { formatDollarAmount, getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, getMonthFromDate, formatMonth, formatDate } from '@/app/lib/utils';
@@ -187,7 +189,17 @@ export default function Page() {
           <Card>
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Transactions</h3>
-              <Select options={last12Months} onSelect={onTransactionMonthChange}/>
+
+              <div className="flex flex-row gap-3">
+                <IconButton icon={PlusIcon} onClick={openTransactionAddOptions} ref={buttonRef}/>
+                { transactionAddOptionsOpen && 
+                  <div className="mt-8 ml-0 absolute w-44 flex flex-col border border-gray-100 bg-white text-off_black text-md font-normal rounded-md shadow-lg">
+                    <p onClick={handleManualClick} className="cursor-pointer px-4 py-2 rounded-t-md hover:bg-gray-100 transition-all duration-150 ease-in-out">Manually enter</p>
+                    <p onClick={handleDocumentClick} className="cursor-pointer px-4 py-2 rounded-b-md hover:bg-gray-100 transition-all duration-150 ease-in-out">Upload document</p>
+                  </div>
+                }
+                <Select options={last12Months} onSelect={onTransactionMonthChange}/>
+              </div>
             </div>
             <div className="flex flex-col">
               {transactions.length ? (
@@ -213,16 +225,6 @@ export default function Page() {
               ) : (
                 <p className="text-md font-normal text-off_gray mt-1 mb-4">No transactions!</p>
               )}
-            </div>
-
-            <div className="flex flex-row justify-center">
-              <Button ref={buttonRef} onClick={openTransactionAddOptions} size="sm">Add Transaction</Button>
-              { transactionAddOptionsOpen && 
-                <div className="mt-8 ml-8 absolute w-44 flex flex-col border border-gray-100 bg-white text-off_black text-md font-normal rounded-md shadow-sm">
-                  <p onClick={handleManualClick} className="cursor-pointer px-4 py-2 rounded-t-md hover:bg-gray-100 transition-all duration-150 ease-in-out">Manually enter</p>
-                  <p onClick={handleDocumentClick} className="cursor-pointer px-4 py-2 rounded-b-md hover:bg-gray-100 transition-all duration-150 ease-in-out">Upload document</p>
-                </div>
-              }
             </div>
           </Card>
         </div>

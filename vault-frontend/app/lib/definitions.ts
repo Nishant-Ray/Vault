@@ -173,3 +173,8 @@ export type SelectOption = {
   value: number;
   text: string;
 }
+
+export type HeroIconType = React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
+  title?: string;
+  titleId?: string;
+} & React.RefAttributes<SVGSVGElement>>;

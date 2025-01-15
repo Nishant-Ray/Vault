@@ -1,7 +1,7 @@
+import React from 'react';
 import clsx from 'clsx';
 import { dmSans } from '@/app/ui/fonts';
 import Link from 'next/link';
-import React from 'react';
 
 type BaseButtonProps = {
   children: React.ReactNode;
