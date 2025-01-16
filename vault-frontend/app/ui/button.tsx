@@ -39,7 +39,7 @@ const Button = React.forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonPro
       "h-8 px-6 text-lg": size === 'md',
       "h-8 px-4 text-sm": size === 'sm',
       "text-white bg-primary hover:bg-primary_hover focus:bg-primary_hover active:bg-primary_click": buttonType === 'action' || buttonType === 'auth',
-      "text-off_black bg-gray-200 hover:bg-gray-100 focus:bg-gray-100 active:bg-gray-300": buttonType === 'neutral',
+      "text-off_black bg-gray-200 hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-100": buttonType === 'neutral',
       "max-w-fit": buttonType === 'action' || buttonType === 'neutral',
       "w-full my-6": buttonType === 'auth'
     },

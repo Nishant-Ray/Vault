@@ -117,10 +117,15 @@ export type TransactionsData = {
   transactions: Transaction[];
 };
 
+export const TRANSACTION_ADD_MANUAL_MODAL_TYPE = 0;
+export const TRANSACTION_ADD_DOCUMENT_MODAL_TYPE = 1;
+export const TRANSACTION_EDIT_MODAL_TYPE = 2;
+export const TRANSACTION_DELETE_MODAL_TYPE = 3;
+
 export type TransactionAddManualModalData = {
   accountID: string;
   date: string;
-  amount: number;
+  amount: string;
   category: string;
   description: string;
 };
@@ -128,6 +133,8 @@ export type TransactionAddManualModalData = {
 export type TransactionAddDocumentModalData = {
   nickname: string;
 }
+
+export type TransactionEditModalData = TransactionAddManualModalData;
 
 export type Bill = {
   id: number;

@@ -1,6 +1,6 @@
 import { request } from '@/app/lib/api';
 import { unformatDate } from '@/app/lib/utils';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, BillsData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillsData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -90,13 +90,13 @@ export async function changeAccountNickname(id: number, newNickname: string) {
   }
 }
 
-export async function removeAccount(id: Number) {
+export async function removeAccount(id: number) {
   try {
     await request<null>(`accounts/remove/${id}`, 'DELETE');
 
   } catch (error) {
     console.error('Server error:', error);
-    throw new Error('Failed to fetch accounts.');
+    throw new Error('Failed to remove account.');
   }
 }
 
@@ -107,7 +107,7 @@ export async function addAccount(accountData: AccountAddModalData) {
 
   } catch (error) {
     console.error('Server error:', error);
-    throw new Error('Failed to fetch accounts.');
+    throw new Error('Failed to add account.');
   }
 }
 
@@ -141,6 +141,26 @@ export async function addTransaction(transactionData: TransactionAddManualModalD
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to fetch accounts.');
+  }
+}
+
+export async function editTransaction(id: number, transactionData: TransactionEditModalData) {
+  try {
+    await request<null>(`transactions/edit/${id}/${transactionData.accountID}/${unformatDate(transactionData.date)}/${transactionData.amount}/${transactionData.category}/${encodeURIComponent(transactionData.description)}`, 'PATCH');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to edit transaction.');
+  }
+}
+
+export async function removeTransaction(id: number) {
+  try {
+    await request<null>(`transactions/remove/${id}`, 'DELETE');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to remove transaction.');
   }
 }
 

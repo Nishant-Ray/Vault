@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       get "get_recent", to: "transactions#get_recent"
       get "get_by_month/:month", to: "transactions#get_by_month"
       post "add/:account_id/:date/:amount/:category/:description", to: "transactions#add", constraints: { amount: /-?[.\d]+/, description: /[^\/]+/ }
+      patch "edit/:id/:account_id/:date/:amount/:category/:description", to: "transactions#edit", constraints: { amount: /-?[.\d]+/, description: /[^\/]+/ }
       delete "remove/:id", to: "transactions#remove"
     end
   end

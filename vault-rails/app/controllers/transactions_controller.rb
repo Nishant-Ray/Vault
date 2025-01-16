@@ -75,6 +75,43 @@ class TransactionsController < ApplicationController
     end
   end
 
+  def edit
+    if request.headers["Authorization"].present?
+      jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
+      current_user = User.find(jwt_payload["sub"])
+    end
+
+    if current_user
+      transaction = Transaction.find(params[:id])
+
+      old_monthly_spending = transaction.monthly_spending
+      old_monthly_spending.update(total: old_monthly_spending.total - transaction.amount)
+
+      transaction.update(account_id: params[:account_id], date: params[:date], amount: params[:amount].to_f, category: params[:category], description: params[:description])
+
+      calculated_month = params[:date].to_s[0, 6].to_i
+      new_monthly_spending = MonthlySpending.where(user_id: current_user.id, month: calculated_month).take
+      if !new_monthly_spending
+        new_monthly_spending = MonthlySpending.create(user_id: current_user.id, month: calculated_month, total: params[:amount].to_f)
+      else
+        new_monthly_spending.update(total: new_monthly_spending.total + params[:amount].to_f)
+      end
+      new_transaction.monthly_spending = relevant_monthly_spending
+      new_transaction.save
+
+      render json: {
+        status: { code: 200, message: "Successfully edited transaction." }
+      }
+    else
+      render json: {
+        status: {
+          code: 401,
+          message: "Unauthorized."
+        }
+      }, status: :unauthorized
+    end
+  end
+
   def remove
     if request.headers["Authorization"].present?
       jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
@@ -82,7 +119,11 @@ class TransactionsController < ApplicationController
     end
 
     if current_user
-      Transaction.find(params[:id]).destroy
+      transaction = Transaction.find(params[:id])
+      monthly_spending = transaction.monthly_spending
+      monthly_spending.update(total: monthly_spending.total - transaction.amount)
+      transaction.destroy
+
       render json: {
         status: { code: 200, message: "Successfully removed transaction." }
       }

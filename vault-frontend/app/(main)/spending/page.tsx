@@ -5,20 +5,21 @@ import { dmSans } from '@/app/ui/fonts';
 import Loading from '@/app/ui/loading';
 import Card from '@/app/ui/card';
 import Select from '@/app/ui/select';
-import Button from '@/app/ui/button';
+import TransactionCard from '@/app/ui/transactionCard';
 import IconButton from '@/app/ui/iconButton';
 import TransactionModal from '@/app/ui/transactionModal';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
-import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions, addTransaction } from '@/app/lib/data';
-import { formatDollarAmount, getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, getMonthFromDate, formatMonth, formatDate } from '@/app/lib/utils';
-import { SelectOption, Account, Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData } from '@/app/lib/definitions';
+import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions, addTransaction, editTransaction, removeTransaction } from '@/app/lib/data';
+import { formatDollarAmount, getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, getMonthFromDate, formatMonth, formatDate, unformatDate } from '@/app/lib/utils';
+import { SelectOption, Account, Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData, TransactionEditModalData, TRANSACTION_ADD_MANUAL_MODAL_TYPE, TRANSACTION_ADD_DOCUMENT_MODAL_TYPE, TRANSACTION_EDIT_MODAL_TYPE, TRANSACTION_DELETE_MODAL_TYPE } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
   const last12Months: SelectOption[] = getLast12MonthsAsOptions();
   const currMonth = getCurrentMonth();
+  const [selectedMonthlySpendingMonth, setSelectedMonthlySpendingMonth] = useState<number>(currMonth);
   const [prevSelectedMonth, setPrevSelectedMonth] = useState<number>(getPreviousMonth());
   const [monthlySpending, setMonthlySpending] = useState<number>(0);
   const [percentChange, setPercentChange] = useState<string>('↓ 0%');
@@ -31,10 +32,12 @@ export default function Page() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [selectedTransactionMonth, setSelectedTransactionMonth] = useState<number>(currMonth);
   const [transactionAddOptionsOpen, setTransactionAddOptionsOpen] = useState<boolean>(false);
-  const [manualModal, setManualModal] = useState<boolean>(true);
-  const [transactionAddModalOpen, setTransactionAddModalOpen] = useState<boolean>(false);
+  const [modalType, setModalType] = useState<number>(TRANSACTION_ADD_MANUAL_MODAL_TYPE);
+  const [transactionModalOpen, setTransactionModalOpen] = useState<boolean>(false);
+  const [transactionSelected, setTransactionSelected] = useState<Transaction | null>(null);
 
   const onSpendingMonthChange = async (month: number) => {
+    setSelectedMonthlySpendingMonth(month);
     const prevMonth = getPreviousMonthFromMonth(month);
     setPrevSelectedMonth(prevMonth);
 
@@ -68,42 +71,98 @@ export default function Page() {
   };
 
   const handleManualClick = () => {
-    setManualModal(true);
-    setTransactionAddModalOpen(true);
-  };
-
-  const handleDocumentClick = () => {
-    setManualModal(false);
-    setTransactionAddModalOpen(true);
+    setModalType(TRANSACTION_ADD_MANUAL_MODAL_TYPE);
+    setTransactionModalOpen(true);
   };
 
   function hopefulTransactionAdd(transaction: Transaction) {
-    if (selectedTransactionMonth === getMonthFromDate(transaction.date)) {
+    const month = getMonthFromDate(transaction.date);
+
+    if (selectedTransactionMonth === month) {
       setTransactions([transaction, ...transactions]);
       const newTransactions = [...transactions];
       const index = newTransactions.findIndex(item => item.date < transaction.date);
       if (index === -1) newTransactions.push(transaction);
       else newTransactions.splice(index, 0, transaction);
       setTransactions(newTransactions);
+    }
 
+    if (selectedMonthlySpendingMonth === month) {
       setMonthlySpending(monthlySpending + transaction.amount);
     }
   }
 
   const handleManualModalSubmit = async (data: TransactionAddManualModalData) => {
     const newTransaction = await addTransaction(data);
-    if (newTransaction) {
-      hopefulTransactionAdd(newTransaction);
+    if (newTransaction) hopefulTransactionAdd(newTransaction);
+
+    setTransactionModalOpen(false);
+  };
+
+  const handleDocumentClick = () => {
+    setModalType(TRANSACTION_ADD_DOCUMENT_MODAL_TYPE);
+    setTransactionModalOpen(true);
+  };
+
+  const handleDocumentModalSubmit = () => {
+    setTransactionModalOpen(false);
+  };
+
+  const handleEditClick = (id: number) => {
+    const foundTransaction = transactions.find(transaction => transaction.id === id);
+    if (foundTransaction) setTransactionSelected(foundTransaction);
+
+    setModalType(TRANSACTION_EDIT_MODAL_TYPE);
+    setTransactionModalOpen(true);
+  };
+
+  function hopefulTransactionEdit(id: number, data: TransactionEditModalData) {
+    const index = transactions.findIndex(item => item.id === id);
+    const transaction = transactions[index];
+    
+    transaction.account_id = Number(data.accountID);
+    const originalAmount = transaction.amount;
+    transaction.amount = Number(data.amount);
+    transaction.category = data.category;
+    transaction.date = unformatDate(data.date);
+    transaction.description = data.description;
+
+    setTransactions(transactions.map((currTransaction, i) => {
+      if (i === index) return transaction;
+      return currTransaction;
+    }));
+
+    if (selectedMonthlySpendingMonth === selectedTransactionMonth) {
+      setMonthlySpending(monthlySpending + (transaction.amount - originalAmount));
     }
-    setTransactionAddModalOpen(false);
+  }
+
+  const handleEditModalSubmit = async (id: number, data: TransactionEditModalData) => {
+    await editTransaction(id, data);
+    hopefulTransactionEdit(id, data);
+
+    setTransactionModalOpen(false);
   };
 
-  const handleDocumentModalSubmit = (_data: TransactionAddDocumentModalData) => {
-    setTransactionAddModalOpen(false);
+  const handleDeleteClick = (id: number) => {
+    const foundTransaction = transactions.find(transaction => transaction.id === id);
+    if (foundTransaction) setTransactionSelected(foundTransaction);
+    
+    setModalType(TRANSACTION_DELETE_MODAL_TYPE);
+    setTransactionModalOpen(true);
   };
 
-  const handleTransactionAddModalClose = () => {
-    setTransactionAddModalOpen(false);
+  const handleDeleteModalSubmit = async (id: number) => {
+    const index = transactions.findIndex(item => item.id === id);
+    setMonthlySpending(monthlySpending - transactions[index].amount);
+    setTransactions((prevTransactions) => prevTransactions.filter((_, i) => i !== index));
+    await removeTransaction(id);
+
+    setTransactionModalOpen(false);
+  };
+
+  const handleTransactionModalClose = () => {
+    setTransactionModalOpen(false);
   };
 
   useEffect(() => {
@@ -155,7 +214,7 @@ export default function Page() {
 
   return (
     <main>
-      <TransactionModal isManualModal={manualModal} isOpen={transactionAddModalOpen} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onClose={handleTransactionAddModalClose}/>
+      <TransactionModal type={modalType} isOpen={transactionModalOpen} accounts={accounts} transaction={transactionSelected} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onEditModalSubmit={handleEditModalSubmit} onDeleteModalSubmit={handleDeleteModalSubmit} onClose={handleTransactionModalClose}/>
       
       <div className="flex flex-row gap-8">
         <div className="flex flex-col gap-8 w-2/5">
@@ -201,25 +260,18 @@ export default function Page() {
                 <Select options={last12Months} onSelect={onTransactionMonthChange}/>
               </div>
             </div>
-            <div className="flex flex-col">
+            <div>
               {transactions.length ? (
-                <div className="my-3">
-                  <div className="flex flex-row items-center gap-16 mb-2">
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
-                    <h4 className="w-16 text-gray-400 font-normal text-md text-right">Amount</h4>
-                    <h4 className="w-36 text-gray-400 font-normal text-md">Description</h4>
+                <div className="flex flex-col my-3 text-off_black">
+                  <div className="flex flex-row items-center gap-8 mb-4 bg-gray-100 rounded-md px-4 py-2">
+                    <h4 className="w-24 font-normal text-sm">Account</h4>
+                    <h4 className="w-24 font-normal text-sm text-right">Date</h4>
+                    <h4 className="w-20 font-normal text-sm text-right">Amount</h4>
+                    <h4 className="w-36 font-normal text-sm">Description</h4>
                   </div>
 
-                  {transactions.map((transaction, i) => {
-                    return (
-                      <div key={transaction.id} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                        <h4 className="w-24 text-off_black font-medium text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
-                        <h4 className="w-24 text-off_black font-medium text-md">{formatDate(transaction.date)}</h4>
-                        <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
-                        <h4 className="w-36 text-off_black font-medium text-md truncate">{transaction.description}</h4>
-                      </div>
-                    );
+                  {transactions.map((transaction) => {
+                    return <TransactionCard key={transaction.id} id={transaction.id} amount={formatDollarAmount(transaction.amount)} date={formatDate(transaction.date)} account={accountIDsToNicknames[transaction.account_id]} description={transaction.description} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
                   })}
                 </div>
               ) : (

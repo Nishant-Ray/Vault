@@ -56,7 +56,7 @@ export default function Page() {
     <main>
       <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-2xl font-semibold mb-6`}>My Accounts</h1>
       <Card>
-        <AccountModal modalType={ACCOUNT_ADD_MODAL_TYPE} isOpen={isAddAccountModalOpen} onAddSubmit={handleAccountAddFormSubmit} onClose={handleAccountAddModalClose}></AccountModal>
+        <AccountModal modalType={ACCOUNT_ADD_MODAL_TYPE} isOpen={isAddAccountModalOpen} existingNickname={null} onAddSubmit={handleAccountAddFormSubmit} onClose={handleAccountAddModalClose}></AccountModal>
 
         <div className="flex flex-col text-off_black gap-8">
           <div className="flex flex-row flex-wrap gap-8 justify-center">

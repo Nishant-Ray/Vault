@@ -6,6 +6,7 @@ import Loading from '@/app/ui/loading';
 import Card from '@/app/ui/card';
 import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
+import TransactionCard from '@/app/ui/transactionCard';
 import clsx from 'clsx';
 import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills, fetchResidenceName, fetchRecentResidenceMessages } from '@/app/lib/data';
 import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
@@ -19,7 +20,7 @@ export default function Page() {
   const last12Months: SelectOption[] = getLast12MonthsAsOptions();
   const currMonth = getCurrentMonth();
   const [prevSelectedMonth, setPrevSelectedMonth] = useState<number>(getPreviousMonth());
-  const [monthlySpending, setMonthlySpending] = useState<string>('$0');
+  const [monthlySpending, setMonthlySpending] = useState<number>(0);
   const [percentChange, setPercentChange] = useState<string>('↓ 0%');
   const [positive, setPositive] = useState<boolean>(true);
   const last5Years: SelectOption[] = getLast5YearsAsOptions();
@@ -35,8 +36,8 @@ export default function Page() {
     setPrevSelectedMonth(prevMonth);
 
     const fetchedSpending = await fetchMonthlySpending(month);
-    if (fetchedSpending) setMonthlySpending(formatDollarAmount(fetchedSpending));
-    else setMonthlySpending('$0');
+    if (fetchedSpending) setMonthlySpending(fetchedSpending);
+    else setMonthlySpending(0);
 
     const fetchedPercentChange = await fetchPercentChange(month, prevMonth);
     if (fetchedPercentChange) {
@@ -60,7 +61,7 @@ export default function Page() {
       if (fetchedName) setName(fetchedName);
 
       const fetchedSpending = await fetchMonthlySpending(currMonth);
-      if (fetchedSpending) setMonthlySpending(formatDollarAmount(fetchedSpending));
+      if (fetchedSpending) setMonthlySpending(fetchedSpending);
 
       const fetchedPercentChange = await fetchPercentChange(currMonth, prevSelectedMonth);
       if (fetchedPercentChange) {
@@ -112,7 +113,7 @@ export default function Page() {
               <Select options={last12Months} onSelect={onMonthChange}/>
             </div>
 
-            <h2 className={`${dmSans.className} antialiased tracking-tight text-black text-4xl font-semibold my-4`}>{monthlySpending}</h2>
+            <h2 className={`${dmSans.className} antialiased tracking-tight text-black text-4xl font-semibold my-4`}>{formatDollarAmount(monthlySpending)}</h2>
 
             <div className="flex flex-row items-center gap-2">
               <div className={clsx("rounded-3xl flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
@@ -128,7 +129,7 @@ export default function Page() {
               <Select options={last5Years} onSelect={onYearChange}/>
             </div>
 
-            <SpendingGraph year={selectedYear}/>
+            <SpendingGraph year={selectedYear} flag={monthlySpending}/>
           </Card>
 
           <Card>
@@ -170,23 +171,16 @@ export default function Page() {
             <h3 className="text-lg font-medium text-off_black">Recent Transactions</h3>
             <div className="flex flex-col">
               {transactions.length ? (
-                <div className="my-3">
-                  <div className="flex flex-row items-center gap-16 mb-2">
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Account</h4>
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Date</h4>
-                    <h4 className="w-16 text-gray-400 font-normal text-md text-right">Amount</h4>
-                    <h4 className="w-36 text-gray-400 font-normal text-md">Description</h4>
+                <div className="flex flex-col my-3 text-off_black">
+                  <div className="flex flex-row items-center gap-8 mb-4 bg-gray-100 rounded-md px-8 py-2">
+                    <h4 className="w-24 font-normal text-sm">Account</h4>
+                    <h4 className="w-24 font-normal text-sm text-right">Date</h4>
+                    <h4 className="w-20 font-normal text-sm text-right">Amount</h4>
+                    <h4 className="w-36 font-normal text-sm">Description</h4>
                   </div>
 
-                  {transactions.map((transaction, i) => {
-                    return (
-                      <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                        <h4 className="w-24 text-off_black font-medium text-md truncate">{accountIDsToNicknames[transaction.account_id]}</h4>
-                        <h4 className="w-24 text-off_black font-medium text-md">{formatDate(transaction.date)}</h4>
-                        <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(transaction.amount)}</h4>
-                        <h4 className="w-36 text-off_black font-medium text-md truncate">{transaction.description}</h4>
-                      </div>
-                    );
+                  {transactions.map((transaction) => {
+                    return <TransactionCard key={transaction.id} full={false} id={transaction.id} amount={formatDollarAmount(transaction.amount)} date={formatDate(transaction.date)} account={accountIDsToNicknames[transaction.account_id]} description={transaction.description}/>
                   })}
                 </div>
               ) : (

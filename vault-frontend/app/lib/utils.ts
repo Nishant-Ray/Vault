@@ -2,59 +2,14 @@ import { months } from '@/app/lib/constants';
 import { SelectOption } from '@/app/lib/definitions';
 
 export function formatDollarAmount(amount: number): string {
-  let negative = false;
-  if (amount < 0) negative = true;
-  const originalAmount = negative ? String(Math.abs(amount)) : String(amount);
-  let formattedAmount = [];
-  let seenDecimal = false;
-  let count = 0;
-
-  for (let i = 0; i < originalAmount.length; i++) {
-    const c = originalAmount.charAt(i);
-    
-    if (!seenDecimal) {
-      if (c == '.') seenDecimal = true;
-    } else {
-      count++;
-    }
-  }
-
-  if (!seenDecimal) {
-    formattedAmount = ['0', '0', '.'];
-  } else {
-    if (count < 2) {
-      for (let i = 0; i < 2 - count; i++) formattedAmount.push('0');
-    }
-    seenDecimal = false;
-  }
-  count = 0;
-
-  for (let i = originalAmount.length - 1; i >= 0; i--) {
-    const c = originalAmount.charAt(i);
-
-    if (!seenDecimal) {
-      if (c === '.') seenDecimal = true;
-      formattedAmount.push(c);
-    } else {
-      if (count === 3) {
-        formattedAmount.push(',');
-        count = 0;
-      }
-      formattedAmount.push(c);
-      count++;
-    }
-  }
-
-  formattedAmount.push('$');
-  if (negative) formattedAmount.push('-');
-  return formattedAmount.reverse().join('');
+  return '$' + amount.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
 export function validDollarAmount(amount: number): boolean {
 
   const numberString = String(amount);
 
-  if (!numberString.length || (numberString.length >= 2 && numberString.charAt(0) === '0')) return false;
+  if (!numberString.length || (numberString.charAt(0) === '0' && numberString.charAt(1) !== '.')) return false;
 
   let count = 0;
   for (let i = numberString.length - 1; i >= 0; i--) {
@@ -149,6 +104,14 @@ export function unformatDate(dateString: string): number { // Date object string
   const date = dateObject.getUTCDate();
   const currDate = date < 10 ? `0${date}` : date;
   return Number(`${dateObject.getUTCFullYear()}${currMonth}${currDate}`);
+}
+
+export function reformatDate(dateNumber: number): string { // YYYYMMDD --> Date object string
+  const dateString = String(dateNumber);
+  const year = Number(dateString.substring(0, 4));
+  const month = Number(dateString.substring(4, 6)) - 1;
+  const date = Number(dateString.substring(6));
+  return (new Date(year, month, date)).toISOString().substring(0, 10);
 }
 
 // export function formatTime(dateTime: number): string {
