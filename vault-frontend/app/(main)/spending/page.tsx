@@ -4,10 +4,10 @@ import { useState, useRef, useEffect } from 'react';
 import { dmSans } from '@/app/ui/fonts';
 import Loading from '@/app/ui/loading';
 import Card from '@/app/ui/card';
-import Select from '@/app/ui/select';
 import TransactionCard from '@/app/ui/transactionCard';
-import IconButton from '@/app/ui/iconButton';
 import TransactionModal from '@/app/ui/transactionModal';
+import Select from '@/app/ui/select';
+import IconButton from '@/app/ui/iconButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions, addTransaction, editTransaction, removeTransaction } from '@/app/lib/data';
@@ -79,7 +79,6 @@ export default function Page() {
     const month = getMonthFromDate(transaction.date);
 
     if (selectedTransactionMonth === month) {
-      setTransactions([transaction, ...transactions]);
       const newTransactions = [...transactions];
       const index = newTransactions.findIndex(item => item.date < transaction.date);
       if (index === -1) newTransactions.push(transaction);
@@ -117,20 +116,29 @@ export default function Page() {
   };
 
   function hopefulTransactionEdit(id: number, data: TransactionEditModalData) {
-    const index = transactions.findIndex(item => item.id === id);
-    const transaction = transactions[index];
-    
+    const newTransactions = [...transactions];
+
+    const index = newTransactions.findIndex(item => item.id === id);
+    const transaction = newTransactions[index];
+
     transaction.account_id = Number(data.accountID);
     const originalAmount = transaction.amount;
     transaction.amount = Number(data.amount);
     transaction.category = data.category;
-    transaction.date = unformatDate(data.date);
+    const newDate = unformatDate(data.date);
     transaction.description = data.description;
 
-    setTransactions(transactions.map((currTransaction, i) => {
-      if (i === index) return transaction;
-      return currTransaction;
-    }));
+    if (transaction.date === newDate) {
+      newTransactions[index] = transaction;
+    } else {
+      transaction.date = newDate;
+      newTransactions.splice(index, 1);
+      const newIndex = newTransactions.findIndex(item => item.date < transaction.date);
+      if (newIndex === -1) newTransactions.push(transaction);
+      else newTransactions.splice(newIndex, 0, transaction);
+    }
+
+    setTransactions(newTransactions);
 
     if (selectedMonthlySpendingMonth === selectedTransactionMonth) {
       setMonthlySpending(monthlySpending + (transaction.amount - originalAmount));
@@ -262,20 +270,20 @@ export default function Page() {
             </div>
             <div>
               {transactions.length ? (
-                <div className="flex flex-col my-3 text-off_black">
-                  <div className="flex flex-row items-center gap-8 mb-4 bg-gray-100 rounded-md px-4 py-2">
-                    <h4 className="w-24 font-normal text-sm">Account</h4>
-                    <h4 className="w-24 font-normal text-sm text-right">Date</h4>
-                    <h4 className="w-20 font-normal text-sm text-right">Amount</h4>
-                    <h4 className="w-36 font-normal text-sm">Description</h4>
+                <div className="flex flex-col mt-3 text-off_black">
+                  <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
+                    <h4 className="w-24 text-right">Amount</h4>
+                    <h4 className="w-24">Category</h4>
+                    <h4 className="w-24">Account</h4>
+                    <h4 className="w-24 text-right">Date</h4>
                   </div>
 
                   {transactions.map((transaction) => {
-                    return <TransactionCard key={transaction.id} id={transaction.id} amount={formatDollarAmount(transaction.amount)} date={formatDate(transaction.date)} account={accountIDsToNicknames[transaction.account_id]} description={transaction.description} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
+                    return <TransactionCard key={transaction.id} id={transaction.id} amount={formatDollarAmount(transaction.amount)} date={formatDate(transaction.date)} account={accountIDsToNicknames[transaction.account_id]} category={transaction.category} description={transaction.description} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
                   })}
                 </div>
               ) : (
-                <p className="text-md font-normal text-off_gray mt-1 mb-4">No transactions!</p>
+                <p className="text-md font-normal text-off_gray mt-1">No transactions!</p>
               )}
             </div>
           </Card>

@@ -45,8 +45,9 @@ Rails.application.routes.draw do
     collection do
       get :get_all
       get :get_upcoming
-      post "add/:due_date/:amount/:shared/:category/:name", to: "bills#add", constraints: { amount: /[.\d]+/, name: /[^\/]+/ }
-      delete "remove/:id", to: "transactions#remove"
+      post "add/:due_date/:total/:shared/:category/:name", to: "bills#add", constraints: { total: /[.\d]+/, name: /[^\/]+/ }
+      patch "edit/:id/:due_date/:total/:shared/:category/:name", to: "bills#edit", constraints: { total: /[.\d]+/, name: /[^\/]+/ }
+      delete "remove/:id", to: "bills#remove"
     end
   end
 

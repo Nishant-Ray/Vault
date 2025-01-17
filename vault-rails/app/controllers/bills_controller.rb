@@ -48,10 +48,33 @@ class BillsController < ApplicationController
     end
 
     if current_user
-      new_bill = Bill.create(user_id: current_user.id, due_date: params[:due_date], amount: params[:amount], shared: params[:shared], category: params[:category], name: params[:name])
+      new_bill = Bill.create(user_id: current_user.id, due_date: params[:due_date], total: params[:total].to_f, shared: params[:shared], category: params[:category], name: params[:name])
       render json: {
         status: { code: 200, message: "Successfully added bill." },
-        data: { bill_id: new_bill.id }
+        data: { bill: new_bill }
+      }
+    else
+      render json: {
+        status: {
+          code: 401,
+          message: "Unauthorized."
+        }
+      }, status: :unauthorized
+    end
+  end
+
+  def edit
+    if request.headers["Authorization"].present?
+      jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
+      current_user = User.find(jwt_payload["sub"])
+    end
+
+    if current_user
+      bill = Bill.find(params[:id])
+      bill.update(due_date: params[:due_date], total: params[:total].to_f, shared: params[:shared], category: params[:category], name: params[:name])
+
+      render json: {
+        status: { code: 200, message: "Successfully edited transaction." }
       }
     else
       render json: {

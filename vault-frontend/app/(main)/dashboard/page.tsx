@@ -7,6 +7,7 @@ import Card from '@/app/ui/card';
 import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
 import TransactionCard from '@/app/ui/transactionCard';
+import BillCard from '@/app/ui/billCard';
 import clsx from 'clsx';
 import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills, fetchResidenceName, fetchRecentResidenceMessages } from '@/app/lib/data';
 import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
@@ -171,20 +172,20 @@ export default function Page() {
             <h3 className="text-lg font-medium text-off_black">Recent Transactions</h3>
             <div className="flex flex-col">
               {transactions.length ? (
-                <div className="flex flex-col my-3 text-off_black">
-                  <div className="flex flex-row items-center gap-8 mb-4 bg-gray-100 rounded-md px-8 py-2">
-                    <h4 className="w-24 font-normal text-sm">Account</h4>
-                    <h4 className="w-24 font-normal text-sm text-right">Date</h4>
-                    <h4 className="w-20 font-normal text-sm text-right">Amount</h4>
-                    <h4 className="w-36 font-normal text-sm">Description</h4>
+                <div className="flex flex-col mt-3 mb-6 text-off_black">
+                  <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
+                    <h4 className="w-24 text-right">Amount</h4>
+                    <h4 className="w-24">Category</h4>
+                    <h4 className="w-24">Account</h4>
+                    <h4 className="w-24 text-right">Date</h4>
                   </div>
 
                   {transactions.map((transaction) => {
-                    return <TransactionCard key={transaction.id} full={false} id={transaction.id} amount={formatDollarAmount(transaction.amount)} date={formatDate(transaction.date)} account={accountIDsToNicknames[transaction.account_id]} description={transaction.description}/>
+                    return <TransactionCard key={transaction.id} full={false} id={transaction.id} amount={formatDollarAmount(transaction.amount)} date={formatDate(transaction.date)} account={accountIDsToNicknames[transaction.account_id]} category={transaction.category} description={transaction.description}/>
                   })}
                 </div>
               ) : (
-                <p className="text-md font-normal text-off_gray mt-1 mb-4">No recent transactions!</p>
+                <p className="text-md font-normal text-off_gray mt-1">No recent transactions!</p>
               )}
             </div>
 
@@ -195,36 +196,22 @@ export default function Page() {
 
           <Card>
             <h3 className="text-lg font-medium text-off_black">Upcoming Bills</h3>
-            <div className="my-6 flex flex-col">
+            <div className="flex flex-col">
               {bills.length ? (
-                <>
-                  <div className="flex flex-row items-center gap-16 mb-2">
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Due Date</h4>
-                    <h4 className="w-16 text-gray-400 font-normal text-md text-right">Total</h4>
-                    <h4 className="w-24 text-gray-400 font-normal text-md">Category</h4>
-                    <h4 className="w-36 text-gray-400 font-normal text-md">Name</h4>
+                <div className="flex flex-col mt-3 mb-6 text-off_black">
+                  <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
+                    <h4 className="w-24 text-right">Total</h4>
+                    <h4 className="w-24">Category</h4>
+                    <h4 className="w-24">Name</h4>
+                    <h4 className="w-24 text-right">Due Date</h4>
                   </div>
 
-                  {bills.map((bill, i) => {
-                    const billCategoryColorArr = billCategoryColors.get(bill.category);
-                    if (billCategoryColorArr) {
-                      const bgColor = billCategoryColorArr[0];
-                      const textColor = billCategoryColorArr[1];
-                      return (
-                        <div key={i} className="flex flex-row items-center h-12 gap-16 border-t border-gray-200">
-                          <h4 className="w-24 text-red-700 font-semibold text-md">{formatDate(bill.due_date)}</h4>
-                          <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(bill.total)}</h4>
-                          <div className="w-24">
-                            <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
-                          </div>
-                          <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
-                        </div>
-                      );
-                    }
+                  {bills.map((bill) => {
+                    return <BillCard key={bill.id} full={false} id={bill.id} name={bill.name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)}/>
                   })}
-                </>
+                </div>
               ) : (
-                <p className="text-sm font-normal text-off_gray">No upcoming bills!</p>
+                <p className="text-md font-normal text-off_gray mt-1">No upcoming bills!</p>
               )}
             </div>
 

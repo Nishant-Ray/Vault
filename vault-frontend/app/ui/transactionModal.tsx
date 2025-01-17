@@ -50,10 +50,11 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
   const handleClose = () => {
     setTransactionAddManualFormState(initialManualModalData);
     setTransactionAddDocumentFormState(initialDocumentModalData);
+    setTransactionEditFormState(initialEditModalData);
     setCategoryOption(initialManualModalData.category);
     setInvalidDollarAmount(false);
     onClose();
-  }
+  };
 
   const handleTransactionAddManualFormInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = event.target;
@@ -77,8 +78,10 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
     const { name, value } = event.target;
     setTransactionEditFormState((prevFormData) => ({
       ...prevFormData,
-      [name]: value
+      [name]: name === 'accountID' ? Number(value) : value
     }));
+
+    if (name === 'category') setCategoryOption(value);
   };
 
   const handleTransactionAddManualModalFormSubmit = (event: React.FormEvent): void => {
@@ -100,8 +103,15 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
 
   const handleTransactionEditModalFormSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
-    if (transaction) onEditModalSubmit(transaction.id, transactionEditFormState);
-    setTransactionEditFormState(initialEditModalData);
+    if (transaction) {
+      if (validDollarAmount(Number(transactionEditFormState.amount))) {
+        onEditModalSubmit(transaction.id, transactionEditFormState);
+        setTransactionEditFormState(initialManualModalData);
+        setInvalidDollarAmount(false);
+      } else {
+        setInvalidDollarAmount(true);
+      }
+    }
   };
 
   const handleTransactionDeleteModal = (): void => {
@@ -141,7 +151,7 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
       { type === TRANSACTION_ADD_MANUAL_MODAL_TYPE ? (
         <form onSubmit={handleTransactionAddManualModalFormSubmit}>
           <Select onChange={handleTransactionAddManualFormInputChange} value={transactionAddManualFormState.accountID} id="accountID" name="accountID" label="Account Used" options={accountOptions}/>
-          <Input onChange={handleTransactionAddManualFormInputChange} value={String(transactionAddManualFormState.date)} id="date" name="date" type="date" label="Date of Transaction"/>
+          <Input onChange={handleTransactionAddManualFormInputChange} value={String(transactionAddManualFormState.date)} max={new Date().toJSON().slice(0, 10)} id="date" name="date" type="date" label="Date of Transaction"/>
           <Input onChange={handleTransactionAddManualFormInputChange} value={String(transactionAddManualFormState.amount)} id="amount" name="amount" type="number" label="Amount ($)" placeholder="Enter transaction amount"/>
           
           <Input onChange={handleTransactionAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" radioLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
@@ -167,7 +177,7 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
       ) : (type === TRANSACTION_EDIT_MODAL_TYPE ? (
         <form onSubmit={handleTransactionEditModalFormSubmit}>
           <Select onChange={handleTransactionEditFormInputChange} value={transactionEditFormState.accountID} id="accountID" name="accountID" label="Account Used" options={accountOptions}/>
-          <Input onChange={handleTransactionEditFormInputChange} value={transactionEditFormState.date} id="date" name="date" type="date" label="Date of Transaction"/>
+          <Input onChange={handleTransactionEditFormInputChange} value={transactionEditFormState.date} max={new Date().toJSON().slice(0, 10)} id="date" name="date" type="date" label="Date of Transaction"/>
           <Input onChange={handleTransactionEditFormInputChange} value={String(transactionEditFormState.amount)} id="amount" name="amount" type="number" label="Amount ($)" placeholder="Enter transaction amount"/>
           
           <Input onChange={handleTransactionEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" radioLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
@@ -184,7 +194,7 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
         </form>
       ) : (
         <div className="flex flex-row justify-center gap-8">
-          <Button onClick={handleTransactionDeleteModal} size="md">Delete Card</Button>
+          <Button onClick={handleTransactionDeleteModal} size="md">Delete Transaction</Button>
           <Button onClick={onClose} buttonType="neutral" size="md">Cancel</Button>
         </div>
       )))}

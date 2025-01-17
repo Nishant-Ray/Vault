@@ -149,9 +149,32 @@ export type Bill = {
   total: number;
 };
 
+export type BillData = {
+  bill: Bill;
+};
+
 export type BillsData = {
   bills: Bill[];
 };
+
+export const BILL_ADD_MANUAL_MODAL_TYPE = 0;
+export const BILL_ADD_DOCUMENT_MODAL_TYPE = 1;
+export const BILL_PAY_MODAL_TYPE = 2;
+export const BILL_EDIT_MODAL_TYPE = 3;
+export const BILL_DELETE_MODAL_TYPE = 4;
+
+export type BillAddManualModalData = {
+  name: string;
+  total: string;
+  dueDate: string;
+  category: string;
+};
+
+export type BillAddDocumentModalData = {
+  nickname: string;
+}
+
+export type BillEditModalData = BillAddManualModalData;
 
 type User = {
   id: number;

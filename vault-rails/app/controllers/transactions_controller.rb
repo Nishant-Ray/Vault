@@ -56,11 +56,12 @@ class TransactionsController < ApplicationController
       relevant_monthly_spending = MonthlySpending.where(user_id: current_user.id, month: calculated_month).take
       if !relevant_monthly_spending
         relevant_monthly_spending = MonthlySpending.create(user_id: current_user.id, month: calculated_month, total: params[:amount].to_f)
+        new_transaction.monthly_spending = relevant_monthly_spending
+        new_transaction.save
       else
         relevant_monthly_spending.update(total: relevant_monthly_spending.total + params[:amount].to_f)
       end
-      new_transaction.monthly_spending = relevant_monthly_spending
-      new_transaction.save
+
       render json: {
         status: { code: 200, message: "Successfully added transaction." },
         data: { transaction: new_transaction }
@@ -96,8 +97,8 @@ class TransactionsController < ApplicationController
       else
         new_monthly_spending.update(total: new_monthly_spending.total + params[:amount].to_f)
       end
-      new_transaction.monthly_spending = relevant_monthly_spending
-      new_transaction.save
+      transaction.monthly_spending = new_monthly_spending
+      transaction.save
 
       render json: {
         status: { code: 200, message: "Successfully edited transaction." }

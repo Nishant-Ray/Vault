@@ -1,6 +1,6 @@
 import { request } from '@/app/lib/api';
 import { unformatDate } from '@/app/lib/utils';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillsData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -140,7 +140,7 @@ export async function addTransaction(transactionData: TransactionAddManualModalD
 
   } catch (error) {
     console.error('Server error:', error);
-    throw new Error('Failed to fetch accounts.');
+    throw new Error('Failed to add transaction.');
   }
 }
 
@@ -172,6 +172,48 @@ export async function fetchUpcomingBills() {
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to fetch upcoming bills.');
+  }
+}
+
+export async function fetchAllBills() {
+  try {
+    const response = await request<BillsData>('bills/get_all', 'GET');
+    return response.data?.bills;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch all bills.');
+  }
+}
+
+export async function addBill(billData: BillAddManualModalData) {
+  try {
+    const response = await request<BillData>(`bills/add/${unformatDate(billData.dueDate)}/${billData.total}/false/${billData.category}/${encodeURIComponent(billData.name)}`, 'POST');
+    return response.data?.bill;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to add bill.');
+  }
+}
+
+export async function editBill(id: number, billData: BillEditModalData) {
+  try {
+    await request<null>(`bills/edit/${id}/${unformatDate(billData.dueDate)}/${billData.total}/false/${billData.category}/${encodeURIComponent(billData.name)}`, 'PATCH');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to edit bill.');
+  }
+}
+
+export async function removeBill(id: number) {
+  try {
+    await request<null>(`bills/remove/${id}`, 'DELETE');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to remove bill.');
   }
 }
 

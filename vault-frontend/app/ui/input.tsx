@@ -9,13 +9,15 @@ interface InputProps {
   label?: string;
   placeholder?: string;
   value?: string;
+  min?: string;
+  max?: string;
   checked?: boolean;
   radioLabel?: string;
   standalone?: boolean;
   className?: string;
 }
 
-export default function Input({ onChange, id, name, type, value, checked, label, placeholder, radioLabel, standalone = true, className, ...rest }: InputProps) {
+export default function Input({ onChange, id, name, type, value, min, max, checked, label, placeholder, radioLabel, standalone = true, className, ...rest }: InputProps) {
   return (
     <div className={clsx({ "mb-5": standalone })}>
       { label && <label htmlFor={id} className="block mb-2 text-lg font-medium text-off_black pl-2">{label}</label> }
@@ -47,7 +49,8 @@ export default function Input({ onChange, id, name, type, value, checked, label,
           name={name}
           value={value}
           placeholder={placeholder}
-          max={type === 'date' ? new Date().toJSON().slice(0, 10) : undefined}
+          min={min}
+          max={max}
           required
           className={clsx(
             "w-full px-4 py-3 bg-gray-200 text-off_black text-sm font-medium rounded-3xl focus:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2",
