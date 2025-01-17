@@ -99,8 +99,8 @@ export default function AccountModal({ modalType, isOpen, existingNickname, onNi
         <form onSubmit={handleAddModalFormSubmit}>
           <Input onChange={handleAddFormInputChange} value={addFormState.nickname} id="nickname" name="nickname" type="text" label="Nickame" placeholder="Enter account nickname"/>
           
-          <Input onChange={handleAddFormInputChange} id="credit_card" name="account_type" type="radio" value="credit_card" label="Account Type" radioLabel="Credit card" standalone={false} checked={addAccountType === 'credit_card'}/>
-          <Input onChange={handleAddFormInputChange} id="bank_account" name="account_type" type="radio" value="bank_account" radioLabel="Bank account" checked={addAccountType === 'bank_account'}/>
+          <Input onChange={handleAddFormInputChange} id="credit_card" name="account_type" type="radio" value="credit_card" label="Account Type" sideLabel="Credit card" standalone={false} checked={addAccountType === 'credit_card'}/>
+          <Input onChange={handleAddFormInputChange} id="bank_account" name="account_type" type="radio" value="bank_account" sideLabel="Bank account" checked={addAccountType === 'bank_account'}/>
 
           <div className="flex flex-row justify-center mt-8">
             <Button type="submit" size="md">Enter</Button> 

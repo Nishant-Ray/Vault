@@ -133,14 +133,16 @@ export default function Page() {
     } else {
       transaction.date = newDate;
       newTransactions.splice(index, 1);
-      const newIndex = newTransactions.findIndex(item => item.date < transaction.date);
-      if (newIndex === -1) newTransactions.push(transaction);
-      else newTransactions.splice(newIndex, 0, transaction);
+      if (getMonthFromDate(transaction.date) === selectedTransactionMonth) {
+        const newIndex = newTransactions.findIndex(item => item.date < transaction.date);
+        if (newIndex === -1) newTransactions.push(transaction);
+        else newTransactions.splice(newIndex, 0, transaction);
+      }
     }
 
     setTransactions(newTransactions);
 
-    if (selectedMonthlySpendingMonth === selectedTransactionMonth) {
+    if (selectedMonthlySpendingMonth === selectedTransactionMonth && getMonthFromDate(transaction.date) === selectedTransactionMonth) {
       setMonthlySpending(monthlySpending + (transaction.amount - originalAmount));
     }
   }
@@ -225,7 +227,7 @@ export default function Page() {
       <TransactionModal type={modalType} isOpen={transactionModalOpen} accounts={accounts} transaction={transactionSelected} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onEditModalSubmit={handleEditModalSubmit} onDeleteModalSubmit={handleDeleteModalSubmit} onClose={handleTransactionModalClose}/>
       
       <div className="flex flex-row gap-8">
-        <div className="flex flex-col gap-8 w-2/5">
+        <div className="flex flex-col gap-8 w-[28vw]">
           <Card>
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Monthly Spending</h3>
@@ -250,9 +252,15 @@ export default function Page() {
 
             <SpendingGraph year={selectedYear} flag={monthlySpending}/>
           </Card>
+
+          <Card>
+            <h3 className="text-lg font-medium text-off_black">AI Insights</h3>
+
+            <p className="text-md font-normal text-off_gray mt-1">No insights!</p>
+          </Card>
         </div>
 
-        <div className="flex flex-col gap-8 w-3/5">
+        <div className="flex flex-col gap-8">
           <Card>
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Transactions</h3>

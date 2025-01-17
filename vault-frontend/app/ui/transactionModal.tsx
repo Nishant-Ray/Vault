@@ -154,9 +154,9 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
           <Input onChange={handleTransactionAddManualFormInputChange} value={String(transactionAddManualFormState.date)} max={new Date().toJSON().slice(0, 10)} id="date" name="date" type="date" label="Date of Transaction"/>
           <Input onChange={handleTransactionAddManualFormInputChange} value={String(transactionAddManualFormState.amount)} id="amount" name="amount" type="number" label="Amount ($)" placeholder="Enter transaction amount"/>
           
-          <Input onChange={handleTransactionAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" radioLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
-          <Input onChange={handleTransactionAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" radioLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
-          <Input onChange={handleTransactionAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" radioLabel="Category 3" checked={categoryOption === 'category3'}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
+          <Input onChange={handleTransactionAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
           
           <Input onChange={handleTransactionAddManualFormInputChange} value={transactionAddManualFormState.description} id="description" name="description" type="text" label="Description" placeholder="Enter transaction description"/>
           
@@ -180,9 +180,9 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
           <Input onChange={handleTransactionEditFormInputChange} value={transactionEditFormState.date} max={new Date().toJSON().slice(0, 10)} id="date" name="date" type="date" label="Date of Transaction"/>
           <Input onChange={handleTransactionEditFormInputChange} value={String(transactionEditFormState.amount)} id="amount" name="amount" type="number" label="Amount ($)" placeholder="Enter transaction amount"/>
           
-          <Input onChange={handleTransactionEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" radioLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
-          <Input onChange={handleTransactionEditFormInputChange} id="category2" name="category" type="radio" value="category2" radioLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
-          <Input onChange={handleTransactionEditFormInputChange} id="category3" name="category" type="radio" value="category3" radioLabel="Category 3" checked={categoryOption === 'category3'}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
+          <Input onChange={handleTransactionEditFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
           
           <Input onChange={handleTransactionEditFormInputChange} value={transactionEditFormState.description} id="description" name="description" type="text" label="Description" placeholder="Enter transaction description"/>
           

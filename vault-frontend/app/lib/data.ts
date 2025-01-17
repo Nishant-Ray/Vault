@@ -136,6 +136,7 @@ export async function fetchMonthlyTransactions(month: number) {
 export async function addTransaction(transactionData: TransactionAddManualModalData) {
   try {
     const response = await request<TransactionData>(`transactions/add/${transactionData.accountID}/${unformatDate(transactionData.date)}/${transactionData.amount}/${transactionData.category}/${encodeURIComponent(transactionData.description)}`, 'POST');
+    console.log(response);
     return response.data?.transaction;
 
   } catch (error) {

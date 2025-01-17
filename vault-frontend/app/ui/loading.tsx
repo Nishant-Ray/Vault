@@ -3,7 +3,7 @@ import CardSkeleton from './cardSkeleton';
 export default function Loading() {
   return (
     <>
-      <div className="grid gap-8 grid-cols-3">
+      <div className="grid gap-8 grid-cols-5">
         <CardSkeleton/>
         <CardSkeleton isWide={true}/>
         <CardSkeleton/>

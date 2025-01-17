@@ -22,6 +22,15 @@ export function validDollarAmount(amount: number): boolean {
   return true;
 }
 
+export function getCurrentDate(): number { // YYYYMMDD
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const currMonth = month < 10 ? `0${month}` : month;
+  const date = today.getDate();
+  const currDate = date < 10 ? `0${date}` : date;
+  return Number(`${today.getFullYear()}${currMonth}${currDate}`);
+}
+
 export function getLast12MonthsAsOptions(): SelectOption[] {
   const today = new Date();
   let last12Months: SelectOption[] = [];

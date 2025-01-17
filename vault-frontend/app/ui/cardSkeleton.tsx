@@ -9,7 +9,8 @@ export default function CardSkeleton({ isWide = false }: CardSkeletonProps) {
   return (
     <div className={clsx(`${shimmer} relative overflow-hidden rounded-xl flex flex-col gap-4 bg-white p-4 shadow-sm`,
       {
-        "col-span-2": isWide
+        "col-span-3": isWide,
+        "col-span-2": !isWide
       }
     )}>
       <div className="flex gap-4">

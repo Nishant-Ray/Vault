@@ -7,9 +7,9 @@ import BillCard from '@/app/ui/billCard';
 import BillModal from '@/app/ui/billModal';
 import IconButton from '@/app/ui/iconButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { fetchAllBills, addBill, editBill, removeBill } from '@/app/lib/data';
-import { formatDollarAmount, formatDate, unformatDate } from '@/app/lib/utils';
-import { Bill, BILL_ADD_MANUAL_MODAL_TYPE, BILL_ADD_DOCUMENT_MODAL_TYPE, BILL_PAY_MODAL_TYPE, BILL_EDIT_MODAL_TYPE, BILL_DELETE_MODAL_TYPE, BillAddManualModalData, BillEditModalData } from '@/app/lib/definitions';
+import { fetchAccounts, addTransaction, fetchAllBills, addBill, editBill, removeBill } from '@/app/lib/data';
+import { formatDollarAmount, getCurrentDate, formatDate, unformatDate } from '@/app/lib/utils';
+import { Account, Bill, BILL_ADD_MANUAL_MODAL_TYPE, BILL_ADD_DOCUMENT_MODAL_TYPE, BILL_PAY_MODAL_TYPE, BILL_EDIT_MODAL_TYPE, BILL_DELETE_MODAL_TYPE, TransactionAddManualModalData, BillAddManualModalData, BillPayModalData, BillEditModalData } from '@/app/lib/definitions';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -19,6 +19,7 @@ export default function Page() {
   const [modalType, setModalType] = useState<number>(BILL_ADD_MANUAL_MODAL_TYPE);
   const [billModalOpen, setBillModalOpen] = useState<boolean>(false);
   const [billSelected, setBillSelected] = useState<Bill | null>(null);
+  const [accounts, setAccounts] = useState<Account[]>([]);
 
   const openBillAddOptions = () => {
     setBillAddOptionsOpen(true);
@@ -61,11 +62,26 @@ export default function Page() {
     setBillModalOpen(true);
   };
 
-  const handlePayModalSubmit = async (id: number) => {
+  const handlePayModalSubmit = async (id: number, data: BillPayModalData) => {
     setBills((prevBills) => prevBills.filter((bill) => bill.id !== id));
     await removeBill(id);
 
+    console.log(data);
+
+    if (data.alsoTransaction) {
+      const transactionData: TransactionAddManualModalData = {
+        accountID: data.accountID,
+        date: (new Date()).toDateString(),
+        amount: String(billSelected?.total),
+        category: data.transactionCategory,
+        description: `${billSelected?.name} Bill Payment`
+      };
+      
+      await addTransaction(transactionData);
+    }
+
     setBillModalOpen(false);
+    setBillSelected(null);
   };
   
   const handleEditClick = (id: number) => {
@@ -120,10 +136,12 @@ export default function Page() {
     await removeBill(id);
 
     setBillModalOpen(false);
+    setBillSelected(null);
   };
 
   const handleBillModalClose = () => {
     setBillModalOpen(false);
+    setBillSelected(null);
   };
 
   useEffect(() => {
@@ -132,6 +150,9 @@ export default function Page() {
       
       const fetchedBills = await fetchAllBills();
       if (fetchedBills) setBills(fetchedBills);
+
+      const fetchedAccounts = await fetchAccounts();
+      if (fetchedAccounts) setAccounts(fetchedAccounts);
 
       setLoading(false);
     };
@@ -154,7 +175,7 @@ export default function Page() {
 
   return (
     <main>
-      <BillModal type={modalType} isOpen={billModalOpen} bill={billSelected} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditModalSubmit} onDeleteModalSubmit={handleDeleteModalSubmit} onClose={handleBillModalClose}/>
+      <BillModal type={modalType} isOpen={billModalOpen} bill={billSelected} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditModalSubmit} onDeleteModalSubmit={handleDeleteModalSubmit} onClose={handleBillModalClose}/>
 
       <div className="flex flex-row gap-8">
         <div className="flex flex-col gap-8 w-3/5">
@@ -214,7 +235,11 @@ export default function Page() {
         </div>
 
         <div className="flex flex-col gap-8 w-2/5">
-          
+          <Card>
+            <h3 className="text-lg font-medium text-off_black">AI Insights</h3>
+
+            <p className="text-md font-normal text-off_gray mt-1">No insights!</p>
+          </Card>
         </div>
       </div>
     </main>

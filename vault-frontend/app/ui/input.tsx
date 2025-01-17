@@ -12,16 +12,16 @@ interface InputProps {
   min?: string;
   max?: string;
   checked?: boolean;
-  radioLabel?: string;
+  sideLabel?: string;
   standalone?: boolean;
   className?: string;
 }
 
-export default function Input({ onChange, id, name, type, value, min, max, checked, label, placeholder, radioLabel, standalone = true, className, ...rest }: InputProps) {
+export default function Input({ onChange, id, name, type, value, min, max, checked, label, placeholder, sideLabel, standalone = true, className, ...rest }: InputProps) {
   return (
     <div className={clsx({ "mb-5": standalone })}>
       { label && <label htmlFor={id} className="block mb-2 text-lg font-medium text-off_black pl-2">{label}</label> }
-      { type === 'radio' ? (
+      { type === 'checkbox' || type === 'radio' ? (
         <label className="font-normal text-off_black flex">
           <input
             {...rest}
@@ -38,7 +38,7 @@ export default function Input({ onChange, id, name, type, value, min, max, check
               className
             )}
           />
-          {radioLabel}
+          {sideLabel}
         </label>
       ) : (
         <input

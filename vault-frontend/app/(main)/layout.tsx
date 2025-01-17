@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div>
       <div className="flex flex-row">
-        <div className="sticky top-0 left-0 bg-white w-80 h-screen px-3 py-4 flex flex-col shadow-sm z-10">
+        <div className="sticky top-0 left-0 bg-white min-w-60 h-screen px-3 py-4 flex flex-col shadow-sm z-10">
           <SideNav/>
         </div>
 

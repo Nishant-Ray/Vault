@@ -172,7 +172,13 @@ export type BillAddManualModalData = {
 
 export type BillAddDocumentModalData = {
   nickname: string;
-}
+};
+
+export type BillPayModalData = {
+  alsoTransaction: boolean;
+  accountID: string;
+  transactionCategory: string;
+};
 
 export type BillEditModalData = BillAddManualModalData;
 

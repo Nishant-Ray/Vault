@@ -77,20 +77,18 @@ export default function BillCard({ full = true, id, name, category, dueDate, tot
       </div>
 
       { cardOpen &&
-        <div className="bg-white p-4 rounded-b-md flex flex-row justify-between items-start">
+        <div className="bg-white p-4 rounded-b-md flex flex-row justify-between items-center">
           <div className="flex flex-col gap-1">
             <p className="text-sm text-off_gray font-normal">Bill Total</p>
             <p className={`${dmSans.className} antialiased tracking-tight text-off_black font-semibold text-3xl`}>{total}</p>
           </div>
 
-          <div className="flex flex-col gap-1 w-72">
-            <p className="text-sm text-off_gray font-normal">Bill Name</p>
-            <div className="bg-black/5 rounded-md p-2">
-              <p className="text-off_black font-normal line-clamp-3">{name}</p>
-            </div>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-off_gray font-normal">Bill Due Date</p>
+            <p className={`${dmSans.className} antialiased tracking-tight text-off_black font-semibold text-3xl`}>{dueDate}</p>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-row gap-4">
             <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/>
             <IconButton icon={PencilIcon} onClick={() => { if (onEdit) onEdit(id); }} blank={false}/>
             <IconButton icon={TrashIcon} onClick={() => { if (onDelete) onDelete(id); }} blank={false}/>
