@@ -51,6 +51,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
   const [billEditFormState, setBillEditFormState] = useState<BillEditModalData>(initialEditModalData);
   const [categoryOption, setCategoryOption] = useState<string>(initialManualModalData.category);
   const [invalidDollarAmount, setInvalidDollarAmount] = useState<boolean>(false);
+  const [alsoTransactionChecked, setAlsoTransactionChecked] = useState<boolean>(false);
   const [accountOptions, setAccountOptions] = useState<SelectOption[]>([]);
   const [transactionCategoryOption, setTransactionCategoryOption] = useState<string>(initialPayModalData.transactionCategory);
 
@@ -61,6 +62,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
     setBillPayFormState(initialPayModalData);
     setBillEditFormState(initialEditModalData);
     setCategoryOption(initialManualModalData.category);
+    setAlsoTransactionChecked(false);
     setTransactionCategoryOption(initialPayModalData.transactionCategory);
     setInvalidDollarAmount(false);
   };
@@ -91,6 +93,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
     }));
 
     if (name === 'transactionCategory') setTransactionCategoryOption(value);
+    else if (name === 'alsoTransaction' && event.target instanceof HTMLInputElement) setAlsoTransactionChecked(event.target.checked);
   };
 
   const handleBillEditFormInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
@@ -201,7 +204,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
         </form>
       ) : (type === BILL_PAY_MODAL_TYPE ? (
         <form onSubmit={handleBillPayModalFormSubmit}>
-          <Input onChange={handleBillPayFormInputChange} id="alsoTransaction" name="alsoTransaction" type="checkbox" label="Log this as a transaction?" sideLabel="Yes"></Input>
+          <Input onChange={handleBillPayFormInputChange} id="alsoTransaction" name="alsoTransaction" type="checkbox" label="Log this as a transaction?" sideLabel="Yes" checked={alsoTransactionChecked}></Input>
           
           { billPayFormState.alsoTransaction && (
             <>
@@ -215,7 +218,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
 
           <div className="flex flex-row justify-center gap-8">
             <Button type="submit" size="md">Pay Bill</Button>
-            <Button onClick={onClose} buttonType="neutral" size="md">Cancel</Button>
+            <Button onClick={handleClose} buttonType="neutral" size="md">Cancel</Button>
           </div>
         </form>
       ) : (type === BILL_EDIT_MODAL_TYPE ? (
