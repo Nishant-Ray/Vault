@@ -7,7 +7,7 @@ import BillCard from '@/app/ui/billCard';
 import BillModal from '@/app/ui/billModal';
 import IconButton from '@/app/ui/iconButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { fetchAccounts, addTransaction, fetchAllBills, addBill, editBill, removeBill } from '@/app/lib/data';
+import { fetchAccounts, addTransaction, fetchAllBills, addBill, editBill, removeBill, fetchResidenceName } from '@/app/lib/data';
 import { formatDollarAmount, getCurrentDate, formatDate, unformatDate } from '@/app/lib/utils';
 import { Account, Bill, BILL_ADD_MANUAL_MODAL_TYPE, BILL_ADD_DOCUMENT_MODAL_TYPE, BILL_PAY_MODAL_TYPE, BILL_EDIT_MODAL_TYPE, BILL_DELETE_MODAL_TYPE, TransactionAddManualModalData, BillAddManualModalData, BillPayModalData, BillEditModalData } from '@/app/lib/definitions';
 
@@ -18,6 +18,7 @@ export default function Page() {
   const [billAddOptionsOpen, setBillAddOptionsOpen] = useState<boolean>(false);
   const [modalType, setModalType] = useState<number>(BILL_ADD_MANUAL_MODAL_TYPE);
   const [billModalOpen, setBillModalOpen] = useState<boolean>(false);
+  const [partOfResidence, setPartOfResidence] = useState<boolean>(false);
   const [billSelected, setBillSelected] = useState<Bill | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
@@ -102,6 +103,7 @@ export default function Page() {
     bill.category = data.category;
     const newDate = unformatDate(data.dueDate);
     bill.total = Number(data.total);
+    bill.shared = data.residence;
 
     if (bill.due_date === newDate) {
       newBills[index] = bill;
@@ -154,6 +156,9 @@ export default function Page() {
       const fetchedAccounts = await fetchAccounts();
       if (fetchedAccounts) setAccounts(fetchedAccounts);
 
+      const fetchedResidenceName = await fetchResidenceName();
+      setPartOfResidence(fetchedResidenceName !== undefined);
+
       setLoading(false);
     };
 
@@ -175,7 +180,7 @@ export default function Page() {
 
   return (
     <main>
-      <BillModal type={modalType} isOpen={billModalOpen} bill={billSelected} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditModalSubmit} onDeleteModalSubmit={handleDeleteModalSubmit} onClose={handleBillModalClose}/>
+      <BillModal type={modalType} isOpen={billModalOpen} partOfResidence={partOfResidence} bill={billSelected} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditModalSubmit} onDeleteModalSubmit={handleDeleteModalSubmit} onClose={handleBillModalClose}/>
 
       <div className="flex flex-row gap-8">
         <div className="flex flex-col gap-8 w-3/5">

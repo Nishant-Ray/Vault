@@ -11,7 +11,8 @@ const initialManualModalData: BillAddManualModalData = {
   name: '',
   total: '0',
   dueDate: '',
-  category: 'category1'
+  category: 'category1',
+  residence: false
 };
 
 const initialDocumentModalData: BillAddDocumentModalData = {
@@ -28,12 +29,14 @@ const initialEditModalData: BillEditModalData = {
   name: '',
   total: '0',
   dueDate: '',
-  category: 'category1'
+  category: 'category1',
+  residence: false
 }
 
 type BillModalProps = {
   type: number;
   isOpen: boolean;
+  partOfResidence: boolean;
   bill: Bill | null;
   accounts: Account[];
   onManualModalSubmit: (data: BillAddManualModalData) => void;
@@ -44,13 +47,14 @@ type BillModalProps = {
   onClose: () => void;
 }
 
-export default function BillModal({ type, isOpen, bill, accounts, onManualModalSubmit, onDocumentModalSubmit, onPayModalSubmit, onEditModalSubmit, onDeleteModalSubmit, onClose }: BillModalProps) {
+export default function BillModal({ type, isOpen, partOfResidence, bill, accounts, onManualModalSubmit, onDocumentModalSubmit, onPayModalSubmit, onEditModalSubmit, onDeleteModalSubmit, onClose }: BillModalProps) {
   const [billAddManualFormState, setBillAddManualFormState] = useState<BillAddManualModalData>(initialManualModalData);
   const [billAddDocumentFormState, setBillAddDocumentFormState] = useState<BillAddDocumentModalData>(initialDocumentModalData);
   const [billPayFormState, setBillPayFormState] = useState<BillPayModalData>(initialPayModalData);
   const [billEditFormState, setBillEditFormState] = useState<BillEditModalData>(initialEditModalData);
   const [categoryOption, setCategoryOption] = useState<string>(initialManualModalData.category);
   const [invalidDollarAmount, setInvalidDollarAmount] = useState<boolean>(false);
+  const [residenceChecked, setResidenceChecked] = useState<boolean>(false);
   const [alsoTransactionChecked, setAlsoTransactionChecked] = useState<boolean>(false);
   const [accountOptions, setAccountOptions] = useState<SelectOption[]>([]);
   const [transactionCategoryOption, setTransactionCategoryOption] = useState<string>(initialPayModalData.transactionCategory);
@@ -62,6 +66,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
     setBillPayFormState(initialPayModalData);
     setBillEditFormState(initialEditModalData);
     setCategoryOption(initialManualModalData.category);
+    setResidenceChecked(false);
     setAlsoTransactionChecked(false);
     setTransactionCategoryOption(initialPayModalData.transactionCategory);
     setInvalidDollarAmount(false);
@@ -71,10 +76,11 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
     const { name, value } = event.target;
     setBillAddManualFormState((prevFormData) => ({
       ...prevFormData,
-      [name]: value
+      [name]: (name === 'residence' && event.target instanceof HTMLInputElement) ? event.target.checked : value
     }));
 
     if (name === 'category') setCategoryOption(value);
+    else if (name === 'residence' && event.target instanceof HTMLInputElement) setResidenceChecked(event.target.checked);
   };
 
   const handleBillAddDocumentFormInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
@@ -100,10 +106,11 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
     const { name, value } = event.target;
     setBillEditFormState((prevFormData) => ({
       ...prevFormData,
-      [name]: value
+      [name]: (name === 'residence' && event.target instanceof HTMLInputElement) ? event.target.checked : value
     }));
 
     if (name === 'category') setCategoryOption(value);
+    else if (name === 'residence' && event.target instanceof HTMLInputElement) setResidenceChecked(event.target.checked);
   };
 
   const handleBillAddManualModalFormSubmit = (event: React.FormEvent): void => {
@@ -136,7 +143,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
     if (bill) {
       if (validDollarAmount(Number(billEditFormState.total))) {
         onEditModalSubmit(bill.id, billEditFormState);
-        setBillEditFormState(initialManualModalData);
+        setBillEditFormState(initialEditModalData);
         setInvalidDollarAmount(false);
       } else {
         setInvalidDollarAmount(true);
@@ -162,8 +169,11 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
         name: bill.name,
         total: String(bill.total),
         dueDate: reformatDate(bill.due_date),
-        category: bill.category
+        category: bill.category,
+        residence: bill.shared
       });
+      
+      setResidenceChecked(bill.shared);
     }
   }, [bill]);
 
@@ -182,11 +192,13 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
         <form onSubmit={handleBillAddManualModalFormSubmit}>
           <Input onChange={handleBillAddManualFormInputChange} value={billAddManualFormState.name} id="name" name="name" type="text" label="Name" placeholder="Enter bill name"/>
           <Input onChange={handleBillAddManualFormInputChange} value={String(billAddManualFormState.total)} id="total" name="total" type="number" label="Total ($)" placeholder="Enter bill total"/>
-          <Input onChange={handleBillAddManualFormInputChange} value={String(billAddManualFormState.dueDate)} min={new Date().toJSON().slice(0, 10)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
+          <Input onChange={handleBillAddManualFormInputChange} value={String(billAddManualFormState.dueDate)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
 
           <Input onChange={handleBillAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
           <Input onChange={handleBillAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
           <Input onChange={handleBillAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
+
+          { partOfResidence && <Input onChange={handleBillAddManualFormInputChange} id="residence" name="residence" type="checkbox" label="Add this as a residence bill?" sideLabel="Yes" checked={residenceChecked}/> }
 
           <Warning isShown={invalidDollarAmount}>Please enter a valid dollar amount!</Warning>
 
@@ -204,7 +216,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
         </form>
       ) : (type === BILL_PAY_MODAL_TYPE ? (
         <form onSubmit={handleBillPayModalFormSubmit}>
-          <Input onChange={handleBillPayFormInputChange} id="alsoTransaction" name="alsoTransaction" type="checkbox" label="Log this as a transaction?" sideLabel="Yes" checked={alsoTransactionChecked}></Input>
+          <Input onChange={handleBillPayFormInputChange} id="alsoTransaction" name="alsoTransaction" type="checkbox" label="Log this as a transaction?" sideLabel="Yes" checked={alsoTransactionChecked}/>
           
           { billPayFormState.alsoTransaction && (
             <>
@@ -225,12 +237,14 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
         <form onSubmit={handleBillEditModalFormSubmit}>
           <Input onChange={handleBillEditFormInputChange} value={billEditFormState.name} id="name" name="name" type="text" label="Name" placeholder="Enter bill name"/>
           <Input onChange={handleBillEditFormInputChange} value={String(billEditFormState.total)} id="total" name="total" type="number" label="Total ($)" placeholder="Enter bill total"/>
-          <Input onChange={handleBillEditFormInputChange} value={String(billEditFormState.dueDate)} min={new Date().toJSON().slice(0, 10)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
+          <Input onChange={handleBillEditFormInputChange} value={String(billEditFormState.dueDate)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
 
           <Input onChange={handleBillEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
           <Input onChange={handleBillEditFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
           <Input onChange={handleBillEditFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
-          
+
+          { partOfResidence && <Input onChange={handleBillEditFormInputChange} id="residence" name="residence" type="checkbox" label="Add this as a residence bill?" sideLabel="Yes" checked={residenceChecked}/> }
+
           <Warning isShown={invalidDollarAmount}>Please enter a valid dollar amount!</Warning>
 
           <div className="flex flex-row justify-center mt-8">

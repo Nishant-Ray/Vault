@@ -168,6 +168,7 @@ export type BillAddManualModalData = {
   total: string;
   dueDate: string;
   category: string;
+  residence: boolean;
 };
 
 export type BillAddDocumentModalData = {

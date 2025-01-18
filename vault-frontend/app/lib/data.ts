@@ -189,7 +189,7 @@ export async function fetchAllBills() {
 
 export async function addBill(billData: BillAddManualModalData) {
   try {
-    const response = await request<BillData>(`bills/add/${unformatDate(billData.dueDate)}/${billData.total}/false/${billData.category}/${encodeURIComponent(billData.name)}`, 'POST');
+    const response = await request<BillData>(`bills/add/${unformatDate(billData.dueDate)}/${billData.total}/${billData.residence}/${billData.category}/${encodeURIComponent(billData.name)}`, 'POST');
     return response.data?.bill;
 
   } catch (error) {
@@ -200,7 +200,7 @@ export async function addBill(billData: BillAddManualModalData) {
 
 export async function editBill(id: number, billData: BillEditModalData) {
   try {
-    await request<null>(`bills/edit/${id}/${unformatDate(billData.dueDate)}/${billData.total}/false/${billData.category}/${encodeURIComponent(billData.name)}`, 'PATCH');
+    await request<null>(`bills/edit/${id}/${unformatDate(billData.dueDate)}/${billData.total}/${billData.residence}/${billData.category}/${encodeURIComponent(billData.name)}`, 'PATCH');
 
   } catch (error) {
     console.error('Server error:', error);

@@ -31,7 +31,6 @@ export default function Input({ onChange, id, name, type, value, min, max, check
             name={name}
             value={value}
             placeholder={placeholder}
-            required
             checked={checked}
             className={clsx(
               "focus:outline-none mr-2",
