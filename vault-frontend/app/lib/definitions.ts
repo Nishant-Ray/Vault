@@ -188,10 +188,15 @@ type User = {
   name: string;
 };
 
-export type ResidenceInfoData = {
+export type Residence = {
   name: string;
-  users: User[];
+  monthly_payment: 'rent' | 'mortgage' | 'none';
 }
+
+export type ResidenceData = {
+  residence: Residence;
+  users: User[];
+};
 
 export type ResidenceMessage = {
   content: string;
@@ -205,6 +210,18 @@ export type ResidenceMessage = {
 export type ResidenceMessagesData = {
   messages: ResidenceMessage[];
 }
+
+export const RESIDENCE_CREATE_MODAL_TYPE = 0;
+export const RESIDENCE_EDIT_MODAL_TYPE = 1;
+export const RESIDENCE_LEAVE_MODAL_TYPE = 2;
+export const RESIDENCE_DELETE_MODAL_TYPE = 3;
+
+export type ResidenceCreateModalData = {
+  name: string;
+  monthlyPayment: 'rent' | 'mortgage' | 'none';
+}
+
+export type ResidenceEditModalData = ResidenceCreateModalData;
 
 export type SelectOption = {
   value: number;

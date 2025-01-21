@@ -1,6 +1,6 @@
 import { request } from '@/app/lib/api';
 import { unformatDate } from '@/app/lib/utils';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceInfoData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidenceMessagesData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -136,7 +136,6 @@ export async function fetchMonthlyTransactions(month: number) {
 export async function addTransaction(transactionData: TransactionAddManualModalData) {
   try {
     const response = await request<TransactionData>(`transactions/add/${transactionData.accountID}/${unformatDate(transactionData.date)}/${transactionData.amount}/${transactionData.category}/${encodeURIComponent(transactionData.description)}`, 'POST');
-    console.log(response);
     return response.data?.transaction;
 
   } catch (error) {
@@ -218,14 +217,85 @@ export async function removeBill(id: number) {
   }
 }
 
+export async function fetchResidenceInfo() {
+  try {
+    const response = await request<ResidenceData>('residences/get_info', 'GET');
+    return response.data;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch residence info.');
+  }
+}
+
 export async function fetchResidenceName() {
   try {
-    const response = await request<ResidenceInfoData>('residences/get_info', 'GET');
-    return response.data?.name;
+    const response = await request<ResidenceData>('residences/get_info', 'GET');
+    return response.data?.residence.name;
 
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to fetch residence name.');
+  }
+}
+
+export async function createResidence(data: ResidenceCreateModalData) {
+  try {
+    await request<null>(`residences/create/${encodeURIComponent(data.name)}/${data.monthlyPayment}`, 'POST');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to create residence.');
+  }
+}
+
+export async function editResidence(data: ResidenceEditModalData) {
+  try {
+    await request<null>(`residences/edit/${encodeURIComponent(data.name)}/${data.monthlyPayment}`, 'PATCH');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to edit residence.');
+  }
+}
+
+export async function leaveResidence() {
+  try {
+    await request<null>(`residences/leave`, 'DELETE');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to leave residence.');
+  }
+}
+
+export async function deleteResidence() {
+  try {
+    await request<null>(`residences/delete`, 'DELETE');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to delete residence.');
+  }
+}
+
+export async function addResident(email: string) {
+  try {
+    await request<null>(`residences/invite_resident/${encodeURIComponent(email)}`, 'PATCH');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to add resident.');
+  }
+}
+
+export async function removeResident(id: number) {
+  try {
+    await request<null>(`residences/remove_resident/${id}`, 'PATCH');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to remove resident.');
   }
 }
 

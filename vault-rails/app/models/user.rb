@@ -10,6 +10,8 @@ class User < ApplicationRecord
   has_many :accounts, dependent: :nullify
   has_many :transactions, dependent: :nullify
   has_many :bills
+  has_many :paid_residence_payments, class_name: "ResidencePayment", foreign_key: :payer_id
+  has_many :received_residence_payments, class_name: "ResidencePayment", foreign_key: :payee_id
   has_many :residence_messages
 
   belongs_to :residence, optional: true

@@ -45,8 +45,8 @@ Rails.application.routes.draw do
     collection do
       get :get_all
       get :get_upcoming
-      post "add/:due_date/:total/:shared/:category/:name", to: "bills#add", constraints: { total: /[.\d]+/, name: /[^\/]+/ }
-      patch "edit/:id/:due_date/:total/:shared/:category/:name", to: "bills#edit", constraints: { total: /[.\d]+/, name: /[^\/]+/ }
+      post "add/:due_date/:total/:category/:name", to: "bills#add", constraints: { total: /[.\d]+/, name: /[^\/]+/ }
+      patch "edit/:id/:due_date/:total/:category/:name", to: "bills#edit", constraints: { total: /[.\d]+/, name: /[^\/]+/ }
       delete "remove/:id", to: "bills#remove"
     end
   end
@@ -54,11 +54,30 @@ Rails.application.routes.draw do
   resources :residences, only: [] do
     collection do
       get :get_info
-      post "create/:name", to: "residences#create", constraints: { name: /[^\/]+/ }
-      delete "delete", to: "residences#delete"
+      post "create/:name/:monthly_payment", to: "residences#create", constraints: { name: /[^\/]+/ }
+      patch "edit/:name/:monthly_payment", to: "residences#edit", constraints: { name: /[^\/]+/ }
+      delete :leave
+      delete :delete
       post "invite_resident/:email", to: "residences#invite_resident"
       patch "remove_resident/:id", to: "residences#remove_resident"
-      patch "change_name/:name", to: "residences#change_name", constraints: { name: /[^\/]+/ }
+    end
+  end
+
+  resources :residence_bills, only: [] do
+    collection do
+      get "get_all", to: "residence_bills#get_all"
+      get "get_by_month/:month", to: "residence_bills#get_by_month"
+      get "get_payments/:id", to: "residence_bills#get_payments"
+      post "add/:total/:category/:due_date", to: "residence_bills#add", constraints: { total: /[.\d]+/ }
+      patch "edit/:id/:total/:category/:due_date", to: "residence_bills#edit", constraints: { total: /[.\d]+/ }
+      delete "remove/:id", to: "residence_bills#remove"
+    end
+  end
+
+  resources :residence_payments, only: [] do
+    collection do
+      post "add/:payee_id/:amount", to: "residence_payments#add", constraints: { amount: /[.\d]+/ }
+      patch "pay/:id", to: "residence_payments#pay"
     end
   end
 

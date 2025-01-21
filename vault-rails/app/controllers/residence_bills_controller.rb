@@ -1,5 +1,5 @@
-class ResidencesController < ApplicationController
-  def get_info
+class ResidenceBillsController < ApplicationController
+  def get_all
     if request.headers["Authorization"].present?
       jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
       current_user = User.find(jwt_payload["sub"])
@@ -7,9 +7,11 @@ class ResidencesController < ApplicationController
 
     if current_user
       if current_user.residence
+        # ...
+
         render json: {
-          status: { code: 200, message: "Successfully retrieved residence info." },
-          data: { residence: current_user.residence, users: current_user.residence.users } # TODO: make users: be usernames, not array of every user object
+          status: { code: 200, message: "Successfully _____." },
+          data: { }
         }, status: :ok
       else
         render json: {
@@ -26,7 +28,7 @@ class ResidencesController < ApplicationController
     end
   end
 
-  def create
+  def get_by_month
     if request.headers["Authorization"].present?
       jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
       current_user = User.find(jwt_payload["sub"])
@@ -34,17 +36,74 @@ class ResidencesController < ApplicationController
 
     if current_user
       if current_user.residence
-        render json: {
-          status: { code: 400, message: "User already has a residence." }
-        }, status: :bad_request
-      else
-        new_residence = Residence.create(name: params[:name], monthly_payment: params[:monthly_payment])
-        current_user.residence = new_residence
-        current_user.save
+        # ...
 
         render json: {
-          status: { code: 200, message: "Successfully created residence." }
+          status: { code: 200, message: "Successfully _____." },
+          data: { }
         }, status: :ok
+      else
+        render json: {
+          status: { code: 404, message: "User does not have a residence." }
+        }, status: :not_found
+      end
+    else
+      render json: {
+        status: {
+          code: 401,
+          message: "Unauthorized."
+        }
+      }, status: :unauthorized
+    end
+  end
+
+  def get_payments
+    if request.headers["Authorization"].present?
+      jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
+      current_user = User.find(jwt_payload["sub"])
+    end
+
+    if current_user
+      if current_user.residence
+        # ...
+
+        render json: {
+          status: { code: 200, message: "Successfully _____." },
+          data: { }
+        }, status: :ok
+      else
+        render json: {
+          status: { code: 404, message: "User does not have a residence." }
+        }, status: :not_found
+      end
+    else
+      render json: {
+        status: {
+          code: 401,
+          message: "Unauthorized."
+        }
+      }, status: :unauthorized
+    end
+  end
+
+  def add
+    if request.headers["Authorization"].present?
+      jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
+      current_user = User.find(jwt_payload["sub"])
+    end
+
+    if current_user
+      if current_user.residence
+        # ...
+
+        render json: {
+          status: { code: 200, message: "Successfully _____." },
+          data: { }
+        }, status: :ok
+      else
+        render json: {
+          status: { code: 404, message: "User does not have a residence." }
+        }, status: :not_found
       end
     else
       render json: {
@@ -64,14 +123,15 @@ class ResidencesController < ApplicationController
 
     if current_user
       if current_user.residence
-        current_user.residence.update(name: params[:name], monthly_payment: params[:monthly_payment])
+        # ...
 
         render json: {
-          status: { code: 200, message: "Successfully edited residence." }
+          status: { code: 200, message: "Successfully _____." },
+          data: { }
         }, status: :ok
       else
         render json: {
-          status: { code: 404, message: "User has no residence." }
+          status: { code: 404, message: "User does not have a residence." }
         }, status: :not_found
       end
     else
@@ -84,7 +144,7 @@ class ResidencesController < ApplicationController
     end
   end
 
-  def leave
+  def remove
     if request.headers["Authorization"].present?
       jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
       current_user = User.find(jwt_payload["sub"])
@@ -92,103 +152,15 @@ class ResidencesController < ApplicationController
 
     if current_user
       if current_user.residence
-        current_user.residence = nil
-        current_user.save
+        # ...
 
         render json: {
-          status: { code: 200, message: "Successfully left residence." }
+          status: { code: 200, message: "Successfully _____." },
+          data: { }
         }, status: :ok
       else
         render json: {
-          status: { code: 404, message: "User has no residence." }
-        }, status: :not_found
-      end
-    else
-      render json: {
-        status: {
-          code: 401,
-          message: "Unauthorized."
-        }
-      }, status: :unauthorized
-    end
-  end
-
-
-  def delete
-    if request.headers["Authorization"].present?
-      jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
-      current_user = User.find(jwt_payload["sub"])
-    end
-
-    if current_user
-      if current_user.residence
-        current_user.residence.destroy
-
-        render json: {
-          status: { code: 200, message: "Successfully deleted residence." }
-        }, status: :ok
-      else
-        render json: {
-          status: { code: 404, message: "User has no residence." }
-        }, status: :not_found
-      end
-    else
-      render json: {
-        status: {
-          code: 401,
-          message: "Unauthorized."
-        }
-      }, status: :unauthorized
-    end
-  end
-
-  def invite_resident
-    if request.headers["Authorization"].present?
-      jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
-      current_user = User.find(jwt_payload["sub"])
-    end
-
-    if current_user
-      if current_user.residence
-        other_user = User.where(email: params[:email])
-        other_user.residence = current_user.residence # TODO: create a notification record instead of just adding user
-
-        render json: {
-          status: { code: 200, message: "Successfully invited user to residence." }
-        }, status: :ok
-      else
-        render json: {
-          status: { code: 404, message: "Current user has no residence." }
-        }, status: :not_found
-      end
-    else
-      render json: {
-        status: {
-          code: 401,
-          message: "Unauthorized."
-        }
-      }, status: :unauthorized
-    end
-  end
-
-  def remove_resident
-    if request.headers["Authorization"].present?
-      jwt_payload = JWT.decode(request.headers["Authorization"].split(" ").last, Rails.application.credentials.devise_jwt_secret_key!).first
-      current_user = User.find(jwt_payload["sub"])
-    end
-
-    if current_user
-      if current_user.residence
-        other_user = User.find(params[:id])
-        other_user.residence = nil
-        other_user.save
-
-        render json: {
-          status: { code: 200, message: "Successfully removed user from residence." }
-        }, status: :ok
-      else
-        render json: {
-          status: { code: 404, message: "Current user has no residence." }
+          status: { code: 404, message: "User does not have a residence." }
         }, status: :not_found
       end
     else

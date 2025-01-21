@@ -8,7 +8,7 @@ import BillModal from '@/app/ui/billModal';
 import IconButton from '@/app/ui/iconButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { fetchAccounts, addTransaction, fetchAllBills, addBill, editBill, removeBill, fetchResidenceName } from '@/app/lib/data';
-import { formatDollarAmount, getCurrentDate, formatDate, unformatDate } from '@/app/lib/utils';
+import { formatDollarAmount, formatDate, unformatDate } from '@/app/lib/utils';
 import { Account, Bill, BILL_ADD_MANUAL_MODAL_TYPE, BILL_ADD_DOCUMENT_MODAL_TYPE, BILL_PAY_MODAL_TYPE, BILL_EDIT_MODAL_TYPE, BILL_DELETE_MODAL_TYPE, TransactionAddManualModalData, BillAddManualModalData, BillPayModalData, BillEditModalData } from '@/app/lib/definitions';
 
 export default function Page() {
@@ -66,8 +66,6 @@ export default function Page() {
   const handlePayModalSubmit = async (id: number, data: BillPayModalData) => {
     setBills((prevBills) => prevBills.filter((bill) => bill.id !== id));
     await removeBill(id);
-
-    console.log(data);
 
     if (data.alsoTransaction) {
       const transactionData: TransactionAddManualModalData = {
@@ -211,7 +209,7 @@ export default function Page() {
                   </div>
 
                   {bills.map((bill) => {
-                    return <BillCard key={bill.id} id={bill.id} name={bill.name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} onPay={handlePayClick} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
+                    return <BillCard key={bill.id} id={bill.id} name={bill.name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} shared={bill.shared} onPay={handlePayClick} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
                   })}
 
                   {/* {bills.map((bill, i) => {
@@ -224,7 +222,7 @@ export default function Page() {
                           <h4 className="w-24 text-red-700 font-semibold text-md">{formatDate(bill.due_date)}</h4>
                           <h4 className="w-16 text-off_black font-bold text-md text-right">{formatDollarAmount(bill.total)}</h4>
                           <div className="w-24">
-                            <h4 className={`max-w-fit rounded-3xl px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
+                            <h4 className={`max-w-fit rounded-full px-3 py-1 font-semibold text-sm bg-[${bgColor}] text-[${textColor}]`}>{bill.category}</h4>
                           </div>
                           <h4 className="w-36 text-off_black font-medium text-md truncate">{bill.name}</h4>
                         </div>

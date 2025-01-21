@@ -237,7 +237,7 @@ export default function Page() {
             <h2 className={`${dmSans.className} antialiased text-black tracking-tight text-4xl font-semibold my-4`}>{formatDollarAmount(monthlySpending)}</h2>
 
             <div className="flex flex-row items-center gap-2">
-              <div className={clsx("rounded-3xl flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
+              <div className={clsx("rounded-full flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
                 <p className={clsx("text-md font-semibold", { "text-positive_text": positive, "text-negative_text": !positive })}>{percentChange}</p>
               </div>
               <h4 className="text-md font-normal text-gray-400">Compared to {formatMonth(prevSelectedMonth)}</h4>

@@ -13,7 +13,7 @@ export function validDollarAmount(amount: number): boolean {
 
   let count = 0;
   for (let i = numberString.length - 1; i >= 0; i--) {
-    if (numberString.charAt(i) == '.') {
+    if (numberString.charAt(i) === '.') {
       return i != 0 && count <= 2;
     }
     count++;

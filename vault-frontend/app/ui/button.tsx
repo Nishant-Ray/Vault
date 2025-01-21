@@ -32,7 +32,7 @@ type ButtonProps = LinkButtonProps | ActionButtonProps | FormButtonProps;
 
 const Button = React.forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(({ children, href, onClick, size = 'xl', buttonType = 'action', type, className, ...rest }, ref) => {
   const buttonClasses = clsx(
-    `${dmSans.className} tracking-tight flex items-center justify-center font-bold rounded-3xl hover:shadow-sm transition-all duration-150 ease-in-out focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
+    `${dmSans.className} tracking-tight flex items-center justify-center font-bold rounded-full hover:shadow-sm transition-all duration-150 ease-in-out focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
     {
       "h-12 px-10 text-2xl": size === 'xl',
       "h-12 text-xl": size === 'lg',
@@ -41,7 +41,7 @@ const Button = React.forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonPro
       "text-white bg-primary hover:bg-primary_hover focus:bg-primary_hover active:bg-primary_click": buttonType === 'action' || buttonType === 'auth',
       "text-off_black bg-gray-200 hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-100": buttonType === 'neutral',
       "max-w-fit": buttonType === 'action' || buttonType === 'neutral',
-      "w-full my-6": buttonType === 'auth'
+      "w-full mt-8 mb-4": buttonType === 'auth'
     },
     className
   );

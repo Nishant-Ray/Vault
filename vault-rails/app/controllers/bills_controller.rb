@@ -48,12 +48,7 @@ class BillsController < ApplicationController
     end
 
     if current_user
-      new_bill = Bill.create(user_id: current_user.id, due_date: params[:due_date], total: params[:total].to_f, shared: params[:shared], category: params[:category], name: params[:name])
-      
-      if params[:shared]
-        bill.residence = current_user.residence
-        bill.save
-      end
+      new_bill = Bill.create(user_id: current_user.id, due_date: params[:due_date], total: params[:total].to_f, category: params[:category], name: params[:name])
 
       render json: {
         status: { code: 200, message: "Successfully added bill." },
@@ -78,15 +73,7 @@ class BillsController < ApplicationController
     if current_user
       bill = Bill.find(params[:id])
 
-      if bill.shared && !params[:shared]
-        bill.residence = nil
-        bill.save
-      elsif !bill.shared && params[:shared]
-        bill.residence = current_user.residence
-        bill.save
-      end
-
-      bill.update(due_date: params[:due_date], total: params[:total].to_f, shared: params[:shared], category: params[:category], name: params[:name])
+      bill.update(due_date: params[:due_date], total: params[:total].to_f, category: params[:category], name: params[:name])
 
       render json: {
         status: { code: 200, message: "Successfully edited bill." }

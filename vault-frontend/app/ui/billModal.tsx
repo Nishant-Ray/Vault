@@ -65,10 +65,10 @@ export default function BillModal({ type, isOpen, partOfResidence, bill, account
     setBillAddDocumentFormState(initialDocumentModalData);
     setBillPayFormState(initialPayModalData);
     setBillEditFormState(initialEditModalData);
-    setCategoryOption(initialManualModalData.category);
+    if (type === BILL_ADD_MANUAL_MODAL_TYPE) setCategoryOption(initialManualModalData.category);
     setResidenceChecked(false);
     setAlsoTransactionChecked(false);
-    setTransactionCategoryOption(initialPayModalData.transactionCategory);
+    if (type === BILL_ADD_MANUAL_MODAL_TYPE) setTransactionCategoryOption(initialPayModalData.transactionCategory);
     setInvalidDollarAmount(false);
   };
 
@@ -194,7 +194,7 @@ export default function BillModal({ type, isOpen, partOfResidence, bill, account
           <Input onChange={handleBillAddManualFormInputChange} value={String(billAddManualFormState.total)} id="total" name="total" type="number" label="Total ($)" placeholder="Enter bill total"/>
           <Input onChange={handleBillAddManualFormInputChange} value={String(billAddManualFormState.dueDate)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
 
-          <Input onChange={handleBillAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
+          <Input onChange={handleBillAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption === 'category1'} standalone={false}/>
           <Input onChange={handleBillAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
           <Input onChange={handleBillAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
 
@@ -222,7 +222,7 @@ export default function BillModal({ type, isOpen, partOfResidence, bill, account
             <>
               <Select onChange={handleBillPayFormInputChange} value={billPayFormState.accountID} id="accountID" name="accountID" label="Account Used" options={accountOptions}/>
 
-              <Input onChange={handleBillPayFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={transactionCategoryOption == 'category1'} standalone={false}/>
+              <Input onChange={handleBillPayFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={transactionCategoryOption === 'category1'} standalone={false}/>
               <Input onChange={handleBillPayFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={transactionCategoryOption === 'category2'} standalone={false} />
               <Input onChange={handleBillPayFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={transactionCategoryOption === 'category3'}/>
             </>
@@ -239,7 +239,7 @@ export default function BillModal({ type, isOpen, partOfResidence, bill, account
           <Input onChange={handleBillEditFormInputChange} value={String(billEditFormState.total)} id="total" name="total" type="number" label="Total ($)" placeholder="Enter bill total"/>
           <Input onChange={handleBillEditFormInputChange} value={String(billEditFormState.dueDate)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
 
-          <Input onChange={handleBillEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption == 'category1'} standalone={false}/>
+          <Input onChange={handleBillEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption === 'category1'} standalone={false}/>
           <Input onChange={handleBillEditFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
           <Input onChange={handleBillEditFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
 

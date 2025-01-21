@@ -52,7 +52,7 @@ export default function Input({ onChange, id, name, type, value, min, max, check
           max={max}
           required
           className={clsx(
-            "w-full px-4 py-3 bg-gray-200 text-off_black text-sm font-medium rounded-3xl focus:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2",
+            "w-full px-4 py-3 bg-gray-200 text-off_black text-sm font-medium rounded-full focus:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2",
             className
           )}
         />

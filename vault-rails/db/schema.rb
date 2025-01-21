@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_30_185043) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_21_085541) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,12 +27,9 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_30_185043) do
     t.string "name"
     t.string "category"
     t.integer "due_date"
-    t.boolean "shared"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "residence_id"
     t.float "total"
-    t.index ["residence_id"], name: "index_bills_on_residence_id"
   end
 
   create_table "monthly_spendings", force: :cascade do |t|
@@ -41,6 +38,16 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_30_185043) do
     t.decimal "total", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "residence_bills", force: :cascade do |t|
+    t.float "total"
+    t.string "category"
+    t.integer "due_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "residence_id", null: false
+    t.index ["residence_id"], name: "index_residence_bills_on_residence_id"
   end
 
   create_table "residence_messages", force: :cascade do |t|
@@ -54,10 +61,21 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_30_185043) do
     t.index ["user_id"], name: "index_residence_messages_on_user_id"
   end
 
+  create_table "residence_payments", force: :cascade do |t|
+    t.integer "payer_id", null: false
+    t.integer "payee_id"
+    t.integer "residence_bill_id", null: false
+    t.float "amount", null: false
+    t.string "status", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "residences", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "monthly_payment"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -91,11 +109,14 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_30_185043) do
   end
 
   add_foreign_key "accounts", "users"
-  add_foreign_key "bills", "residences"
   add_foreign_key "bills", "users"
   add_foreign_key "monthly_spendings", "users"
+  add_foreign_key "residence_bills", "residences"
   add_foreign_key "residence_messages", "residences"
   add_foreign_key "residence_messages", "users"
+  add_foreign_key "residence_payments", "residence_bills"
+  add_foreign_key "residence_payments", "users", column: "payee_id"
+  add_foreign_key "residence_payments", "users", column: "payer_id"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "monthly_spendings"
   add_foreign_key "transactions", "users"

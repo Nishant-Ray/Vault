@@ -117,7 +117,7 @@ export default function Page() {
             <h2 className={`${dmSans.className} antialiased tracking-tight text-black text-4xl font-semibold my-4`}>{formatDollarAmount(monthlySpending)}</h2>
 
             <div className="flex flex-row items-center gap-2">
-              <div className={clsx("rounded-3xl flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
+              <div className={clsx("rounded-full flex items-center justify-center px-2 py-1", { "bg-positive": positive, "bg-negative": !positive })}>
                 <p className={clsx("text-md font-semibold", { "text-positive_text": positive, "text-negative_text": !positive })}>{percentChange}</p>
               </div>
               <h4 className="text-md font-normal text-gray-400">Compared to {formatMonth(prevSelectedMonth)}</h4>
@@ -144,7 +144,7 @@ export default function Page() {
                         return (
                           <div key={i}>
                             <p className="ml-3 mb-1 text-xs font-normal text-off_gray">User {message.user_id}</p>
-                            <h6 className="bg-white max-w-fit rounded-3xl px-3 py-1 text-md font-normal text-off_black">{message.content}</h6>
+                            <h6 className="bg-white max-w-fit rounded-full px-3 py-1 text-md font-normal text-off_black">{message.content}</h6>
                           </div>
                         );
                       })}
@@ -207,7 +207,7 @@ export default function Page() {
                   </div>
 
                   {bills.map((bill) => {
-                    return <BillCard key={bill.id} full={false} id={bill.id} name={bill.name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)}/>
+                    return <BillCard key={bill.id} full={false} id={bill.id} name={bill.name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} shared={bill.shared}/>
                   })}
                 </div>
               ) : (

@@ -22,8 +22,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="w-full h-full flex flex-row justify-end items-center gap-x-6">
-              <div className="w-10 h-10 rounded-3xl bg-gray-300"/>
-              <div className="w-10 h-10 rounded-3xl bg-gray-300"/>
+              <div className="w-10 h-10 rounded-full bg-gray-300"/>
+              <div className="w-10 h-10 rounded-full bg-gray-300"/>
             </div>  
           </div>
 
