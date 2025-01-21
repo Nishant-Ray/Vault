@@ -53,7 +53,7 @@ class BillsController < ApplicationController
       render json: {
         status: { code: 200, message: "Successfully added bill." },
         data: { bill: new_bill }
-      }
+      }, status: :ok
     else
       render json: {
         status: {
@@ -72,12 +72,11 @@ class BillsController < ApplicationController
 
     if current_user
       bill = Bill.find(params[:id])
-
       bill.update(due_date: params[:due_date], total: params[:total].to_f, category: params[:category], name: params[:name])
 
       render json: {
         status: { code: 200, message: "Successfully edited bill." }
-      }
+      }, status: :ok
     else
       render json: {
         status: {
@@ -98,7 +97,7 @@ class BillsController < ApplicationController
       Bill.find(params[:id]).destroy
       render json: {
         status: { code: 200, message: "Successfully removed bill." }
-      }
+      }, status: :ok
     else
       render json: {
         status: {

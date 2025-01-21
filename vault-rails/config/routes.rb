@@ -76,7 +76,7 @@ Rails.application.routes.draw do
 
   resources :residence_payments, only: [] do
     collection do
-      post "add/:payee_id/:amount", to: "residence_payments#add", constraints: { amount: /[.\d]+/ }
+      post "add/:residence_bill_id/:payee_id/:amount", to: "residence_payments#add", constraints: { amount: /[.\d]+/ }
       patch "pay/:id", to: "residence_payments#pay"
     end
   end

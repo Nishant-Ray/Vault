@@ -7,11 +7,11 @@ class ResidencePaymentsController < ApplicationController
 
     if current_user
       if current_user.residence
-        # ...
+        new_payment = ResidencePayment.create(residence_bill_id: params[:residence_bill_id], payer_id: params[:payer_id], payee_id: params[:payee_id], amount: params[:amount], status: "Pending")
 
         render json: {
-          status: { code: 200, message: "Successfully _____." },
-          data: { }
+          status: { code: 200, message: "Successfully added residence payment." },
+          data: { residence_payment: new_payment }
         }, status: :ok
       else
         render json: {
@@ -36,11 +36,11 @@ class ResidencePaymentsController < ApplicationController
 
     if current_user
       if current_user.residence
-        # ...
+        payment = ResidencePayment.find(params[:id])
+        payment.update(status: "Paid")
 
         render json: {
-          status: { code: 200, message: "Successfully _____." },
-          data: { }
+          status: { code: 200, message: "Successfully paid residence payment." }
         }, status: :ok
       else
         render json: {
