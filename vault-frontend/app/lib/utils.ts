@@ -1,5 +1,5 @@
 import { months } from '@/app/lib/constants';
-import { SelectOption } from '@/app/lib/definitions';
+import { SelectOption, Bill, ResidenceBill } from '@/app/lib/definitions';
 
 export function formatDollarAmount(amount: number): string {
   return '$' + amount.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -121,6 +121,10 @@ export function reformatDate(dateNumber: number): string { // YYYYMMDD --> Date 
   const month = Number(dateString.substring(4, 6)) - 1;
   const date = Number(dateString.substring(6));
   return (new Date(year, month, date)).toISOString().substring(0, 10);
+}
+
+export function isBill(bill: Bill | ResidenceBill): boolean {
+  return 'user_id' in bill;
 }
 
 // export function formatTime(dateTime: number): string {

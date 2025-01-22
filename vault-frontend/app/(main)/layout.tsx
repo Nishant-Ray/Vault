@@ -2,6 +2,8 @@
 
 import { dmSans } from '@/app/ui/fonts';
 import SideNav from '@/app/ui/sideNav';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
+import { BellIcon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -21,9 +23,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h1 className={`${dmSans.className} antialiased tracking-tighter text-off_black text-3xl font-bold`}>{pathname.slice(1).charAt(0).toUpperCase() + pathname.slice(2)}</h1>
             </div>
 
-            <div className="w-full h-full flex flex-row justify-end items-center gap-x-6">
-              <div className="w-10 h-10 rounded-full bg-gray-300"/>
-              <div className="w-10 h-10 rounded-full bg-gray-300"/>
+            <div className="w-full h-full flex flex-row justify-end items-center gap-x-4">
+              <div className="w-10 h-10 rounded-full text-off_black bg-white hover:bg-gray-200 flex justify-center items-center">
+                <BellIcon className="w-6"/>
+              </div>
+              <UserCircleIcon className="w-12 h-12 text-gray-300"/>
             </div>  
           </div>
 

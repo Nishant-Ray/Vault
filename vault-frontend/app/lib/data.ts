@@ -1,6 +1,6 @@
 import { request } from '@/app/lib/api';
 import { unformatDate } from '@/app/lib/utils';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidenceMessagesData } from '@/app/lib/definitions';
 
 export async function fetchName() {
   try {
@@ -188,7 +188,7 @@ export async function fetchAllBills() {
 
 export async function addBill(billData: BillAddManualModalData) {
   try {
-    const response = await request<BillData>(`bills/add/${unformatDate(billData.dueDate)}/${billData.total}/${billData.residence}/${billData.category}/${encodeURIComponent(billData.name)}`, 'POST');
+    const response = await request<BillData>(`bills/add/${unformatDate(billData.dueDate)}/${billData.total}/${billData.category}/${encodeURIComponent(billData.name)}`, 'POST');
     return response.data?.bill;
 
   } catch (error) {
@@ -199,7 +199,7 @@ export async function addBill(billData: BillAddManualModalData) {
 
 export async function editBill(id: number, billData: BillEditModalData) {
   try {
-    await request<null>(`bills/edit/${id}/${unformatDate(billData.dueDate)}/${billData.total}/${billData.residence}/${billData.category}/${encodeURIComponent(billData.name)}`, 'PATCH');
+    await request<null>(`bills/edit/${id}/${unformatDate(billData.dueDate)}/${billData.total}/${billData.category}/${encodeURIComponent(billData.name)}`, 'PATCH');
 
   } catch (error) {
     console.error('Server error:', error);
@@ -296,6 +296,59 @@ export async function removeResident(id: number) {
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to remove resident.');
+  }
+}
+
+export async function fetchUpcomingResidenceBills() {
+  try {
+    const response = await request<ResidenceBillsData>('residence_bills/get_upcoming', 'GET');
+    return response.data?.residence_bills;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch upcoming residence bills.');
+  }
+}
+
+export async function fetchAllResidenceBills() {
+  try {
+    const response = await request<ResidenceBillsData>('residence_bills/get_all', 'GET');
+    return response.data?.residence_bills;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch all residence bills.');
+  }
+}
+
+export async function addResidenceBill(billData: ResidenceBillEditModalData) {
+  try {
+    const response = await request<ResidenceBillData>(`residence_bills/add/${billData.total}/${billData.category}/${unformatDate(billData.dueDate)}`, 'POST');
+    return response.data?.residence_bill;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to add residence bill.');
+  }
+}
+
+export async function editResidenceBill(id: number, billData: ResidenceBillEditModalData) {
+  try {
+    await request<null>(`residence_bills/edit/${id}/${billData.total}/${billData.category}/${unformatDate(billData.dueDate)}`, 'PATCH');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to edit residence bill.');
+  }
+}
+
+export async function removeResidenceBill(id: number) {
+  try {
+    await request<null>(`residence_bills/remove/${id}`, 'DELETE');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to remove residence bill.');
   }
 }
 

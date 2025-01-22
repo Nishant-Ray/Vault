@@ -7,18 +7,18 @@ import { redirect } from 'next/navigation';
 
 interface BillCardProps {
   full?: boolean;
+  isResidenceBill?: boolean;
   id: number;
   name: string;
   category: string;
   dueDate: string;
   total: string;
-  shared: boolean;
   onPay?: (id: number) => void;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
 };
 
-export default function BillCard({ full = true, id, name, category, dueDate, total, shared, onPay, onEdit, onDelete, ...rest }: BillCardProps) {
+export default function BillCard({ full = true, isResidenceBill = false, id, name, category, dueDate, total, onPay, onEdit, onDelete, ...rest }: BillCardProps) {
   if (!full) {
     return (
       <div {...rest} className="mt-4 rounded-md">
@@ -86,18 +86,21 @@ export default function BillCard({ full = true, id, name, category, dueDate, tot
           </div>
 
           <div className="flex flex-col gap-1">
-            <p className={`${dmSans.className} antialiased tracking-tight text-off_black font-medium text-xl`}>Pay by {dueDate}</p>
-            { shared && <div onClick={() => redirect('/residence')} className="flex flex-row justify-center gap-1 text-off_gray rounded-md cursor-pointer hover:bg-gray-100 focus:outline-none transition-all duration-150 ease-in-out">
-              <p className="font-normal text-md">Residence Bill</p>
-              <HomeIcon className="w-4"></HomeIcon>
-            </div> }
+            <p className={`${dmSans.className} antialiased tracking-tight text-off_black font-medium text-2xl`}>Pay by {dueDate}</p>
           </div>
 
-          <div className="flex flex-row gap-4">
-            <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/>
-            <IconButton icon={PencilIcon} onClick={() => { if (onEdit) onEdit(id); }} blank={false}/>
-            <IconButton icon={TrashIcon} onClick={() => { if (onDelete) onDelete(id); }} blank={false}/>
-          </div>
+          { isResidenceBill ? (
+            <div onClick={() => redirect('/residence')} className="w-36 py-1 flex flex-row justify-center gap-1 text-lg text-off_gray rounded-md cursor-pointer hover:bg-gray-100 focus:outline-none transition-all duration-150 ease-in-out">
+              <p className="font-normal text-md">Residence Bill</p>
+              <HomeIcon className="w-4"></HomeIcon>
+            </div>
+          ) : (
+            <div className="flex flex-row justify-end gap-4 w-36">
+              <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/>
+              <IconButton icon={PencilIcon} onClick={() => { if (onEdit) onEdit(id); }} blank={false}/>
+              <IconButton icon={TrashIcon} onClick={() => { if (onDelete) onDelete(id); }} blank={false}/>
+            </div>
+          )}
           
         </div>
       }

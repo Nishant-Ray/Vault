@@ -9,11 +9,10 @@ import Button from '@/app/ui/button';
 import TransactionCard from '@/app/ui/transactionCard';
 import BillCard from '@/app/ui/billCard';
 import clsx from 'clsx';
-import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills, fetchResidenceName, fetchRecentResidenceMessages } from '@/app/lib/data';
-import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate } from '@/app/lib/utils';
-import { SelectOption, Transaction, Bill, ResidenceMessage } from '@/app/lib/definitions';
+import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills, fetchResidenceName, fetchUpcomingResidenceBills, fetchRecentResidenceMessages } from '@/app/lib/data';
+import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate, isBill } from '@/app/lib/utils';
+import { SelectOption, Transaction, Bill, ResidenceBill, ResidenceMessage } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
-import { billCategoryColors } from '@/app/lib/colors';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +27,7 @@ export default function Page() {
   const [selectedYear, setSelectedYear] = useState<number>(getCurrentYear);
   const [accountIDsToNicknames, setAccountIDsToNicknames] = useState<Record<number, string>>({});
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [bills, setBills] = useState<Bill[]>([]);
+  const [combinedBills, setCombinedBills] = useState<(Bill | ResidenceBill)[]>([]);
   const [residenceName, setResidenceName] = useState<string>('');
   const [residenceMessages, setResidenceMessages] = useState<ResidenceMessage[]>([]);
 
@@ -85,14 +84,31 @@ export default function Page() {
       if (fetchedTransactions) setTransactions(fetchedTransactions);
 
       const fetchedBills = await fetchUpcomingBills();
-      if (fetchedBills) setBills(fetchedBills);
 
       const fetchedResidenceName = await fetchResidenceName();
       if (fetchedResidenceName) {
         setResidenceName(fetchedResidenceName);
+
+        const fetchedResidenceBills = await fetchUpcomingResidenceBills();
+
+        if (fetchedBills && fetchedResidenceBills) {
+          const newCombinedBills = [];
+          let i = 0;
+          let j = 0;
+          while (i < fetchedBills.length || j < fetchedResidenceBills.length) {
+            if (i < fetchedBills.length && j < fetchedResidenceBills.length) {
+              if (fetchedBills[i].due_date <= fetchedResidenceBills[j].due_date) newCombinedBills.push(fetchedBills[i++]);
+              else newCombinedBills.push(fetchedResidenceBills[j++]);
+            } else if (i < fetchedBills.length) newCombinedBills.push(fetchedBills[i++]);
+            else newCombinedBills.push(fetchedResidenceBills[j++]);
+          }
+          setCombinedBills(newCombinedBills);
+        } else if (fetchedBills) setCombinedBills(fetchedBills);
+        else if (fetchedResidenceBills) setCombinedBills(fetchedResidenceBills);
+
         const fetchedResidenceMessages = await fetchRecentResidenceMessages();
         if (fetchedResidenceMessages) setResidenceMessages(fetchedResidenceMessages);
-      }
+      } else if (fetchedBills) setCombinedBills(fetchedBills);
 
       setLoading(false);
     };
@@ -197,7 +213,7 @@ export default function Page() {
           <Card>
             <h3 className="text-lg font-medium text-off_black">Upcoming Bills</h3>
             <div className="flex flex-col">
-              {bills.length ? (
+              {combinedBills.length ? (
                 <div className="flex flex-col mt-3 mb-6 text-off_black">
                   <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
                     <h4 className="w-24 text-right">Total</h4>
@@ -206,8 +222,9 @@ export default function Page() {
                     <h4 className="w-24 text-right">Due Date</h4>
                   </div>
 
-                  {bills.map((bill) => {
-                    return <BillCard key={bill.id} full={false} id={bill.id} name={bill.name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} shared={bill.shared}/>
+                  {combinedBills.map((bill) => {
+                    if (isBill(bill)) return <BillCard full={false} key={bill.id} id={bill.id} name={(bill as Bill).name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)}/>
+                    return <BillCard key={bill.id} full={false} isResidenceBill={true} id={bill.id} name={bill.category} category="Residence" dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)}/>
                   })}
                 </div>
               ) : (

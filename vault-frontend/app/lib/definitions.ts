@@ -142,7 +142,6 @@ export type Bill = {
   name: string;
   category: string;
   due_date: number;
-  shared: boolean;
   created_at: string;
   updated_at: string;
   residence_id: number | 'nil';
@@ -168,7 +167,6 @@ export type BillAddManualModalData = {
   total: string;
   dueDate: string;
   category: string;
-  residence: boolean;
 };
 
 export type BillAddDocumentModalData = {
@@ -198,6 +196,60 @@ export type ResidenceData = {
   users: User[];
 };
 
+export const RESIDENCE_CREATE_MODAL_TYPE = 0;
+export const RESIDENCE_EDIT_MODAL_TYPE = 1;
+export const RESIDENCE_LEAVE_MODAL_TYPE = 2;
+export const RESIDENCE_DELETE_MODAL_TYPE = 3;
+
+export type ResidenceCreateModalData = {
+  name: string;
+  monthlyPayment: 'rent' | 'mortgage' | 'none';
+}
+
+export type ResidenceEditModalData = ResidenceCreateModalData;
+
+export type ResidenceBill = {
+  id: number;
+  residence_id: number;
+  total: number;
+  category: string;
+  due_date: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ResidenceBillData = {
+  residence_bill: ResidenceBill;
+};
+
+export type ResidenceBillsData = {
+  residence_bills: ResidenceBill[];
+};
+
+export const RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE = 0;
+export const RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE = 1;
+export const RESIDENCE_BILL_PAY_MODAL_TYPE = 2;
+export const RESIDENCE_BILL_EDIT_MODAL_TYPE = 3;
+export const RESIDENCE_BILL_DELETE_MODAL_TYPE = 4;
+
+export type ResidenceBillAddManualModalData = {
+  total: string;
+  dueDate: string;
+  category: string;
+};
+
+export type ResidenceBillAddDocumentModalData = {
+  nickname: string;
+};
+
+export type ResidenceBillPayModalData = {
+  alsoTransaction: boolean;
+  accountID: string;
+  transactionCategory: string;
+};
+
+export type ResidenceBillEditModalData = ResidenceBillAddManualModalData;
+
 export type ResidenceMessage = {
   content: string;
   is_update: boolean;
@@ -211,24 +263,12 @@ export type ResidenceMessagesData = {
   messages: ResidenceMessage[];
 }
 
-export const RESIDENCE_CREATE_MODAL_TYPE = 0;
-export const RESIDENCE_EDIT_MODAL_TYPE = 1;
-export const RESIDENCE_LEAVE_MODAL_TYPE = 2;
-export const RESIDENCE_DELETE_MODAL_TYPE = 3;
-
-export type ResidenceCreateModalData = {
-  name: string;
-  monthlyPayment: 'rent' | 'mortgage' | 'none';
-}
-
-export type ResidenceEditModalData = ResidenceCreateModalData;
+export type HeroIconType = React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
+  title?: string;
+  titleId?: string;
+} & React.RefAttributes<SVGSVGElement>>;
 
 export type SelectOption = {
   value: number;
   text: string;
 }
-
-export type HeroIconType = React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
-  title?: string;
-  titleId?: string;
-} & React.RefAttributes<SVGSVGElement>>;

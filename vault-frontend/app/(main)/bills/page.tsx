@@ -7,18 +7,17 @@ import BillCard from '@/app/ui/billCard';
 import BillModal from '@/app/ui/billModal';
 import IconButton from '@/app/ui/iconButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { fetchAccounts, addTransaction, fetchAllBills, addBill, editBill, removeBill, fetchResidenceName } from '@/app/lib/data';
-import { formatDollarAmount, formatDate, unformatDate } from '@/app/lib/utils';
-import { Account, Bill, BILL_ADD_MANUAL_MODAL_TYPE, BILL_ADD_DOCUMENT_MODAL_TYPE, BILL_PAY_MODAL_TYPE, BILL_EDIT_MODAL_TYPE, BILL_DELETE_MODAL_TYPE, TransactionAddManualModalData, BillAddManualModalData, BillPayModalData, BillEditModalData } from '@/app/lib/definitions';
+import { fetchAccounts, addTransaction, fetchAllBills, addBill, editBill, removeBill, fetchResidenceName, fetchAllResidenceBills } from '@/app/lib/data';
+import { formatDollarAmount, formatDate, unformatDate, isBill } from '@/app/lib/utils';
+import { Account, Bill, BILL_ADD_MANUAL_MODAL_TYPE, BILL_ADD_DOCUMENT_MODAL_TYPE, BILL_PAY_MODAL_TYPE, BILL_EDIT_MODAL_TYPE, BILL_DELETE_MODAL_TYPE, TransactionAddManualModalData, BillAddManualModalData, BillPayModalData, BillEditModalData, ResidenceBill } from '@/app/lib/definitions';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [bills, setBills] = useState<Bill[]>([]);
+  const [combinedBills, setCombinedBills] = useState<(Bill | ResidenceBill)[]>([]);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [billAddOptionsOpen, setBillAddOptionsOpen] = useState<boolean>(false);
   const [modalType, setModalType] = useState<number>(BILL_ADD_MANUAL_MODAL_TYPE);
   const [billModalOpen, setBillModalOpen] = useState<boolean>(false);
-  const [partOfResidence, setPartOfResidence] = useState<boolean>(false);
   const [billSelected, setBillSelected] = useState<Bill | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
@@ -32,11 +31,11 @@ export default function Page() {
   };
   
   function hopefulBillAdd(bill: Bill) {
-    const newBills = [...bills];
-    const index = newBills.findIndex(item => item.due_date > bill.due_date);
-    if (index === -1) newBills.push(bill);
-    else newBills.splice(index, 0, bill);
-    setBills(newBills);
+    const newCombinedBills = [...combinedBills];
+    const index = newCombinedBills.findIndex(item => item.due_date > bill.due_date);
+    if (index === -1) newCombinedBills.push(bill);
+    else newCombinedBills.splice(index, 0, bill);
+    setCombinedBills(newCombinedBills);
   }
 
   const handleManualModalSubmit = async (data: BillAddManualModalData) => {
@@ -56,15 +55,15 @@ export default function Page() {
   };
 
   const handlePayClick = (id: number) => {
-    const foundBill = bills.find(bill => bill.id === id);
-    if (foundBill) setBillSelected(foundBill);
+    const foundBill = combinedBills.find(bill => isBill(bill) && bill.id === id);
+    if (foundBill) setBillSelected(foundBill as Bill);
     
     setModalType(BILL_PAY_MODAL_TYPE);
     setBillModalOpen(true);
   };
 
   const handlePayModalSubmit = async (id: number, data: BillPayModalData) => {
-    setBills((prevBills) => prevBills.filter((bill) => bill.id !== id));
+    setCombinedBills((prevCombinedBills) => prevCombinedBills.filter((bill) => !isBill(bill) || (isBill(bill) && bill.id !== id)));
     await removeBill(id);
 
     if (data.alsoTransaction) {
@@ -84,36 +83,35 @@ export default function Page() {
   };
   
   const handleEditClick = (id: number) => {
-    const foundBill = bills.find(bill => bill.id === id);
-    if (foundBill) setBillSelected(foundBill);
+    const foundBill = combinedBills.find(bill => isBill(bill) && bill.id === id);
+    if (foundBill) setBillSelected(foundBill as Bill);
 
     setModalType(BILL_EDIT_MODAL_TYPE);
     setBillModalOpen(true);
   };
 
   function hopefulBillEdit(id: number, data: BillEditModalData) {
-    const newBills = [...bills];
+    const newCombinedBills = [...combinedBills];
 
-    const index = newBills.findIndex(item => item.id === id);
-    const bill = newBills[index];
+    const index = newCombinedBills.findIndex(item => isBill(bill) && item.id === id);
+    const bill = newCombinedBills[index] as Bill;
 
     bill.name = data.name;
     bill.category = data.category;
     const newDate = unformatDate(data.dueDate);
     bill.total = Number(data.total);
-    bill.shared = data.residence;
 
     if (bill.due_date === newDate) {
-      newBills[index] = bill;
+      newCombinedBills[index] = bill;
     } else {
       bill.due_date = newDate;
-      newBills.splice(index, 1);
-      const newIndex = newBills.findIndex(item => item.due_date > bill.due_date);
-      if (newIndex === -1) newBills.push(bill);
-      else newBills.splice(newIndex, 0, bill);
+      newCombinedBills.splice(index, 1);
+      const newIndex = newCombinedBills.findIndex(item => item.due_date > bill.due_date);
+      if (newIndex === -1) newCombinedBills.push(bill);
+      else newCombinedBills.splice(newIndex, 0, bill);
     }
 
-    setBills(newBills);
+    setCombinedBills(newCombinedBills);
   }
 
   const handleEditModalSubmit = async (id: number, data: BillEditModalData) => {
@@ -124,15 +122,15 @@ export default function Page() {
   };
 
   const handleDeleteClick = (id: number) => {
-    const foundBill = bills.find(bill => bill.id === id);
-    if (foundBill) setBillSelected(foundBill);
+    const foundBill = combinedBills.find(bill => isBill(bill) && bill.id === id);
+    if (foundBill) setBillSelected(foundBill as Bill);
     
     setModalType(BILL_DELETE_MODAL_TYPE);
     setBillModalOpen(true);
   };
 
   const handleDeleteModalSubmit = async (id: number) => {
-    setBills((prevBills) => prevBills.filter((bill) => bill.id !== id));
+    setCombinedBills((prevCombinedBills) => prevCombinedBills.filter((bill) => !isBill(bill) || (isBill(bill) && bill.id !== id)));
     await removeBill(id);
 
     setBillModalOpen(false);
@@ -149,13 +147,30 @@ export default function Page() {
       setLoading(true);
       
       const fetchedBills = await fetchAllBills();
-      if (fetchedBills) setBills(fetchedBills);
 
       const fetchedAccounts = await fetchAccounts();
       if (fetchedAccounts) setAccounts(fetchedAccounts);
 
       const fetchedResidenceName = await fetchResidenceName();
-      setPartOfResidence(fetchedResidenceName !== undefined);
+      if (fetchedResidenceName) {
+        const fetchedResidenceBills = await fetchAllResidenceBills();
+        
+        if (fetchedBills && fetchedResidenceBills) {
+          const newCombinedBills = [];
+          let i = 0;
+          let j = 0;
+          while (i < fetchedBills.length || j < fetchedResidenceBills.length) {
+            if (i < fetchedBills.length && j < fetchedResidenceBills.length) {
+              if (fetchedBills[i].due_date <= fetchedResidenceBills[j].due_date) newCombinedBills.push(fetchedBills[i++]);
+              else newCombinedBills.push(fetchedResidenceBills[j++]);
+            } else if (i < fetchedBills.length) newCombinedBills.push(fetchedBills[i++]);
+            else newCombinedBills.push(fetchedResidenceBills[j++]);
+          }
+          setCombinedBills(newCombinedBills);
+        } else if (fetchedBills) setCombinedBills(fetchedBills);
+        else if (fetchedResidenceBills) setCombinedBills(fetchedResidenceBills);
+
+      } else if (fetchedBills) setCombinedBills(fetchedBills);
 
       setLoading(false);
     };
@@ -178,7 +193,7 @@ export default function Page() {
 
   return (
     <main>
-      <BillModal type={modalType} isOpen={billModalOpen} partOfResidence={partOfResidence} bill={billSelected} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditModalSubmit} onDeleteModalSubmit={handleDeleteModalSubmit} onClose={handleBillModalClose}/>
+      <BillModal type={modalType} isOpen={billModalOpen} bill={billSelected} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditModalSubmit} onDeleteModalSubmit={handleDeleteModalSubmit} onClose={handleBillModalClose}/>
 
       <div className="flex flex-row gap-8">
         <div className="flex flex-col gap-8 w-3/5">
@@ -198,7 +213,7 @@ export default function Page() {
             </div>
 
             <div>
-              {bills.length ? (
+              {combinedBills.length ? (
                 <div className="flex flex-col mt-3 text-off_black">
                   <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
                     <h4 className="w-24 text-right">Total</h4>
@@ -208,8 +223,9 @@ export default function Page() {
                     <div className="w-8 bg-gray-100"/>
                   </div>
 
-                  {bills.map((bill) => {
-                    return <BillCard key={bill.id} id={bill.id} name={bill.name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} shared={bill.shared} onPay={handlePayClick} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
+                  {combinedBills.map((bill) => {
+                    if (isBill(bill)) return <BillCard key={bill.id} id={bill.id} name={(bill as Bill).name} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} onPay={handlePayClick} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
+                    return <BillCard key={bill.id} isResidenceBill={true} id={bill.id} name={bill.category} category="Residence" dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)}/>
                   })}
 
                   {/* {bills.map((bill, i) => {
