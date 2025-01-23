@@ -50,6 +50,10 @@ export type ResponseBody<TData> = {
   data?: TData;
 };
 
+export type IdData = {
+  id: number;
+};
+
 export type NameData = {
   name: string;
 };
@@ -181,9 +185,13 @@ export type BillPayModalData = {
 
 export type BillEditModalData = BillAddManualModalData;
 
-type User = {
+export type User = {
+  email: string;
   id: number;
   name: string;
+  created_at: string;
+  updated_at: string;
+  residence_id: number;
 };
 
 export type Residence = {
@@ -207,6 +215,15 @@ export type ResidenceCreateModalData = {
 }
 
 export type ResidenceEditModalData = ResidenceCreateModalData;
+
+export type ResidentData = {
+  resident: User;
+  new_message: ResidenceMessage;
+};
+
+export type RemoveResidentData = {
+  new_message: ResidenceMessage;
+}
 
 export type ResidenceBill = {
   id: number;
@@ -250,7 +267,23 @@ export type ResidenceBillPayModalData = {
 
 export type ResidenceBillEditModalData = ResidenceBillAddManualModalData;
 
+export type ResidencePayment = {
+  id: number;
+  payer_id: number;
+  payee_id: number | null;
+  amount: number;
+  residence_bill_id: number;
+  status: 'Paid' | 'Pending';
+  created_at: string;
+  updated_at: string;
+};
+
+export type ResidencePaymentsData = {
+  payments: ResidencePayment[];
+}
+
 export type ResidenceMessage = {
+  id: number;
   content: string;
   is_update: boolean;
   created_at: string;
@@ -258,6 +291,10 @@ export type ResidenceMessage = {
   residence_id: number;
   user_id: number;
 };
+
+export type ResidenceMessageData = {
+  message: ResidenceMessage;
+}
 
 export type ResidenceMessagesData = {
   messages: ResidenceMessage[];

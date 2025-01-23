@@ -150,12 +150,29 @@ class ResidencesController < ApplicationController
 
     if current_user
       if current_user.residence
-        other_user = User.where(email: params[:email])
-        other_user.residence = current_user.residence # TODO: create a notification record instead of just adding user
+        other_user = User.find_by(email: params[:email])
 
-        render json: {
-          status: { code: 200, message: "Successfully invited user to residence." }
-        }, status: :ok
+        if other_user
+          if other_user.id == current_user.id || current_user.residence.users.include?(other_user)
+            render json: {
+              status: { code: 400, message: "Unable to add existing user to residence." }
+            }, status: :bad_request
+          else
+            other_user.residence = current_user.residence # TODO: create a notification record instead of just adding user
+            other_user.save
+
+            message = ResidenceMessage.create(content: "#{current_user.name} added #{other_user.name} to residence", is_update: true, residence_id: current_user.residence.id, user_id: current_user.id)
+
+            render json: {
+              status: { code: 200, message: "Successfully invited user to residence." },
+              data: { resident: other_user, new_message: message }
+            }, status: :ok
+          end
+        else
+          render json: {
+            status: { code: 404, message: "No such user found." }
+          }, status: :not_found
+        end
       else
         render json: {
           status: { code: 404, message: "Current user has no residence." }
@@ -183,8 +200,11 @@ class ResidencesController < ApplicationController
         other_user.residence = nil
         other_user.save
 
+        message = ResidenceMessage.create(content: "#{current_user.name} removed #{other_user.name} from residence", is_update: true, residence_id: current_user.residence.id, user_id: current_user.id)
+
         render json: {
-          status: { code: 200, message: "Successfully removed user from residence." }
+          status: { code: 200, message: "Successfully removed user from residence." },
+          data: { new_message: message }
         }, status: :ok
       else
         render json: {

@@ -66,7 +66,8 @@ class ResidenceMessagesController < ApplicationController
         new_message.residence = current_user.residence
         new_message.save
         render json: {
-          status: { code: 200, message: "Successfully created residence message." }
+          status: { code: 200, message: "Successfully created residence message." },
+          data: { message: new_message }
         }, status: :ok
       else
         render json: {

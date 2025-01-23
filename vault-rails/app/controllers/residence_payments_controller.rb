@@ -39,6 +39,16 @@ class ResidencePaymentsController < ApplicationController
         payment = ResidencePayment.find(params[:id])
         payment.update(status: "Paid")
 
+        formatted_due_date = Date.strptime(payment.residence_bill.due_date.to_s, "%Y%m%d").strftime("%m/%d/%Y")
+        if params[:payee_id]
+          payee_name = User.find(params[:payee_id]).name
+          message = "#{current_user.name} paid #{payee_name} for #{payment.residence_bill.category} Bill due #{formatted_due_date}"
+        else
+          message = "#{current_user.name} paid #{payment.residence_bill.category} Bill due #{formatted_due_date}"
+        end
+
+        ResidenceMessage.create(content: message, is_update: true, residence_id: current_user.residence.id, user_id: current_user.id)
+
         render json: {
           status: { code: 200, message: "Successfully paid residence payment." }
         }, status: :ok

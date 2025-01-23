@@ -1,6 +1,17 @@
 import { request } from '@/app/lib/api';
 import { unformatDate } from '@/app/lib/utils';
-import { NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { IdData, NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidentData, RemoveResidentData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidencePaymentsData, ResidenceMessageData, ResidenceMessagesData } from '@/app/lib/definitions';
+
+export async function fetchCurrentUserId() {
+  try {
+    const response = await request<IdData>('get_current_user_id', 'GET');
+    return response.data?.id;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch user id.');
+  }
+}
 
 export async function fetchName() {
   try {
@@ -281,7 +292,8 @@ export async function deleteResidence() {
 
 export async function addResident(email: string) {
   try {
-    await request<null>(`residences/invite_resident/${encodeURIComponent(email)}`, 'PATCH');
+    const response = await request<ResidentData>(`residences/invite_resident/${encodeURIComponent(email)}`, 'PATCH');
+    return response.data;
 
   } catch (error) {
     console.error('Server error:', error);
@@ -291,7 +303,8 @@ export async function addResident(email: string) {
 
 export async function removeResident(id: number) {
   try {
-    await request<null>(`residences/remove_resident/${id}`, 'PATCH');
+    const response = await request<RemoveResidentData>(`residences/remove_resident/${id}`, 'PATCH');
+    return response.data?.new_message;
 
   } catch (error) {
     console.error('Server error:', error);
@@ -352,6 +365,17 @@ export async function removeResidenceBill(id: number) {
   }
 }
 
+export async function fetchResidencePayments(id: number) {
+  try {
+    const response = await request<ResidencePaymentsData>(`residence_bills/get_payments/${id}`, 'GET');
+    return response.data?.payments;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch residence bill payments.');
+  }
+}
+
 export async function fetchRecentResidenceMessages() {
   try {
     const response = await request<ResidenceMessagesData>('residence_messages/get_recent', 'GET');
@@ -360,5 +384,27 @@ export async function fetchRecentResidenceMessages() {
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to fetch recent residence messages.');
+  }
+}
+
+export async function fetchAllResidenceMessages() {
+  try {
+    const response = await request<ResidenceMessagesData>('residence_messages/get_all', 'GET');
+    return response.data?.messages;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch all residence messages.');
+  }
+}
+
+export async function createResidenceMessage(isUpdate: boolean, content: string) {
+  try {
+    const response = await request<ResidenceMessageData>(`residence_messages/create/${isUpdate}/${encodeURIComponent(content)}`, 'POST');
+    return response.data?.message;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to create residence messages.');
   }
 }

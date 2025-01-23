@@ -1,21 +1,35 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import { ChevronUpIcon, ChevronDownIcon, CheckIcon, PencilIcon, TrashIcon, UserCircleIcon, DocumentCurrencyDollarIcon } from '@heroicons/react/24/solid';
-import { dmSans } from '@/app/ui/fonts';
 import IconButton from './iconButton';
+import { dmSans } from '@/app/ui/fonts';
+import { ResidencePayment } from '@/app/lib/definitions';
+import { formatDollarAmount } from '@/app/lib/utils';
 
 interface ResidenceBillCardProps {
   id: number;
   category: string;
   dueDate: string;
   total: string;
+  payments: ResidencePayment[];
+  residentIdToName: Record<number, string>;
+  currentUserId: number;
+  onOpen?: (id: number) => void;
   onPay?: (id: number) => void;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
 };
 
-export default function ResidenceBillCard({ id, category, dueDate, total, onPay, onEdit, onDelete, ...rest }: ResidenceBillCardProps) {
+export default function ResidenceBillCard({ id, category, dueDate, total, payments, residentIdToName, currentUserId, onOpen, onPay, onEdit, onDelete, ...rest }: ResidenceBillCardProps) {
   const [cardOpen, setCardOpen] = useState<boolean>(false);
+
+  const handleCardOpen = () => {
+    if (cardOpen) setCardOpen(false);
+    else {
+      if (onOpen) onOpen(id);
+      setCardOpen(true);
+    }
+  };
 
   return (
     <div
@@ -57,7 +71,7 @@ export default function ResidenceBillCard({ id, category, dueDate, total, onPay,
         </div>
 
         <button
-          onClick={() => setCardOpen(!cardOpen)}
+          onClick={handleCardOpen}
           className={clsx("w-8 rounded-md p-2 focus:outline-none transition-all duration-150 ease-in-out",
             {
               "text-off_gray bg-black/5 hover:bg-black/10 focus:bg-black/10": !cardOpen,
@@ -71,55 +85,45 @@ export default function ResidenceBillCard({ id, category, dueDate, total, onPay,
 
       { cardOpen &&
         <div className="flex flex-col">
-          <div className="bg-white flex flex-col items-center gap-1 p-4">
-            <div className="max-w-fit flex flex-row justify-center gap-8 px-4 py-2 bg-gray-100 rounded-md text-off_black font-normal text-sm">
-              <p className="w-24">Resident</p>
-              <p className="w-24">To Pay</p>
-              <p className="w-20">Status</p>
-              <p className="w-24 text-right">Amount</p>
-              <div className="w-7"></div>
+          { payments.length === 0 ? (
+            <div className="bg-white p-4 text-center text-off_gray font-normal text-sm">
+              <p>Click the edit button below to setup payments for this bill!</p>
             </div>
-
-            <div className="max-w-fit flex flex-row justify-center items-center gap-8 px-4 py-2 rounded-md text-off_black font-normal text-sm">
-              <div className="flex flex-row items-center gap-2 w-24">
-                <UserCircleIcon className="w-7 h-7 text-gray-300"/>
-                <p className="">John</p>
-              </div>
-              
-              <div className="flex flex-row items-center gap-2 w-24">
-                <UserCircleIcon className="w-7 h-7 text-gray-300"/>
-                <p className="">Bob</p>
+          ) : (
+            <div className="bg-white flex flex-col items-center gap-1 p-4">
+              <div className="max-w-fit flex flex-row justify-center gap-8 px-4 py-2 bg-gray-100 rounded-md text-off_black font-normal text-sm">
+                <p className="w-24">Resident</p>
+                <p className="w-24">To Pay</p>
+                <p className="w-20">Status</p>
+                <p className="w-24 text-right">Amount</p>
+                <div className="w-7"></div>
               </div>
 
-              <div className="w-20">
-                <p className="max-w-fit rounded-md px-2 py-1 font-medium text-sm bg-positive text-positive_text">Paid</p>
-              </div>
+              { payments.map((payment) => {
+                return (
+                  <div key={payment.id} className="max-w-fit flex flex-row justify-center items-center gap-8 px-4 py-2 rounded-md text-off_black font-normal text-sm">
+                    <div className="flex flex-row items-center gap-1 w-24">
+                      <UserCircleIcon className="w-7 h-7 text-gray-300"/>
+                      <p>{ residentIdToName[payment.payer_id] }</p>
+                    </div>
+                    
+                    <div className="flex flex-row items-center gap-1 w-24">
+                      { payment.payee_id ? <UserCircleIcon className="w-7 h-7 text-gray-300"/> : <DocumentCurrencyDollarIcon className="w-7 h-6 text-off_gray"/> }
+                      <p>{ payment.payee_id ? residentIdToName[payment.payer_id] : 'Bill' }</p>
+                    </div>
 
-              <p className="w-24 text-right">$1,000.00</p>
+                    <div className="w-20">
+                      <p className="max-w-fit rounded-md px-2 py-1 font-medium text-sm bg-positive text-positive_text">Paid</p>
+                    </div>
 
-              <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/>
+                    <p className="w-24 text-right">{ formatDollarAmount(payment.amount) }</p>
+                    
+                    { payment.payer_id === currentUserId ? <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/> : <div className="w-7"></div> }
+                  </div>
+                );
+              })}
             </div>
-
-            <div className="max-w-fit flex flex-row justify-center gap-8 px-4 py-2 rounded-md text-off_black font-normal text-sm">
-              <div className="flex flex-row items-center gap-2 w-24">
-                <UserCircleIcon className="w-7 h-7 text-gray-300"/>
-                <p>Bob</p>
-              </div>
-
-              <div className="flex flex-row items-center gap-2 w-24">
-                <DocumentCurrencyDollarIcon className="w-7 h-6 text-off_gray"></DocumentCurrencyDollarIcon>
-                <p>Bill</p>
-              </div>
-
-              <div className="w-20">
-                <p className="max-w-fit rounded-md px-2 py-1 font-medium text-sm bg-positive text-positive_text">Not Paid</p>
-              </div>
-
-              <p className="w-24 text-right">$2,000.00</p>
-
-              <div className="w-7"></div>
-            </div>
-          </div>
+          )}
 
           <div className="bg-white p-4 rounded-b-md flex flex-row justify-between items-center">
             <div className="flex flex-col gap-1">
@@ -132,7 +136,6 @@ export default function ResidenceBillCard({ id, category, dueDate, total, onPay,
             </div>
 
             <div className="flex flex-row justify-end gap-4">
-              {/* <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/> */}
               <IconButton icon={PencilIcon} onClick={() => { if (onEdit) onEdit(id); }} blank={false}/>
               <IconButton icon={TrashIcon} onClick={() => { if (onDelete) onDelete(id); }} blank={false}/>
             </div>

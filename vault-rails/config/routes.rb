@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   get "/current_user", to: "user#index"
   get "/get_current_user_name", to: "user#get_current_user_name"
+  get "/get_current_user_id", to: "user#get_current_user_id"
 
   resources :monthly_spendings, only: [] do
     collection do
@@ -58,14 +59,15 @@ Rails.application.routes.draw do
       patch "edit/:name/:monthly_payment", to: "residences#edit", constraints: { name: /[^\/]+/ }
       delete :leave
       delete :delete
-      post "invite_resident/:email", to: "residences#invite_resident"
+      patch "invite_resident/:email", to: "residences#invite_resident", constraints: { email: /[^\/]+/ }
       patch "remove_resident/:id", to: "residences#remove_resident"
     end
   end
 
   resources :residence_bills, only: [] do
     collection do
-      get "get_all", to: "residence_bills#get_all"
+      get :get_all
+      get :get_upcoming
       get "get_by_month/:month", to: "residence_bills#get_by_month"
       get "get_payments/:id", to: "residence_bills#get_payments"
       post "add/:total/:category/:due_date", to: "residence_bills#add", constraints: { total: /[.\d]+/ }

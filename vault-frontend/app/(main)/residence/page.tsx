@@ -9,17 +9,19 @@ import Select from '@/app/ui/select';
 import ResidenceModal from '@/app/ui/residenceModal';
 import ResidenceBillModal from '@/app/ui/residenceBillModal';
 import ResidenceBillCard from '@/app/ui/residenceBillCard';
-import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
-import { PlusIcon } from '@heroicons/react/24/solid';
+import { PaperAirplaneIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { dmSans } from '@/app/ui/fonts';
 import clsx from 'clsx';
-import { fetchAccounts, addTransaction, fetchResidenceInfo, createResidence, editResidence, leaveResidence, deleteResidence, fetchAllResidenceBills, addResidenceBill, editResidenceBill, removeResidenceBill, fetchRecentResidenceMessages } from '@/app/lib/data';
-import { SelectOption, Account, TransactionAddManualModalData, ResidenceData, RESIDENCE_CREATE_MODAL_TYPE, RESIDENCE_EDIT_MODAL_TYPE, RESIDENCE_LEAVE_MODAL_TYPE, RESIDENCE_DELETE_MODAL_TYPE, ResidenceCreateModalData, ResidenceEditModalData, ResidenceBill, RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE, RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE, RESIDENCE_BILL_PAY_MODAL_TYPE, RESIDENCE_BILL_EDIT_MODAL_TYPE, RESIDENCE_BILL_DELETE_MODAL_TYPE, ResidenceBillAddManualModalData, ResidenceBillAddDocumentModalData, ResidenceBillPayModalData, ResidenceBillEditModalData, ResidenceMessage } from '@/app/lib/definitions';
+import { fetchCurrentUserId, fetchAccounts, addTransaction, fetchResidenceInfo, createResidence, editResidence, leaveResidence, deleteResidence, fetchAllResidenceBills, addResidenceBill, editResidenceBill, removeResidenceBill, fetchResidencePayments, fetchAllResidenceMessages, createResidenceMessage } from '@/app/lib/data';
+import { SelectOption, User, Account, TransactionAddManualModalData, ResidenceData, RESIDENCE_CREATE_MODAL_TYPE, RESIDENCE_EDIT_MODAL_TYPE, RESIDENCE_LEAVE_MODAL_TYPE, RESIDENCE_DELETE_MODAL_TYPE, ResidenceCreateModalData, ResidenceEditModalData, ResidenceBill, RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE, RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE, RESIDENCE_BILL_PAY_MODAL_TYPE, RESIDENCE_BILL_EDIT_MODAL_TYPE, RESIDENCE_BILL_DELETE_MODAL_TYPE, ResidenceBillAddManualModalData, ResidenceBillAddDocumentModalData, ResidenceBillPayModalData, ResidenceBillEditModalData, ResidencePayment, ResidenceMessage } from '@/app/lib/definitions';
 import { formatDollarAmount, getLast12MonthsAsOptions, formatDate, unformatDate } from '@/app/lib/utils';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [name, setName] = useState<string>('');
+  const [currentUserId, setCurrentUserId] = useState<number>(0);
   const [residenceData, setResidenceData] = useState<ResidenceData | null>(null);
+  const [residentIdMapping, setResidentIdMapping] = useState<Record<number, string>>({});
   const [modalType, setModalType] = useState<number>(RESIDENCE_CREATE_MODAL_TYPE);
   const [residenceModalOpen, setResidenceModalOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -28,10 +30,12 @@ export default function Page() {
   const [residenceBillSelected, setResidenceBillSelected] = useState<ResidenceBill | null>(null);
   const [residenceBills, setResidenceBills] = useState<ResidenceBill[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [residencePayments, setResidencePayments] = useState<Record<number, ResidencePayment[]>>({});
   const [monthlyPayment, setMonthlyPayment] = useState({ total: 4300, dueDate: 20250131, paid: false });
   const last12Months: SelectOption[] = getLast12MonthsAsOptions();
   const monthlyPaymentVsUtilities: SelectOption[] = [{ value: 0, text: 'Last 3 months'}, { value: 0, text: 'Last 6 months'}, { value: 0, text: 'Last 12 months'}];
   const [residenceMessages, setResidenceMessages] = useState<ResidenceMessage[]>([]);
+  const [currentResidenceMessage, setCurrentResidenceMessage] = useState<string>('');
 
   // RESIDENCE MODAL FUNCTIONS
 
@@ -80,6 +84,12 @@ export default function Page() {
       },
       users: residenceData!.users || []
     });
+
+    let newResidentIdMapping: Record<number, string> = {};
+    residenceData!.users.forEach(user => {
+      newResidentIdMapping[user.id] = user.name;
+    });
+    setResidentIdMapping(newResidentIdMapping);
   };
 
   const handleEditResidenceModalSubmit = async (data: ResidenceEditModalData) => {
@@ -92,6 +102,7 @@ export default function Page() {
   const handleLeaveResidenceModalSubmit = async () => {
     await leaveResidence();
     setResidenceData(null);
+    setResidentIdMapping({});
 
     setResidenceModalOpen(false);
   };
@@ -99,12 +110,37 @@ export default function Page() {
   const handleDeleteResidenceModalSubmit = async () => {
     await deleteResidence();
     setResidenceData(null);
+    setResidentIdMapping({});
 
     setResidenceModalOpen(false);
   };
 
   const handleResidenceModalClose = () => {
     setResidenceModalOpen(false);
+  };
+
+  const handleResidentAdd = (resident: User, newMessage: ResidenceMessage) => {
+    setResidenceData({
+      residence: {
+        name: residenceData!.residence.name,
+        monthly_payment: residenceData!.residence.monthly_payment
+      },
+      users: [...residenceData!.users, resident]
+    });
+
+    setResidenceMessages([...residenceMessages, newMessage]);
+  };
+
+  const handleResidentRemove = (id: number, newMessage: ResidenceMessage) => {
+    setResidenceData({
+      residence: {
+        name: residenceData!.residence.name,
+        monthly_payment: residenceData!.residence.monthly_payment
+      },
+      users: residenceData!.users.filter((resident) => resident.id !== id)
+    });
+
+    setResidenceMessages([...residenceMessages, newMessage]);
   };
 
   // RESIDENCE BILL MODAL FUNCTIONS
@@ -147,7 +183,12 @@ export default function Page() {
     setResidenceBillSelected(null);
   };
 
-  // RESIDENCE CARD FUNCTIONS
+  // RESIDENCE BILL CARD FUNCTIONS
+
+  const handleOpenClick = (id: number) => {
+    const foundBill = residenceBills.find(bill => bill.id === id);
+    if (foundBill) setResidenceBillSelected(foundBill);
+  }
 
   const handlePayClick = (id: number) => {
     const foundBill = residenceBills.find(bill => bill.id === id);
@@ -228,20 +269,56 @@ export default function Page() {
     setResidenceBillSelected(null);
   };
 
+  // RESIDENCE MESSAGE FUNCTIONS
+
+  const handleResidenceMessageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setCurrentResidenceMessage(event.currentTarget.value);
+  };
+
+  const handleResidenceMessageSend = async () => {
+    const newMessage = await createResidenceMessage(false, currentResidenceMessage);
+    if (newMessage) {
+      setResidenceMessages([...residenceMessages, newMessage]);
+      setCurrentResidenceMessage('');
+    }
+  };
+
   useEffect(() => {
     const fetchResidenceData = async () => {
       setLoading(true);
+
+      const fetchedUserId = await fetchCurrentUserId();
+      if (fetchedUserId) setCurrentUserId(fetchedUserId);
 
       const fetchedAccounts = await fetchAccounts();
       if (fetchedAccounts) setAccounts(fetchedAccounts);
 
       const fetchedResidenceInfo = await fetchResidenceInfo();
-      if (fetchedResidenceInfo) setResidenceData(fetchedResidenceInfo);
+      if (fetchedResidenceInfo) {
+        setResidenceData(fetchedResidenceInfo);
+
+        let newResidentIdMapping: Record<number, string> = {};
+        fetchedResidenceInfo.users.forEach(user => {
+          newResidentIdMapping[user.id] = user.name;
+        });
+        setResidentIdMapping(newResidentIdMapping);
+      }
 
       const fetchedResidenceBills = await fetchAllResidenceBills();
-      if (fetchedResidenceBills) setResidenceBills(fetchedResidenceBills);
+      if (fetchedResidenceBills) {
+        setResidenceBills(fetchedResidenceBills);
+        
+        let residenceBillIdsToResidencePayments: Record<number, ResidencePayment[]> = {};
+        for (let i = 0; i < fetchedResidenceBills.length; i++) {
+          const id = fetchedResidenceBills[i].id;
+          const fetchedResidencePayments = await fetchResidencePayments(id);
+          if (fetchedResidencePayments) residenceBillIdsToResidencePayments[id] = fetchedResidencePayments;
+        }
 
-      const fetchedResidenceMessages = await fetchRecentResidenceMessages();
+        setResidencePayments(residenceBillIdsToResidencePayments);
+      }
+
+      const fetchedResidenceMessages = await fetchAllResidenceMessages();
       if (fetchedResidenceMessages) setResidenceMessages(fetchedResidenceMessages);
       
       setLoading(false);
@@ -265,7 +342,7 @@ export default function Page() {
 
   return (
     <main>
-      <ResidenceModal type={modalType} isOpen={residenceModalOpen} residence={residenceData?.residence || null} onCreateModalSubmit={handleCreateResidenceModalSubmit} onEditModalSubmit={handleEditResidenceModalSubmit} onLeaveModalSubmit={handleLeaveResidenceModalSubmit} onDeleteModalSubmit={handleDeleteResidenceModalSubmit} onClose={handleResidenceModalClose}/>
+      <ResidenceModal type={modalType} isOpen={residenceModalOpen} residenceData={residenceData} currentUserId={currentUserId} onCreateModalSubmit={handleCreateResidenceModalSubmit} onEditModalSubmit={handleEditResidenceModalSubmit} onLeaveModalSubmit={handleLeaveResidenceModalSubmit} onDeleteModalSubmit={handleDeleteResidenceModalSubmit} onClose={handleResidenceModalClose} onResidentAdd={handleResidentAdd} onResidentRemove={handleResidentRemove}/>
       <ResidenceBillModal type={modalType} isOpen={residenceBillModalOpen} residenceBill={residenceBillSelected} accounts={accounts} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditResidenceBillModalSubmit} onDeleteModalSubmit={handleDeleteResidenceBillModalSubmit} onClose={handleResidenceBillModalClose}/>
 
       { !residenceData ? (
@@ -304,12 +381,39 @@ export default function Page() {
 
               <Card>
                 <h3 className="text-lg font-medium text-off_black">Manage Residence</h3>
-                  <div className="flex flex-col mt-4 gap-2">
-                    <Button onClick={handleEditResidenceClick} size="md">Edit Residence</Button>
-                    <Button onClick={handleLeaveResidenceClick} size="md">Leave Residence</Button>
-                    <Button onClick={handleDeleteResidenceClick} size="md">Delete Residence</Button>
+
+                <div className="flex flex-col my-2 gap-4">
+                  <div>
+                    <p className="text-sm text-off_black font-medium mb-1">Residence Name</p>
+                    <p className="text-md text-off_black font-normal bg-gray-100 rounded-md px-2 py-1 truncate">{residenceData.residence.name}</p>
                   </div>
-                </Card>
+
+                  <div>
+                    <p className="text-sm text-off_black font-medium mb-1">Monthly Payment Type</p>
+                    <p className="text-md text-off_black font-normal bg-gray-100 rounded-md px-2 py-1">{residenceData.residence.monthly_payment.charAt(0).toUpperCase() + residenceData.residence.monthly_payment.substring(1)}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-off_black font-medium mb-1">Residents</p>
+                    <div className="flex flex-col gap-2">
+                      { residenceData.users.map((user) => {
+                        return (
+                          <div key={user.id} className="flex flex-row items-center gap-1">
+                            <UserCircleIcon className="w-7 h-7 text-gray-300"/>
+                            <p className="text-md text-off_black font-normal truncate">{user.name}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center mt-4 gap-2">
+                  <Button onClick={handleEditResidenceClick} size="sm">Edit Residence</Button>
+                  <Button onClick={handleLeaveResidenceClick} size="sm">Leave Residence</Button>
+                  <Button onClick={handleDeleteResidenceClick} size="sm">Delete Residence</Button>
+                </div>
+              </Card>
               
             </div>
 
@@ -341,7 +445,7 @@ export default function Page() {
                       </div>
 
                       {residenceBills.map((bill) => {
-                        return <ResidenceBillCard key={bill.id} id={bill.id} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} onPay={handlePayClick} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
+                        return <ResidenceBillCard key={bill.id} id={bill.id} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} payments={residencePayments[bill.id]} residentIdToName={residentIdMapping} currentUserId={currentUserId} onOpen={handleOpenClick} onPay={handlePayClick} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
                       })}
 
                     </div>
@@ -356,11 +460,19 @@ export default function Page() {
                 <div className="mt-2 flex flex-col bg-off_white p-4 rounded-xl">
                   <>
                     {residenceMessages.length ? (
-                      <div className="flex flex-col gap-4 pb-4 max-h-72">
-                        {residenceMessages.map((message, i) => {
+                      <div className="flex flex-col gap-4 pb-4 items-start max-h-72 overflow-y-auto">
+                        {residenceMessages.map((message) => {
+                          if (message.is_update) {
+                            return (
+                              <div key={message.id} className="self-center">
+                                <h6 className="text-sm font-normal text-off_gray">{message.content}</h6>
+                              </div>
+                            );
+                          }
+
                           return (
-                            <div key={i}>
-                              <p className="ml-3 mb-1 text-xs font-normal text-off_gray">User {message.user_id}</p>
+                            <div key={message.id}>
+                              <p className="ml-3 mb-1 text-xs font-normal text-off_gray">{residentIdMapping[message.user_id]}</p>
                               <h6 className="bg-white max-w-fit rounded-full px-3 py-1 text-md font-normal text-off_black">{message.content}</h6>
                             </div>
                           );
@@ -371,8 +483,8 @@ export default function Page() {
                     )}
                   </>
                   <form className="flex flex-row items-center gap-2 h-8">
-                    <input className="rounded-full bg-white border border-gray-200 w-full px-3 py-1" type="text" placeholder="Enter message"/>
-                    <IconButton className="h-8" icon={PaperAirplaneIcon} onClick={() => {}}></IconButton>
+                    <input className="rounded-full bg-white border border-gray-200 w-full px-4 py-1 focus:outline-none focus:border-gray-300 text-sm text-off_black font-normal" type="text" placeholder="Enter message" value={currentResidenceMessage} onChange={handleResidenceMessageChange}/>
+                    <IconButton className="h-8" icon={PaperAirplaneIcon} onClick={handleResidenceMessageSend}></IconButton>
                   </form>
                 </div>
               </Card>
