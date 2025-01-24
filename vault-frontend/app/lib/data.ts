@@ -407,6 +407,17 @@ export async function deleteResidencePayment(paymentId: number) {
   }
 }
 
+export async function payResidencePayment(paymentId: number) {
+  try {
+    const response = await request<RemoveResidentData>(`residence_payments/pay/${paymentId}`, 'PATCH');
+    return response.data?.new_message;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to pay residence payment.');
+  }
+}
+
 export async function fetchRecentResidenceMessages() {
   try {
     const response = await request<ResidenceMessagesData>('residence_messages/get_recent', 'GET');

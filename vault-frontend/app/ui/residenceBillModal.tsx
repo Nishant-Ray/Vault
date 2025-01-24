@@ -36,17 +36,18 @@ type ResidenceBillModalProps = {
   residenceBill: ResidenceBill | null;
   residents: User[];
   payments: ResidencePayment[];
+  paymentIdToPay: number | null;
   accounts: Account[];
   currentUserId: number;
   onManualModalSubmit: (data: ResidenceBillAddManualModalData, payments: Record<number, ResidenceBillPaymentData>) => void;
   onDocumentModalSubmit: (data: ResidenceBillAddDocumentModalData) => void;
-  onPayModalSubmit: (id: number, data: ResidenceBillPayModalData) => void;
+  onPayModalSubmit: (billId: number, data: ResidenceBillPayModalData, paymentId: number | null) => void;
   onEditModalSubmit: (id: number, data: ResidenceBillEditModalData, payments: Record<number, ResidenceBillPaymentData>) => void
   onDeleteModalSubmit: (id: number) => void;
   onClose: () => void;
 }
 
-export default function ResidenceBillModal({ type, isOpen, residenceBill, residents, payments, accounts, currentUserId, onManualModalSubmit, onDocumentModalSubmit, onPayModalSubmit, onEditModalSubmit, onDeleteModalSubmit, onClose }: ResidenceBillModalProps) {
+export default function ResidenceBillModal({ type, isOpen, residenceBill, residents, payments, paymentIdToPay, accounts, currentUserId, onManualModalSubmit, onDocumentModalSubmit, onPayModalSubmit, onEditModalSubmit, onDeleteModalSubmit, onClose }: ResidenceBillModalProps) {
   const [residenceBillAddManualFormState, setResidenceBillAddManualFormState] = useState<ResidenceBillAddManualModalData>(initialManualModalData);
   const [residenceBillAddDocumentFormState, setResidenceBillAddDocumentFormState] = useState<ResidenceBillAddDocumentModalData>(initialDocumentModalData);
   const [residenceBillPayFormState, setResidenceBillPayFormState] = useState<ResidenceBillPayModalData>(initialPayModalData);
@@ -181,7 +182,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
   const handleBillPayModalFormSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
     if (residenceBill) {
-      onPayModalSubmit(residenceBill.id, residenceBillPayFormState);
+      onPayModalSubmit(residenceBill.id, residenceBillPayFormState, paymentIdToPay);
       setResidenceBillPayFormState(initialPayModalData);
     }
   };

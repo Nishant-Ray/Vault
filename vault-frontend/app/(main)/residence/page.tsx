@@ -12,7 +12,7 @@ import ResidenceBillCard from '@/app/ui/residenceBillCard';
 import { PaperAirplaneIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { dmSans } from '@/app/ui/fonts';
 import clsx from 'clsx';
-import { fetchCurrentUserId, fetchAccounts, addTransaction, fetchResidenceInfo, createResidence, editResidence, leaveResidence, deleteResidence, fetchAllResidenceBills, addResidenceBill, editResidenceBill, removeResidenceBill, fetchResidencePayments, addResidencePayment, editResidencePayment, deleteResidencePayment, fetchAllResidenceMessages, createResidenceMessage } from '@/app/lib/data';
+import { fetchCurrentUserId, fetchAccounts, addTransaction, fetchResidenceInfo, createResidence, editResidence, leaveResidence, deleteResidence, fetchAllResidenceBills, addResidenceBill, editResidenceBill, removeResidenceBill, fetchResidencePayments, addResidencePayment, editResidencePayment, deleteResidencePayment, payResidencePayment, fetchAllResidenceMessages, createResidenceMessage } from '@/app/lib/data';
 import { SelectOption, User, Account, TransactionAddManualModalData, ResidenceData, RESIDENCE_CREATE_MODAL_TYPE, RESIDENCE_EDIT_MODAL_TYPE, RESIDENCE_LEAVE_MODAL_TYPE, RESIDENCE_DELETE_MODAL_TYPE, ResidenceCreateModalData, ResidenceEditModalData, ResidenceBill, RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE, RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE, RESIDENCE_BILL_PAY_MODAL_TYPE, RESIDENCE_BILL_EDIT_MODAL_TYPE, RESIDENCE_BILL_DELETE_MODAL_TYPE, ResidenceBillAddManualModalData, ResidenceBillAddDocumentModalData, ResidenceBillPayModalData, ResidenceBillEditModalData, ResidenceBillPaymentData, ResidencePayment, ResidenceMessage } from '@/app/lib/definitions';
 import { formatDollarAmount, getLast12MonthsAsOptions, formatDate, unformatDate } from '@/app/lib/utils';
 
@@ -31,6 +31,7 @@ export default function Page() {
   const [residenceBills, setResidenceBills] = useState<ResidenceBill[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [residencePayments, setResidencePayments] = useState<Record<number, ResidencePayment[]>>({});
+  const [paymentIdToPay, setPaymentIdToPay] = useState<number | null>(null);
   const [monthlyPayment, setMonthlyPayment] = useState({ total: 4300, dueDate: 20250131, paid: false });
   const last12Months: SelectOption[] = getLast12MonthsAsOptions();
   const monthlyPaymentVsUtilities: SelectOption[] = [{ value: 0, text: 'Last 3 months'}, { value: 0, text: 'Last 6 months'}, { value: 0, text: 'Last 12 months'}];
@@ -206,18 +207,20 @@ export default function Page() {
     if (foundBill) setResidenceBillSelected(foundBill);
   }
 
-  const handlePayClick = (id: number) => {
-    const foundBill = residenceBills.find(bill => bill.id === id);
+  const handlePayClick = (billId: number, paymentId: number) => {
+    const foundBill = residenceBills.find(bill => bill.id === billId);
     if (foundBill) {
       setResidenceBillSelected(foundBill);
-      setRelevantPayments(residencePayments[id]);
+      setRelevantPayments(residencePayments[billId]);
     }
-    
+
+    setPaymentIdToPay(paymentId);
+
     setModalType(RESIDENCE_BILL_PAY_MODAL_TYPE);
     setResidenceBillModalOpen(true);
   };
 
-  const handlePayModalSubmit = async (id: number, data: ResidenceBillPayModalData) => {
+  const handlePayModalSubmit = async (billId: number, data: ResidenceBillPayModalData, paymentId: number | null) => {
     if (data.alsoTransaction) {
       const transactionData: TransactionAddManualModalData = {
         accountID: data.accountID,
@@ -230,7 +233,24 @@ export default function Page() {
       await addTransaction(transactionData);
     }
 
+    if (paymentId) {
+      const newMessage = await payResidencePayment(paymentId);
+      if (newMessage) {
+        setResidenceMessages([...residenceMessages, newMessage]);
+        setCurrentResidenceMessage('');
+      }
+      
+      const newResidencePayments: Record<number, ResidencePayment[]> = { 
+        ...residencePayments, 
+        [billId]: residencePayments[billId].map(payment => 
+          payment.id === paymentId ? { ...payment, status: 'Paid' } : payment
+        )
+      };
+      setResidencePayments(newResidencePayments);
+    }
+
     setResidenceBillModalOpen(false);
+    setPaymentIdToPay(null);
     setResidenceBillSelected(null);
     setRelevantPayments([]);
   };
@@ -412,7 +432,7 @@ export default function Page() {
   return (
     <main>
       <ResidenceModal type={modalType} isOpen={residenceModalOpen} residenceData={residenceData} currentUserId={currentUserId} onCreateModalSubmit={handleCreateResidenceModalSubmit} onEditModalSubmit={handleEditResidenceModalSubmit} onLeaveModalSubmit={handleLeaveResidenceModalSubmit} onDeleteModalSubmit={handleDeleteResidenceModalSubmit} onClose={handleResidenceModalClose} onResidentAdd={handleResidentAdd} onResidentRemove={handleResidentRemove}/>
-      <ResidenceBillModal type={modalType} isOpen={residenceBillModalOpen} residenceBill={residenceBillSelected} residents={residenceData!.users} payments={relevantPayments} accounts={accounts} currentUserId={currentUserId} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditResidenceBillModalSubmit} onDeleteModalSubmit={handleDeleteResidenceBillModalSubmit} onClose={handleResidenceBillModalClose}/>
+      <ResidenceBillModal type={modalType} isOpen={residenceBillModalOpen} residenceBill={residenceBillSelected} residents={residenceData!.users} payments={relevantPayments} paymentIdToPay={paymentIdToPay} accounts={accounts} currentUserId={currentUserId} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditResidenceBillModalSubmit} onDeleteModalSubmit={handleDeleteResidenceBillModalSubmit} onClose={handleResidenceBillModalClose}/>
 
       { !residenceData ? (
         <div className="absolute top-20 left-60 right-0 bottom-0 flex flex-col justify-center items-center gap-2 text-center">
@@ -514,7 +534,7 @@ export default function Page() {
                       </div>
 
                       {residenceBills.map((bill) => {
-                        return <ResidenceBillCard key={bill.id} id={bill.id} category={bill.category} dueDate={formatDate(bill.due_date)} total={formatDollarAmount(bill.total)} payments={residencePayments[bill.id]} residentIdToName={residentIdMapping} currentUserId={currentUserId} onOpen={handleOpenClick} onPay={handlePayClick} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
+                        return <ResidenceBillCard key={bill.id} id={bill.id} category={bill.category} dueDate={formatDate(bill.due_date)} total={bill.total} payments={residencePayments[bill.id]} residentIdToName={residentIdMapping} currentUserId={currentUserId} onOpen={handleOpenClick} onPay={handlePayClick} onEdit={handleEditClick} onDelete={handleDeleteClick}/>
                       })}
 
                     </div>

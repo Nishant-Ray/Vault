@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { ChevronUpIcon, ChevronDownIcon, CheckIcon, PencilIcon, TrashIcon, UserCircleIcon, DocumentCurrencyDollarIcon } from '@heroicons/react/24/solid';
 import IconButton from './iconButton';
@@ -10,18 +10,19 @@ interface ResidenceBillCardProps {
   id: number;
   category: string;
   dueDate: string;
-  total: string;
+  total: number;
   payments: ResidencePayment[];
   residentIdToName: Record<number, string>;
   currentUserId: number;
   onOpen?: (id: number) => void;
-  onPay?: (id: number) => void;
+  onPay?: (billId: number, paymentId: number) => void;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
 };
 
 export default function ResidenceBillCard({ id, category, dueDate, total, payments, residentIdToName, currentUserId, onOpen, onPay, onEdit, onDelete, ...rest }: ResidenceBillCardProps) {
   const [cardOpen, setCardOpen] = useState<boolean>(false);
+  const [billPaid, setBillPaid] = useState<boolean>(false);
 
   const handleCardOpen = () => {
     if (cardOpen) setCardOpen(false);
@@ -30,6 +31,18 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
       setCardOpen(true);
     }
   };
+
+  useEffect(() => {
+    if (payments) {
+      let billAmount = 0;
+      for (let i = 0; i < payments.length; i++) {
+        const payment = payments[i];
+        if (payment.payee_id === null && payment.status === 'Paid') billAmount += payment.amount;
+      }
+      
+      setBillPaid(billAmount === total);
+    }
+  }, [payments]);
 
   return (
     <div
@@ -48,7 +61,7 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
           }
         )}
       >
-        <p className="w-24 font-medium text-md text-right">{total}</p>
+        <p className="w-24 font-medium text-md text-right">{formatDollarAmount(total)}</p>
 
         <div className="w-24">
           <p className={clsx("max-w-fit rounded-md px-2 py-1 font-medium text-sm",
@@ -64,10 +77,11 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
         <div className="w-20">
           <p className={clsx("max-w-fit rounded-md px-2 py-1 font-medium text-sm",
             {
-              "bg-positive text-positive_text": !cardOpen,
+              "bg-positive text-positive_text": !cardOpen && billPaid,
+              "bg-negative text-negative_text": !cardOpen && !billPaid,
               "bg-white/20 text-white": cardOpen
             }
-          )}>Not Paid</p>
+          )}>{billPaid ? 'Paid' : 'Not Paid'}</p>
         </div>
 
         <button
@@ -109,7 +123,7 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
                     
                     <div className="flex flex-row items-center gap-1 w-28">
                       { payment.payee_id ? <UserCircleIcon className="w-6 h-6 text-gray-300"/> : <DocumentCurrencyDollarIcon className="w-7 h-6 text-off_gray"/> }
-                      <p className="truncate">{ payment.payee_id ? residentIdToName[payment.payee_id] : 'Bill' }<span className="text-xs text-off_gray">{payment.payee_id === currentUserId ? ' (YOU)' : ''}</span></p>
+                      <p className="truncate">{ payment.payee_id ? residentIdToName[payment.payee_id] : 'Bill Directly' }<span className="text-xs text-off_gray">{payment.payee_id === currentUserId ? ' (YOU)' : ''}</span></p>
                     </div>
 
                     <div className="w-20">
@@ -118,7 +132,7 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
 
                     <p className="w-20 text-right">{ formatDollarAmount(payment.amount) }</p>
                     
-                    { payment.payer_id === currentUserId ? <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/> : <div className="w-8"></div> }
+                    { payment.payer_id === currentUserId && payment.status === 'Pending' ? <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id, payment.id); }} blank={false}/> : <div className="w-8"></div> }
                   </div>
                 );
               })}
@@ -128,7 +142,7 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
           <div className="bg-white p-4 rounded-b-md flex flex-row justify-between items-center">
             <div className="flex flex-col gap-1">
               <p className="text-sm text-off_gray font-normal">Residence Bill Total</p>
-              <p className={`${dmSans.className} antialiased tracking-tight text-off_black font-semibold text-3xl`}>{total}</p>
+              <p className={`${dmSans.className} antialiased tracking-tight text-off_black font-semibold text-3xl`}>{formatDollarAmount(total)}</p>
             </div>
 
             <div className="flex flex-col gap-1">
