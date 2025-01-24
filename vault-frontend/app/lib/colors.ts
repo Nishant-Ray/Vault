@@ -1,4 +1,5 @@
 export const colors: Record<string, string> = {
+  'primary': 'rgba(74, 219, 144, 0.6)',
   'accent': 'rgba(54, 162, 235, 0.6)'
 };
 

@@ -11,7 +11,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 const initialManualModalData: ResidenceBillAddManualModalData = {
   total: '0',
   dueDate: '',
-  category: 'category1'
+  category: 'Rent'
 };
 
 const initialDocumentModalData: ResidenceBillAddDocumentModalData = {
@@ -27,7 +27,7 @@ const initialPayModalData: ResidenceBillPayModalData = {
 const initialEditModalData: ResidenceBillEditModalData = {
   total: '0',
   dueDate: '',
-  category: 'category1'
+  category: 'Rent'
 }
 
 type ResidenceBillModalProps = {
@@ -233,6 +233,8 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
         dueDate: reformatDate(residenceBill.due_date),
         category: residenceBill.category
       });
+
+      setCategoryOption(residenceBill.category);
     }
   };
 
@@ -295,6 +297,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
           <Input onChange={handleBillAddManualFormInputChange} id="Electricity" name="category" type="radio" value="Electricity" sideLabel="Electricity" checked={categoryOption === 'Electricity'} standalone={false} />
           <Input onChange={handleBillAddManualFormInputChange} id="Internet" name="category" type="radio" value="Internet" sideLabel="Internet" checked={categoryOption === 'Internet'} standalone={false} />
           <Input onChange={handleBillAddManualFormInputChange} id="Trash" name="category" type="radio" value="Trash" sideLabel="Trash" checked={categoryOption === 'Trash'} standalone={false} />
+          <Input onChange={handleBillAddManualFormInputChange} id="Gas" name="category" type="radio" value="Gas" sideLabel="Gas" checked={categoryOption === 'Gas'} standalone={false} />
           <Input onChange={handleBillAddManualFormInputChange} id="Misc" name="category" type="radio" value="Misc" sideLabel="Misc." checked={categoryOption === 'Misc'}/>
 
           <div className="mb-2">
@@ -368,6 +371,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
           <Input onChange={handleBillEditFormInputChange} id="Electricity" name="category" type="radio" value="Electricity" sideLabel="Electricity" checked={categoryOption === 'Electricity'} standalone={false} />
           <Input onChange={handleBillEditFormInputChange} id="Internet" name="category" type="radio" value="Internet" sideLabel="Internet" checked={categoryOption === 'Internet'} standalone={false} />
           <Input onChange={handleBillEditFormInputChange} id="Trash" name="category" type="radio" value="Trash" sideLabel="Trash" checked={categoryOption === 'Trash'} standalone={false} />
+          <Input onChange={handleBillEditFormInputChange} id="Gas" name="category" type="radio" value="Gas" sideLabel="Gas" checked={categoryOption === 'Gas'} standalone={false} />
           <Input onChange={handleBillEditFormInputChange} id="Misc" name="category" type="radio" value="Misc" sideLabel="Misc" checked={categoryOption === 'Misc'}/>
 
           <div className="mb-2">

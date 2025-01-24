@@ -124,6 +124,18 @@ export function reformatDate(dateNumber: number): string { // YYYYMMDD --> Date 
   return (new Date(year, month, date)).toISOString().substring(0, 10);
 }
 
+export function getNumberOfMonthsAgo(numMonthsAgo: number): number { // x --> YYYYMM - x
+  const today = new Date();
+  const month = today.getMonth() + 1 - numMonthsAgo;
+  let currMonth;
+  let year = today.getFullYear();
+  if (month <= 0) {
+    year--;
+    currMonth = 12 + month;
+  } else currMonth = month < 10 ? `0${month}` : month;
+  return Number(`${year}${currMonth}`);
+}
+
 export function isBill(bill: Bill | ResidenceBill): boolean {
   return 'user_id' in bill;
 }

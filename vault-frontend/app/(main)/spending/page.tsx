@@ -261,7 +261,7 @@ export default function Page() {
         </div>
 
         <div className="flex flex-col gap-8">
-          <Card>
+          <Card className="min-w-96">
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-medium text-off_black">Transactions</h3>
 

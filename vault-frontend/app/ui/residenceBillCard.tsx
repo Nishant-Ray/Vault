@@ -72,6 +72,7 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
               "bg-positive text-positive_text": !cardOpen && category === 'Electricity',
               "bg-orange-100 text-orange-600": !cardOpen && category === 'Internet',
               "bg-gray-600 text-white": !cardOpen && category === 'Trash',
+              "bg-amber-100 text-yellow-600": !cardOpen && category === 'Gas',
               "bg-gray-100 text-gray-400": !cardOpen && category === 'Misc',
               "bg-white/20 text-white": cardOpen
             }

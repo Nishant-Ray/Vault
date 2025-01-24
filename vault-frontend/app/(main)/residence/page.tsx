@@ -9,12 +9,13 @@ import Select from '@/app/ui/select';
 import ResidenceModal from '@/app/ui/residenceModal';
 import ResidenceBillModal from '@/app/ui/residenceBillModal';
 import ResidenceBillCard from '@/app/ui/residenceBillCard';
+import ResidenceGraph from '@/app/ui/residenceGraph';
 import { PaperAirplaneIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { dmSans } from '@/app/ui/fonts';
 import clsx from 'clsx';
 import { fetchCurrentUserId, fetchAccounts, addTransaction, fetchResidenceInfo, createResidence, editResidence, leaveResidence, deleteResidence, fetchAllResidenceBills, addResidenceBill, editResidenceBill, removeResidenceBill, fetchResidencePayments, addResidencePayment, editResidencePayment, deleteResidencePayment, payResidencePayment, fetchAllResidenceMessages, createResidenceMessage } from '@/app/lib/data';
-import { SelectOption, User, Account, TransactionAddManualModalData, ResidenceData, RESIDENCE_CREATE_MODAL_TYPE, RESIDENCE_EDIT_MODAL_TYPE, RESIDENCE_LEAVE_MODAL_TYPE, RESIDENCE_DELETE_MODAL_TYPE, ResidenceCreateModalData, ResidenceEditModalData, ResidenceBill, RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE, RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE, RESIDENCE_BILL_PAY_MODAL_TYPE, RESIDENCE_BILL_EDIT_MODAL_TYPE, RESIDENCE_BILL_DELETE_MODAL_TYPE, ResidenceBillAddManualModalData, ResidenceBillAddDocumentModalData, ResidenceBillPayModalData, ResidenceBillEditModalData, ResidenceBillPaymentData, ResidencePayment, ResidenceMessage } from '@/app/lib/definitions';
-import { formatDollarAmount, getLast12MonthsAsOptions, formatDate, unformatDate } from '@/app/lib/utils';
+import { SelectOption, User, Account, TransactionAddManualModalData, ResidenceData, RESIDENCE_CREATE_MODAL_TYPE, RESIDENCE_EDIT_MODAL_TYPE, RESIDENCE_LEAVE_MODAL_TYPE, RESIDENCE_DELETE_MODAL_TYPE, ResidenceCreateModalData, ResidenceEditModalData, ResidenceBill, RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE, RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE, RESIDENCE_BILL_PAY_MODAL_TYPE, RESIDENCE_BILL_EDIT_MODAL_TYPE, RESIDENCE_BILL_DELETE_MODAL_TYPE, ResidenceBillAddManualModalData, ResidenceBillAddDocumentModalData, ResidenceBillPayModalData, ResidenceBillEditModalData, ResidenceBillPaymentData, ResidencePayment, MonthlyPayment, ResidenceMessage } from '@/app/lib/definitions';
+import { formatDollarAmount, getCurrentMonth, getLast12MonthsAsOptions, getMonthFromDate, formatDate, unformatDate,  } from '@/app/lib/utils';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,9 +33,11 @@ export default function Page() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [residencePayments, setResidencePayments] = useState<Record<number, ResidencePayment[]>>({});
   const [paymentIdToPay, setPaymentIdToPay] = useState<number | null>(null);
-  const [monthlyPayment, setMonthlyPayment] = useState({ total: 4300, dueDate: 20250131, paid: false });
+  const [monthlyPayment, setMonthlyPayment] = useState<MonthlyPayment | null>(null);
+  const [selectedMonthForMonthlyPayment, setSelectedMonthForMonthlyPayment] = useState<number>(getCurrentMonth());
   const last12Months: SelectOption[] = getLast12MonthsAsOptions();
-  const monthlyPaymentVsUtilities: SelectOption[] = [{ value: 0, text: 'Last 3 months'}, { value: 0, text: 'Last 6 months'}, { value: 0, text: 'Last 12 months'}];
+  const [lastNumberOfMonths, setLastNumberOfMonths] = useState<number>(3);
+  const last3Intervals: SelectOption[] = [{ value: 3, text: 'Last 3 months'}, { value: 6, text: 'Last 6 months'}, { value: 12, text: 'Last 12 months'}];
   const [residenceMessages, setResidenceMessages] = useState<ResidenceMessage[]>([]);
   const [currentResidenceMessage, setCurrentResidenceMessage] = useState<string>('');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -249,6 +252,30 @@ export default function Page() {
         )
       };
       setResidencePayments(newResidencePayments);
+
+      if (residenceBillSelected) {
+        if (residenceBillSelected.category === 'Rent' || residenceBillSelected.category === 'Mortgage' && (getMonthFromDate(residenceBillSelected.due_date) === selectedMonthForMonthlyPayment)) {
+          for (let i = 0; i < residenceBills.length; i++) {
+            const bill = residenceBills[i];
+            const payments = newResidencePayments[bill.id];
+      
+            if (getMonthFromDate(bill.due_date) === selectedMonthForMonthlyPayment && (bill.category === 'Rent' || bill.category === 'Mortgage')) {
+              let billPaid = 0;
+      
+              for (let j = 0; j < payments.length; j++) {
+                const payment = payments[j];
+                if (payment.payee_id === null && payment.status === 'Paid') billPaid += payment.amount;
+              }
+      
+              setMonthlyPayment({
+                total: bill.total,
+                dueDate: bill.due_date,
+                paid: billPaid === bill.total
+              });
+            }
+          }
+        }
+      }
     }
 
     setResidenceBillModalOpen(false);
@@ -360,6 +387,41 @@ export default function Page() {
     setRelevantPayments([]);
   };
 
+  // RESIDENCE FIGURES FUNCTIONS
+
+  const handleMonthChange = (value: number) => {
+    setSelectedMonthForMonthlyPayment(value);
+
+    let foundMonthlyPaymentBill = false;
+
+    for (let i = 0; i < residenceBills.length; i++) {
+      const bill = residenceBills[i];
+      const payments = residencePayments[bill.id];
+
+      if (getMonthFromDate(bill.due_date) === value && (bill.category === 'Rent' || bill.category === 'Mortgage')) {
+        foundMonthlyPaymentBill = true;
+        let billPaid = 0;
+
+        for (let j = 0; j < payments.length; j++) {
+          const payment = payments[j];
+          if (payment.payee_id === null && payment.status === 'Paid') billPaid += payment.amount;
+        }
+
+        setMonthlyPayment({
+          total: bill.total,
+          dueDate: bill.due_date,
+          paid: billPaid === bill.total
+        });
+      }
+    }
+
+    if (!foundMonthlyPaymentBill) setMonthlyPayment(null);
+  };
+
+  const handleIntervalChange = (lastNumberOfMonths: number) => {
+    setLastNumberOfMonths(lastNumberOfMonths);
+  };
+
   // RESIDENCE MESSAGE FUNCTIONS
 
   const handleResidenceMessageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -407,9 +469,27 @@ export default function Page() {
         
         let residenceBillIdsToResidencePayments: Record<number, ResidencePayment[]> = {};
         for (let i = 0; i < fetchedResidenceBills.length; i++) {
-          const id = fetchedResidenceBills[i].id;
-          const fetchedResidencePayments = await fetchResidencePayments(id);
-          if (fetchedResidencePayments) residenceBillIdsToResidencePayments[id] = fetchedResidencePayments;
+          const bill = fetchedResidenceBills[i];
+
+          const fetchedResidencePayments = await fetchResidencePayments(bill.id);
+          if (fetchedResidencePayments) {
+            residenceBillIdsToResidencePayments[bill.id] = fetchedResidencePayments;
+
+            if (getMonthFromDate(bill.due_date) === selectedMonthForMonthlyPayment && (bill.category === 'Rent' || bill.category === 'Mortgage')) {
+              let billPaid = 0;
+
+              for (let j = 0; j < fetchedResidencePayments.length; j++) {
+                const payment = fetchedResidencePayments[j];
+                if (payment.payee_id === null && payment.status === 'Paid') billPaid += payment.amount;
+              }
+
+              setMonthlyPayment({
+                total: bill.total,
+                dueDate: bill.due_date,
+                paid: billPaid === bill.total
+              });
+            }
+          }
         }
 
         setResidencePayments(residenceBillIdsToResidencePayments);
@@ -455,25 +535,46 @@ export default function Page() {
           <div className="flex flex-row gap-8">
             <div className="flex flex-col gap-8 w-2/5">
               <Card>
-                <div className="flex flex-row justify-between">
-                  <h3 className="text-lg font-medium text-off_black">Monthly { residenceData.residence.monthly_payment }</h3>
-                  <Select options={last12Months} onSelect={() => {}}/>
-                </div>
-    
-                <h2 className={`${dmSans.className} antialiased text-black tracking-tight text-4xl font-semibold my-4`}>{formatDollarAmount(monthlyPayment.total)}</h2>
+                { residenceData.residence.monthly_payment === 'None' ? (
+                  <p className="text-md font-normal text-off_gray">No monthly payments!</p>
+                ) : (
+                  <>
+                    <div className="flex flex-row justify-between">
+                      <h3 className="text-lg font-medium text-off_black">Monthly { residenceData.residence.monthly_payment }</h3>
+                      <Select options={last12Months} onSelect={handleMonthChange}/>
+                    </div>
 
-                <div className={clsx("max-w-fit rounded-full px-3 py-1", { "bg-positive": monthlyPayment.paid, "bg-negative": !monthlyPayment.paid })}>
-                  <p className={clsx("text-md font-medium", { "text-positive_text": monthlyPayment.paid, "text-negative_text": !monthlyPayment.paid })}>{monthlyPayment.paid ? 'Paid' : 'Not paid'}</p>
-                </div>
+                    { monthlyPayment ? (
+                      <>
+                        <h2 className={`${dmSans.className} antialiased text-black tracking-tight text-4xl font-semibold my-4`}>{formatDollarAmount(monthlyPayment.total)}</h2>
+
+                        <div className="flex flex-row items-center gap-2">
+                          <div className={clsx("max-w-fit rounded-full px-3 py-1", { "bg-positive": monthlyPayment.paid, "bg-negative": !monthlyPayment.paid })}>
+                            <p className={clsx("text-md font-medium", { "text-positive_text": monthlyPayment.paid, "text-negative_text": !monthlyPayment.paid })}>{monthlyPayment.paid ? 'Paid' : 'Not paid'}</p>
+                          </div>
+                          <h4 className="text-md font-normal text-gray-400">Due {formatDate(monthlyPayment.dueDate)}</h4>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-md font-normal text-off_gray mt-1">No {residenceData.residence.monthly_payment.charAt(0).toLowerCase() + residenceData.residence.monthly_payment.substring(1)} bill found!</p>
+                    )}
+                  </>
+                )}
               </Card>
 
               <Card>
-                <div className="flex flex-row justify-between">
-                  <h3 className="text-lg font-medium text-off_black">{ residenceData.residence.monthly_payment } vs. Utilities</h3>
-                  <Select options={monthlyPaymentVsUtilities} onSelect={() => {}}/>
-                </div>
+                { residenceData.residence.monthly_payment === 'None' ? (
+                  <p className="text-md font-normal text-off_gray">No monthly payments!</p>
+                ) : (
+                  <>
+                    <div className="flex flex-row justify-between">
+                      <h3 className="text-lg font-medium text-off_black">{ residenceData.residence.monthly_payment } vs. Utilities</h3>
+                      <Select options={last3Intervals} onSelect={handleIntervalChange}/>
+                    </div>
 
-                <p>Rent vs utilities graph</p>
+                    <ResidenceGraph monthlyPaymentType={residenceData.residence.monthly_payment} lastNumberOfMonths={lastNumberOfMonths} residenceBills={residenceBills}/>
+                  </>
+                )}
               </Card>
 
               <Card>
@@ -507,8 +608,10 @@ export default function Page() {
 
                 <div className="flex flex-col items-center mt-4 gap-2">
                   <Button onClick={handleEditResidenceClick} size="sm">Edit Residence</Button>
-                  <Button onClick={handleLeaveResidenceClick} size="sm">Leave Residence</Button>
-                  <Button onClick={handleDeleteResidenceClick} size="sm">Delete Residence</Button>
+                  <div className="flex flex-row gap-2">
+                    <Button onClick={handleLeaveResidenceClick} size="sm">Leave Residence</Button>
+                    <Button onClick={handleDeleteResidenceClick} size="sm">Delete Residence</Button>
+                  </div>
                 </div>
               </Card>
               

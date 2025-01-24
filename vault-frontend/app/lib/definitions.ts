@@ -291,6 +291,12 @@ export type ResidencePaymentsData = {
   payments: ResidencePayment[];
 }
 
+export type MonthlyPayment = {
+  total: number;
+  dueDate: number;
+  paid: boolean;
+}
+
 export type ResidenceMessage = {
   id: number;
   content: string;
