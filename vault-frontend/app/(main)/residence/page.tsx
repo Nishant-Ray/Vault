@@ -37,6 +37,8 @@ export default function Page() {
   const monthlyPaymentVsUtilities: SelectOption[] = [{ value: 0, text: 'Last 3 months'}, { value: 0, text: 'Last 6 months'}, { value: 0, text: 'Last 12 months'}];
   const [residenceMessages, setResidenceMessages] = useState<ResidenceMessage[]>([]);
   const [currentResidenceMessage, setCurrentResidenceMessage] = useState<string>('');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // RESIDENCE MODAL FUNCTIONS
 
@@ -373,6 +375,12 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'instant', block: 'nearest' });
+    }
+  }, [residenceMessages]);
+
+  useEffect(() => {
     const fetchResidenceData = async () => {
       setLoading(true);
 
@@ -549,7 +557,7 @@ export default function Page() {
                 <div className="mt-2 flex flex-col bg-off_white p-4 rounded-xl">
                   <>
                     {residenceMessages.length ? (
-                      <div className="flex flex-col gap-4 pb-4 items-start max-h-72 overflow-y-auto">
+                      <div className="flex flex-col gap-4 pr-4 pb-4 items-start max-h-72 overflow-y-auto" ref={containerRef}>
                         {residenceMessages.map((message) => {
                           if (message.is_update) {
                             return (
@@ -560,18 +568,24 @@ export default function Page() {
                           }
 
                           return (
-                            <div key={message.id}>
-                              <p className="ml-3 mb-1 text-xs font-normal text-off_gray">{residentIdMapping[message.user_id]}</p>
-                              <h6 className="bg-white max-w-fit rounded-full px-3 py-1 text-md font-normal text-off_black">{message.content}</h6>
+                            <div key={message.id} className={clsx({"self-end": message.user_id === currentUserId})}>
+                              { message.user_id !== currentUserId && <p className="ml-3 mb-1 text-xs font-normal text-off_gray">{residentIdMapping[message.user_id]}</p> }
+                              <h6 className={clsx("max-w-fit rounded-full px-3 py-1 text-md font-normal",
+                                {
+                                  "bg-white text-off_black": message.user_id !== currentUserId,
+                                  "bg-accent text-white": message.user_id === currentUserId
+                                }
+                              )}>{message.content}</h6>
                             </div>
                           );
                         })}
+                        <div ref={bottomRef}/>
                       </div>
                     ) : (
                       <p className="text-sm font-normal text-off_gray">No recent messages</p>
                     )}
                   </>
-                  <form className="flex flex-row items-center gap-2 h-8">
+                  <form onSubmit={e => {e.preventDefault(); handleResidenceMessageSend();}} className="flex flex-row items-center gap-2 h-8">
                     <input className="rounded-full bg-white border border-gray-200 w-full px-4 py-1 focus:outline-none focus:border-gray-300 text-sm text-off_black font-normal" type="text" placeholder="Enter message" value={currentResidenceMessage} onChange={handleResidenceMessageChange}/>
                     <IconButton className="h-8" icon={PaperAirplaneIcon} onClick={handleResidenceMessageSend}></IconButton>
                   </form>
