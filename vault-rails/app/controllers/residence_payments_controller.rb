@@ -1,3 +1,5 @@
+include ActionView::Helpers::NumberHelper
+
 class ResidencePaymentsController < ApplicationController
   def add
     if request.headers["Authorization"].present?
@@ -104,9 +106,9 @@ class ResidencePaymentsController < ApplicationController
         formatted_due_date = Date.strptime(payment.residence_bill.due_date.to_s, "%Y%m%d").strftime("%m/%d/%Y")
         if params[:payee_id]
           payee_name = User.find(params[:payee_id]).name
-          message = "#{current_user.name} paid $#{payment.amount} to #{payee_name} for #{payment.residence_bill.category} Bill due #{formatted_due_date}"
+          message = "#{current_user.name} paid #{number_to_currency(payment.amount)} to #{payee_name} for #{payment.residence_bill.category} Bill due #{formatted_due_date}"
         else
-          message = "#{current_user.name} paid $#{payment.amount} directly to #{payment.residence_bill.category} Bill due #{formatted_due_date}"
+          message = "#{current_user.name} paid #{number_to_currency(payment.amount)} directly to #{payment.residence_bill.category} Bill due #{formatted_due_date}"
         end
 
         message = ResidenceMessage.create(content: message, is_update: true, residence_id: current_user.residence.id, user_id: current_user.id)

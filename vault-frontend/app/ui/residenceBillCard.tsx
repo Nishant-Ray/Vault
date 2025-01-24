@@ -127,7 +127,12 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
                     </div>
 
                     <div className="w-20">
-                      <p className="max-w-fit rounded-md px-2 py-1 font-medium text-sm bg-positive text-positive_text">{ payment.status }</p>
+                      <p className={clsx("max-w-fit rounded-md px-2 py-1 font-medium text-sm",
+                        {
+                          "bg-positive text-positive_text": payment.status === 'Paid',
+                          "bg-negative text-negative_text": payment.status === 'Pending'
+                        }
+                      )}>{ payment.status }</p>
                     </div>
 
                     <p className="w-20 text-right">{ formatDollarAmount(payment.amount) }</p>

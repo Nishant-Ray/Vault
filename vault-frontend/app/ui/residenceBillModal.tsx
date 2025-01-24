@@ -76,6 +76,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
     setAlsoTransactionChecked(false);
     if (type === RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE) setTransactionCategoryOption(initialPayModalData.transactionCategory);
     setInvalidDollarAmount(false);
+    setImproperPayments(false);
   };
 
   const handleBillAddManualFormInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
@@ -106,7 +107,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
         ...prevState,
         [id]: {
           ...prevState[id],
-          payeeId: value === -1 ? null : value
+          payeeId: value === -1 ? null : value,
         }
       }));
     } else if (name === 'amount') {
@@ -301,6 +302,9 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
             </div>
             <div className="flex flex-col gap-1">
               { residents.map((resident) => {
+                const payeeIdValue = resident.id in residenceBillPaymentsState ? (residenceBillPaymentsState[resident.id].payeeId ?? -1) : 0; 
+                const amountValue = resident.id in residenceBillPaymentsState ? residenceBillPaymentsState[resident.id].amount : "";
+
                 return (
                   <div key={resident.id} className="w-full flex flex-row justify-center items-center gap-12 px-4 py-2 text-off_black font-normal text-md">
                     <div className="w-44 flex flex-row items-center gap-1">
@@ -308,9 +312,9 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
                       <p className="truncate">{ resident.name }<span className="text-xs text-off_gray">{resident.id === currentUserId ? ' (YOU)' : ''}</span></p>
                     </div>
 
-                    <Select onChange={handleBillPaymentsInputChange} id={`add_payee_${String(resident.id)}`} name="payee" options={payeeOptions.filter((option) => option.value !== resident.id)} className="w-44"/>
+                    <Select onChange={handleBillPaymentsInputChange} id={`add_payee_${String(resident.id)}`} name="payee" options={payeeOptions.filter((option) => option.value !== resident.id)} value={payeeIdValue} className="w-44"/>
 
-                    <input onChange={handleBillPaymentsInputChange} id={`add_amount_${String(resident.id)}`} name="amount" className="w-36 bg-gray-200 rounded-full px-4 py-1 focus:outline-none" type="number" placeholder="Enter amount"/>
+                    <input onChange={handleBillPaymentsInputChange} id={`add_amount_${String(resident.id)}`} name="amount" defaultValue={amountValue} className="w-36 bg-gray-200 rounded-full px-4 py-1 focus:outline-none" type="number" placeholder="Enter amount"/>
                   </div>
                 );
               })}
@@ -368,7 +372,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
             </div>
             <div className="flex flex-col gap-1">
               { residents.map((resident) => {
-                const payeeIdValue = resident.id in residenceBillPaymentsState ? residenceBillPaymentsState[resident.id].payeeId ?? -1 : 0; 
+                const payeeIdValue = resident.id in residenceBillPaymentsState ? (residenceBillPaymentsState[resident.id].payeeId ?? -1) : 0; 
                 const amountValue = resident.id in residenceBillPaymentsState ? residenceBillPaymentsState[resident.id].amount : "";
 
                 return (
