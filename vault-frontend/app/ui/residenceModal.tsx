@@ -10,12 +10,12 @@ import { addResident, removeResident } from '@/app/lib/data';
 
 const initialCreateModalData: ResidenceCreateModalData = {
   name: '',
-  monthlyPayment: 'rent'
+  monthlyPayment: 'Rent'
 };
 
 const initialEditModalData: ResidenceEditModalData = {
   name: '',
-  monthlyPayment: 'rent'
+  monthlyPayment: 'Rent'
 };
 
 type ResidenceModalProps = {
@@ -149,9 +149,9 @@ export default function ResidenceModal({ type, isOpen, residenceData, currentUse
         <form onSubmit={handleResidenceCreateModalFormSubmit}>
           <Input onChange={handleResidenceCreateFormInputChange} value={residenceCreateFormState.name} id="name" name="name" type="text" label="Name" placeholder="Enter residence name"/>
 
-          <Input onChange={handleResidenceEditFormInputChange} id="rent" name="monthlyPayment" type="radio" value="rent" label="Monthly Payment Type" sideLabel="Rent" checked={monthlyPaymentOption === 'rent'} standalone={false}/>
-          <Input onChange={handleResidenceEditFormInputChange} id="mortgage" name="monthlyPayment" type="radio" value="mortgage" sideLabel="Mortgage" checked={monthlyPaymentOption === 'mortgage'} standalone={false} />
-          <Input onChange={handleResidenceEditFormInputChange} id="none" name="monthlyPayment" type="radio" value="none" sideLabel="None" checked={monthlyPaymentOption === 'none'}/>
+          <Input onChange={handleResidenceEditFormInputChange} id="Rent" name="monthlyPayment" type="radio" value="Rent" label="Monthly Payment Type" sideLabel="Rent" checked={monthlyPaymentOption === 'Rent'} standalone={false}/>
+          <Input onChange={handleResidenceEditFormInputChange} id="Mortgage" name="monthlyPayment" type="radio" value="Mortgage" sideLabel="Mortgage" checked={monthlyPaymentOption === 'Mortgage'} standalone={false} />
+          <Input onChange={handleResidenceEditFormInputChange} id="None" name="monthlyPayment" type="radio" value="None" sideLabel="None" checked={monthlyPaymentOption === 'None'}/>
 
           <div className="flex flex-row justify-center mt-8">
             <Button type="submit" size="md">Enter</Button> 
@@ -161,9 +161,9 @@ export default function ResidenceModal({ type, isOpen, residenceData, currentUse
         <form onSubmit={handleResidenceEditModalFormSubmit}>
           <Input onChange={handleResidenceEditFormInputChange} value={residenceEditFormState.name} id="name" name="name" type="text" label="Name" placeholder="Enter residence name"/>
 
-          <Input onChange={handleResidenceEditFormInputChange} id="rent" name="monthlyPayment" type="radio" value="rent" label="Monthly Payment Type" sideLabel="Rent" checked={monthlyPaymentOption === 'rent'} standalone={false}/>
-          <Input onChange={handleResidenceEditFormInputChange} id="mortgage" name="monthlyPayment" type="radio" value="mortgage" sideLabel="Mortgage" checked={monthlyPaymentOption === 'mortgage'} standalone={false} />
-          <Input onChange={handleResidenceEditFormInputChange} id="none" name="monthlyPayment" type="radio" value="none" sideLabel="None" checked={monthlyPaymentOption === 'none'}/>
+          <Input onChange={handleResidenceEditFormInputChange} id="Rent" name="monthlyPayment" type="radio" value="Rent" label="Monthly Payment Type" sideLabel="Rent" checked={monthlyPaymentOption === 'Rent'} standalone={false}/>
+          <Input onChange={handleResidenceEditFormInputChange} id="Mortgage" name="monthlyPayment" type="radio" value="Mortgage" sideLabel="Mortgage" checked={monthlyPaymentOption === 'Mortgage'} standalone={false} />
+          <Input onChange={handleResidenceEditFormInputChange} id="None" name="monthlyPayment" type="radio" value="None" sideLabel="None" checked={monthlyPaymentOption === 'None'}/>
 
           <div className="mb-2">
             <p className="block mb-2 text-lg font-medium text-off_black pl-2">Residents</p>

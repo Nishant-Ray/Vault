@@ -39,6 +39,7 @@ type ResidenceBillModalProps = {
   paymentIdToPay: number | null;
   accounts: Account[];
   currentUserId: number;
+  monthlyPaymentType: 'Rent' | 'Mortgage' | 'None';
   onManualModalSubmit: (data: ResidenceBillAddManualModalData, payments: Record<number, ResidenceBillPaymentData>) => void;
   onDocumentModalSubmit: (data: ResidenceBillAddDocumentModalData) => void;
   onPayModalSubmit: (billId: number, data: ResidenceBillPayModalData, paymentId: number | null) => void;
@@ -47,7 +48,7 @@ type ResidenceBillModalProps = {
   onClose: () => void;
 }
 
-export default function ResidenceBillModal({ type, isOpen, residenceBill, residents, payments, paymentIdToPay, accounts, currentUserId, onManualModalSubmit, onDocumentModalSubmit, onPayModalSubmit, onEditModalSubmit, onDeleteModalSubmit, onClose }: ResidenceBillModalProps) {
+export default function ResidenceBillModal({ type, isOpen, residenceBill, residents, payments, paymentIdToPay, accounts, currentUserId, monthlyPaymentType, onManualModalSubmit, onDocumentModalSubmit, onPayModalSubmit, onEditModalSubmit, onDeleteModalSubmit, onClose }: ResidenceBillModalProps) {
   const [residenceBillAddManualFormState, setResidenceBillAddManualFormState] = useState<ResidenceBillAddManualModalData>(initialManualModalData);
   const [residenceBillAddDocumentFormState, setResidenceBillAddDocumentFormState] = useState<ResidenceBillAddDocumentModalData>(initialDocumentModalData);
   const [residenceBillPayFormState, setResidenceBillPayFormState] = useState<ResidenceBillPayModalData>(initialPayModalData);
@@ -289,9 +290,12 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
           <Input onChange={handleBillAddManualFormInputChange} value={String(residenceBillAddManualFormState.total)} id="total" name="total" type="number" label="Total ($)" placeholder="Enter bill total"/>
           <Input onChange={handleBillAddManualFormInputChange} value={String(residenceBillAddManualFormState.dueDate)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
 
-          <Input onChange={handleBillAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption === 'category1'} standalone={false}/>
-          <Input onChange={handleBillAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
-          <Input onChange={handleBillAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
+          { monthlyPaymentType !== 'None' && <Input onChange={handleBillAddManualFormInputChange} id={monthlyPaymentType} name="category" type="radio" value={monthlyPaymentType} label="Category" sideLabel={monthlyPaymentType} checked={categoryOption === monthlyPaymentType} standalone={false}/> }
+          <Input onChange={handleBillAddManualFormInputChange} id="Water" name="category" type="radio" value="Water" sideLabel="Water" checked={categoryOption === 'Water'} standalone={false} />
+          <Input onChange={handleBillAddManualFormInputChange} id="Electricity" name="category" type="radio" value="Electricity" sideLabel="Electricity" checked={categoryOption === 'Electricity'} standalone={false} />
+          <Input onChange={handleBillAddManualFormInputChange} id="Internet" name="category" type="radio" value="Internet" sideLabel="Internet" checked={categoryOption === 'Internet'} standalone={false} />
+          <Input onChange={handleBillAddManualFormInputChange} id="Trash" name="category" type="radio" value="Trash" sideLabel="Trash" checked={categoryOption === 'Trash'} standalone={false} />
+          <Input onChange={handleBillAddManualFormInputChange} id="Misc" name="category" type="radio" value="Misc" sideLabel="Misc." checked={categoryOption === 'Misc'}/>
 
           <div className="mb-2">
             <p className="block mb-2 text-lg font-medium text-off_black pl-2">Resident Bill Payments</p>
@@ -359,9 +363,12 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
           <Input onChange={handleBillEditFormInputChange} value={String(residenceBillEditFormState.total)} id="total" name="total" type="number" label="Total ($)" placeholder="Enter bill total"/>
           <Input onChange={handleBillEditFormInputChange} value={String(residenceBillEditFormState.dueDate)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
 
-          <Input onChange={handleBillEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption === 'category1'} standalone={false}/>
-          <Input onChange={handleBillEditFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
-          <Input onChange={handleBillEditFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
+          { monthlyPaymentType !== 'None' && <Input onChange={handleBillEditFormInputChange} id={monthlyPaymentType} name="category" type="radio" value={monthlyPaymentType} label="Category" sideLabel={monthlyPaymentType} checked={categoryOption === monthlyPaymentType} standalone={false}/> }
+          <Input onChange={handleBillEditFormInputChange} id="Water" name="category" type="radio" value="Water" sideLabel="Water" checked={categoryOption === 'Water'} standalone={false} />
+          <Input onChange={handleBillEditFormInputChange} id="Electricity" name="category" type="radio" value="Electricity" sideLabel="Electricity" checked={categoryOption === 'Electricity'} standalone={false} />
+          <Input onChange={handleBillEditFormInputChange} id="Internet" name="category" type="radio" value="Internet" sideLabel="Internet" checked={categoryOption === 'Internet'} standalone={false} />
+          <Input onChange={handleBillEditFormInputChange} id="Trash" name="category" type="radio" value="Trash" sideLabel="Trash" checked={categoryOption === 'Trash'} standalone={false} />
+          <Input onChange={handleBillEditFormInputChange} id="Misc" name="category" type="radio" value="Misc" sideLabel="Misc" checked={categoryOption === 'Misc'}/>
 
           <div className="mb-2">
             <p className="block mb-2 text-lg font-medium text-off_black pl-2">Resident Bill Payments</p>

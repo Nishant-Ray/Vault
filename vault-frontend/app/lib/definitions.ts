@@ -196,7 +196,7 @@ export type User = {
 
 export type Residence = {
   name: string;
-  monthly_payment: 'rent' | 'mortgage' | 'none';
+  monthly_payment: 'Rent' | 'Mortgage' | 'None';
 }
 
 export type ResidenceData = {
@@ -211,7 +211,7 @@ export const RESIDENCE_DELETE_MODAL_TYPE = 3;
 
 export type ResidenceCreateModalData = {
   name: string;
-  monthlyPayment: 'rent' | 'mortgage' | 'none';
+  monthlyPayment: 'Rent' | 'Mortgage' | 'None';
 }
 
 export type ResidenceEditModalData = ResidenceCreateModalData;

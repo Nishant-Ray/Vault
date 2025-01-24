@@ -440,7 +440,7 @@ export default function Page() {
   return (
     <main>
       <ResidenceModal type={modalType} isOpen={residenceModalOpen} residenceData={residenceData} currentUserId={currentUserId} onCreateModalSubmit={handleCreateResidenceModalSubmit} onEditModalSubmit={handleEditResidenceModalSubmit} onLeaveModalSubmit={handleLeaveResidenceModalSubmit} onDeleteModalSubmit={handleDeleteResidenceModalSubmit} onClose={handleResidenceModalClose} onResidentAdd={handleResidentAdd} onResidentRemove={handleResidentRemove}/>
-      <ResidenceBillModal type={modalType} isOpen={residenceBillModalOpen} residenceBill={residenceBillSelected} residents={residenceData!.users} payments={relevantPayments} paymentIdToPay={paymentIdToPay} accounts={accounts} currentUserId={currentUserId} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditResidenceBillModalSubmit} onDeleteModalSubmit={handleDeleteResidenceBillModalSubmit} onClose={handleResidenceBillModalClose}/>
+      <ResidenceBillModal type={modalType} isOpen={residenceBillModalOpen} residenceBill={residenceBillSelected} residents={residenceData!.users} payments={relevantPayments} paymentIdToPay={paymentIdToPay} accounts={accounts} currentUserId={currentUserId} monthlyPaymentType={residenceData!.residence.monthly_payment} onManualModalSubmit={handleManualModalSubmit} onDocumentModalSubmit={handleDocumentModalSubmit} onPayModalSubmit={handlePayModalSubmit} onEditModalSubmit={handleEditResidenceBillModalSubmit} onDeleteModalSubmit={handleDeleteResidenceBillModalSubmit} onClose={handleResidenceBillModalClose}/>
 
       { !residenceData ? (
         <div className="absolute top-20 left-60 right-0 bottom-0 flex flex-col justify-center items-center gap-2 text-center">
@@ -456,7 +456,7 @@ export default function Page() {
             <div className="flex flex-col gap-8 w-2/5">
               <Card>
                 <div className="flex flex-row justify-between">
-                  <h3 className="text-lg font-medium text-off_black">Monthly { residenceData.residence.monthly_payment === 'rent' ? 'Rent' : 'Mortgage' }</h3>
+                  <h3 className="text-lg font-medium text-off_black">Monthly { residenceData.residence.monthly_payment }</h3>
                   <Select options={last12Months} onSelect={() => {}}/>
                 </div>
     
@@ -469,7 +469,7 @@ export default function Page() {
 
               <Card>
                 <div className="flex flex-row justify-between">
-                  <h3 className="text-lg font-medium text-off_black">{ residenceData.residence.monthly_payment === 'rent' ? 'Rent' : 'Mortgage' } vs. Utilities</h3>
+                  <h3 className="text-lg font-medium text-off_black">{ residenceData.residence.monthly_payment } vs. Utilities</h3>
                   <Select options={monthlyPaymentVsUtilities} onSelect={() => {}}/>
                 </div>
 

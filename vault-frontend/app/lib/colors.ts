@@ -15,3 +15,16 @@ export const billCategoryColors = new Map<string, [string, string]>([ // [bg col
   ['Fitness', ['#dddddd', '#dddddd']],
   ['Misc.', ['#bbbbbb', '#555555']]
 ]);
+
+export const residenceBillColors: Record<string, [string, string]> = {
+  'Rent': ['#dddddd', '#dddddd'],
+  'Mortgage': ['#dddddd', '#dddddd'],
+  'Internet': ['#dddddd', '#dddddd'],
+  'Trash': ['#eaf7f0', '#2baa63'], // green
+  'Insurance': ['#dddddd', '#dddddd'],
+  'Medical': ['#dddddd', '#dddddd'],
+  'Misc': ['#fdeded', '#eb605e'], // red
+  'Transportation': ['#dddddd', '#dddddd'],
+  'Fitness': ['#dddddd', '#dddddd'],
+  'Misc.': ['#bbbbbb', '#555555']
+};

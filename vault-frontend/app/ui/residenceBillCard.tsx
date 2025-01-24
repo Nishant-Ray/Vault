@@ -5,6 +5,7 @@ import IconButton from './iconButton';
 import { dmSans } from '@/app/ui/fonts';
 import { ResidencePayment } from '@/app/lib/definitions';
 import { formatDollarAmount } from '@/app/lib/utils';
+import { residenceBillColors } from '@/app/lib/colors';
 
 interface ResidenceBillCardProps {
   id: number;
@@ -66,7 +67,12 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
         <div className="w-24">
           <p className={clsx("max-w-fit rounded-md px-2 py-1 font-medium text-sm",
             {
-              "bg-positive text-positive_text": !cardOpen,
+              "bg-accent text-white": !cardOpen && category === 'Rent',
+              "bg-blue-100 text-blue-400": !cardOpen && category === 'Water',
+              "bg-positive text-positive_text": !cardOpen && category === 'Electricity',
+              "bg-orange-100 text-orange-600": !cardOpen && category === 'Internet',
+              "bg-gray-600 text-white": !cardOpen && category === 'Trash',
+              "bg-gray-100 text-gray-400": !cardOpen && category === 'Misc',
               "bg-white/20 text-white": cardOpen
             }
           )}>{category}</p>
