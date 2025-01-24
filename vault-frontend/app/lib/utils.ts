@@ -6,6 +6,7 @@ export function formatDollarAmount(amount: number): string {
 }
 
 export function validDollarAmount(amount: number): boolean {
+  if (amount === 0) return true;
 
   const numberString = String(amount);
 

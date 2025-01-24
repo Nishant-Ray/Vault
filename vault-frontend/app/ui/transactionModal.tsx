@@ -47,6 +47,10 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
   const [categoryOption, setCategoryOption] = useState<string>(initialManualModalData.category);
   const [invalidDollarAmount, setInvalidDollarAmount] = useState<boolean>(false);
 
+  const handleOpen = () => {
+    if (type === TRANSACTION_EDIT_MODAL_TYPE) reloadState();
+  };
+
   const handleClose = () => {
     setTransactionAddManualFormState(initialManualModalData);
     setTransactionAddDocumentFormState(initialDocumentModalData);
@@ -118,15 +122,7 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
     if (transaction) onDeleteModalSubmit(transaction.id);
   };
 
-  useEffect(() => {
-    let newAccountOptions: SelectOption[] = [];
-    accounts.forEach(account => {
-      newAccountOptions.push({value: account.id, text: account.nickname});
-    });
-    setAccountOptions(newAccountOptions);
-  }, [accounts]);
-
-  useEffect(() => {
+  const reloadState = () => {
     if (transaction) {
       setTransactionEditFormState({
         accountID: String(transaction.account_id),
@@ -136,6 +132,18 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
         description: transaction.description
       });
     }
+  };
+
+  useEffect(() => {
+    let newAccountOptions: SelectOption[] = [];
+    accounts.forEach(account => {
+      newAccountOptions.push({value: account.id, text: account.nickname});
+    });
+    setAccountOptions(newAccountOptions);
+  }, [accounts]);
+
+  useEffect(() => {
+    reloadState();
   }, [transaction]);
 
   return (
@@ -145,6 +153,7 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
               type === TRANSACTION_EDIT_MODAL_TYPE ? "Edit Transaction Information" :
               "Are you sure you want to delete this transaction?" }
       isOpen={isOpen}
+      onOpen={handleOpen}
       onClose={handleClose}
     >
       

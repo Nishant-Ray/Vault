@@ -39,6 +39,10 @@ export default function ResidenceModal({ type, isOpen, residenceData, currentUse
   const [residents, setResidents] = useState<User[]>([]);
   const [newResidentEmail, setNewResidentEmail] = useState<string>('');
   const [newResidentWarning, setNewResidentWarning] = useState<boolean>(false);
+  
+  const handleOpen = () => {
+    if (type === RESIDENCE_EDIT_MODAL_TYPE) reloadState();
+  };
 
   const handleClose = () => {
     setResidenceCreateFormState(initialCreateModalData);
@@ -112,7 +116,7 @@ export default function ResidenceModal({ type, isOpen, residenceData, currentUse
     onDeleteModalSubmit();
   };
 
-  useEffect(() => {
+  const reloadState = () => {
     if (residenceData) {
       const monthlyPayment = residenceData.residence.monthly_payment;
 
@@ -124,6 +128,10 @@ export default function ResidenceModal({ type, isOpen, residenceData, currentUse
       setMonthlyPaymentOption(monthlyPayment);
       setResidents(residenceData.users);
     }
+  };
+
+  useEffect(() => {
+    reloadState();
   }, [residenceData]);
 
   return (
@@ -133,6 +141,7 @@ export default function ResidenceModal({ type, isOpen, residenceData, currentUse
               type === RESIDENCE_LEAVE_MODAL_TYPE ? "Are you sure you want to leave this residence?" :
               "Are you sure you want to delete this residence?" }
       isOpen={isOpen}
+      onOpen={handleOpen}
       onClose={handleClose}
     >
       
@@ -168,7 +177,7 @@ export default function ResidenceModal({ type, isOpen, residenceData, currentUse
                 return (
                   <div key={user.id} className="w-full flex flex-row justify-center items-center gap-10 h-12">
                     <div className="w-44 flex flex-row items-center gap-1">
-                      <UserCircleIcon className="w-7 h-7 text-gray-300"/>
+                      <UserCircleIcon className="w-6 h-6 text-gray-300"/>
                       <p className="text-md text-off_black font-normal truncate">{user.name}<span className="text-xs text-off_gray">{user.id === currentUserId ? ' (YOU)' : ''}</span></p>
                     </div>
 

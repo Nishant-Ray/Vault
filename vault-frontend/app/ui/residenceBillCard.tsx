@@ -85,40 +85,40 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
 
       { cardOpen &&
         <div className="flex flex-col">
-          { payments.length === 0 ? (
+          { !payments || payments.length === 0 ? (
             <div className="bg-white p-4 text-center text-off_gray font-normal text-sm">
               <p>Click the edit button below to setup payments for this bill!</p>
             </div>
           ) : (
             <div className="bg-white flex flex-col items-center gap-1 p-4">
               <div className="max-w-fit flex flex-row justify-center gap-8 px-4 py-2 bg-gray-100 rounded-md text-off_black font-normal text-sm">
-                <p className="w-24">Resident</p>
-                <p className="w-24">To Pay</p>
+                <p className="w-28">Resident</p>
+                <p className="w-28">To Pay</p>
                 <p className="w-20">Status</p>
-                <p className="w-24 text-right">Amount</p>
-                <div className="w-7"></div>
+                <p className="w-20 text-right">Amount</p>
+                <div className="w-8"></div>
               </div>
 
               { payments.map((payment) => {
                 return (
                   <div key={payment.id} className="max-w-fit flex flex-row justify-center items-center gap-8 px-4 py-2 rounded-md text-off_black font-normal text-sm">
-                    <div className="flex flex-row items-center gap-1 w-24">
-                      <UserCircleIcon className="w-7 h-7 text-gray-300"/>
-                      <p>{ residentIdToName[payment.payer_id] }</p>
+                    <div className="flex flex-row items-center gap-1 w-28">
+                      <UserCircleIcon className="w-6 h-6 text-gray-300"/>
+                      <p className="truncate">{ residentIdToName[payment.payer_id] }<span className="text-xs text-off_gray">{payment.payer_id === currentUserId ? ' (YOU)' : ''}</span></p>
                     </div>
                     
-                    <div className="flex flex-row items-center gap-1 w-24">
-                      { payment.payee_id ? <UserCircleIcon className="w-7 h-7 text-gray-300"/> : <DocumentCurrencyDollarIcon className="w-7 h-6 text-off_gray"/> }
-                      <p>{ payment.payee_id ? residentIdToName[payment.payer_id] : 'Bill' }</p>
+                    <div className="flex flex-row items-center gap-1 w-28">
+                      { payment.payee_id ? <UserCircleIcon className="w-6 h-6 text-gray-300"/> : <DocumentCurrencyDollarIcon className="w-7 h-6 text-off_gray"/> }
+                      <p className="truncate">{ payment.payee_id ? residentIdToName[payment.payee_id] : 'Bill' }<span className="text-xs text-off_gray">{payment.payee_id === currentUserId ? ' (YOU)' : ''}</span></p>
                     </div>
 
                     <div className="w-20">
-                      <p className="max-w-fit rounded-md px-2 py-1 font-medium text-sm bg-positive text-positive_text">Paid</p>
+                      <p className="max-w-fit rounded-md px-2 py-1 font-medium text-sm bg-positive text-positive_text">{ payment.status }</p>
                     </div>
 
-                    <p className="w-24 text-right">{ formatDollarAmount(payment.amount) }</p>
+                    <p className="w-20 text-right">{ formatDollarAmount(payment.amount) }</p>
                     
-                    { payment.payer_id === currentUserId ? <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/> : <div className="w-7"></div> }
+                    { payment.payer_id === currentUserId ? <IconButton icon={CheckIcon} onClick={() => { if (onPay) onPay(id); }} blank={false}/> : <div className="w-8"></div> }
                   </div>
                 );
               })}

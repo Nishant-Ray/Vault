@@ -5,11 +5,12 @@ import { dmSans } from '@/app/ui/fonts';
 interface ModalProps {
   title: string;
   isOpen: boolean;
+  onOpen?: () => void;
   onClose: () => void;
   children?: React.ReactNode;
 };
 
-export default function Modal({ title, isOpen, onClose, children }: ModalProps) {
+export default function Modal({ title, isOpen, onOpen, onClose, children }: ModalProps) {
   const [modalOpen, setModalOpen] = useState(isOpen);
   const modalRef = useRef<HTMLDialogElement | null>(null);
 
@@ -32,6 +33,7 @@ export default function Modal({ title, isOpen, onClose, children }: ModalProps) 
     const modalElement = modalRef.current;
     if (modalElement) {
       if (modalOpen) {
+        if (onOpen) onOpen();
         modalElement.showModal();
       } else {
         modalElement.close();

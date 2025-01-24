@@ -1,6 +1,6 @@
 import { request } from '@/app/lib/api';
 import { unformatDate } from '@/app/lib/utils';
-import { IdData, NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidentData, RemoveResidentData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidencePaymentsData, ResidenceMessageData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { IdData, NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidentData, RemoveResidentData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidencePaymentsData, ResidencePaymentData, ResidenceMessageData, ResidenceMessagesData } from '@/app/lib/definitions';
 
 export async function fetchCurrentUserId() {
   try {
@@ -373,6 +373,37 @@ export async function fetchResidencePayments(id: number) {
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to fetch residence bill payments.');
+  }
+}
+
+export async function addResidencePayment(billId: number, payerId: number, payeeId: number | null, amount: number) {
+  try {
+    const response = await request<ResidencePaymentData>(`residence_payments/add/${billId}/${payerId}/${payeeId}/${amount}`, 'POST');
+    return response.data?.residence_payment;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to add residence payment.');
+  }
+}
+
+export async function editResidencePayment(paymentId: number, billId: number, payerId: number, payeeId: number | null, amount: number) {
+  try {
+    await request<null>(`residence_payments/edit/${paymentId}/${billId}/${payerId}/${payeeId}/${amount}`, 'PATCH');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to edit residence payment.');
+  }
+}
+
+export async function deleteResidencePayment(paymentId: number) {
+  try {
+    await request<null>(`residence_payments/remove/${paymentId}`, 'DELETE');
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to edit residence payment.');
   }
 }
 

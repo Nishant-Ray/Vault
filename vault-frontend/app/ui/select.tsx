@@ -4,30 +4,28 @@ import clsx from 'clsx';
 
 type BaseSelectProps = {
   options: SelectOption[];
+  id?: string;
+  name?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onSelect?: (value: number) => void;
   className?: string;
 };
 
 type FormSelectProps = BaseSelectProps & {
-  value: string;
   label: string;
-  id: string;
-  name: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  onSelect?: never;
+  value?: string;
+  defaultValue?: never;
 };
 
 type ChipSelectProps = BaseSelectProps & {
-  value?: never;
   label?: never;
-  id?: never;
-  name?: never;
-  onChange?: never;
-  onSelect: (value: number) => void;
+  value?: number;
+  defaultValue?: number;
 };
 
 type SelectProps = FormSelectProps | ChipSelectProps;
 
-export default function Select({ options, value, label, id, name, onChange, onSelect, className, ...rest }: SelectProps) {
+export default function Select({ options, value, defaultValue, label, id, name, onChange, onSelect, className, ...rest }: SelectProps) {
   if (label) {
     return (
       <div>
@@ -55,6 +53,7 @@ export default function Select({ options, value, label, id, name, onChange, onSe
 
   const onOptionSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (onSelect) onSelect(Number(event.currentTarget.value));
+    if (onChange) onChange(event);
   };
   
   
@@ -62,6 +61,10 @@ export default function Select({ options, value, label, id, name, onChange, onSe
     <div>
       <select
         {...rest}
+        id={id}
+        name={name}
+        value={value}
+        defaultValue={defaultValue}
         onChange={onOptionSelect}
         required
         className={clsx(

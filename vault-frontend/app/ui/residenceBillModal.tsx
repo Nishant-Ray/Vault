@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Account, ResidenceBill, ResidenceBillAddManualModalData, ResidenceBillAddDocumentModalData, ResidenceBillPayModalData, ResidenceBillEditModalData, SelectOption, RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE, RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE, RESIDENCE_BILL_PAY_MODAL_TYPE, RESIDENCE_BILL_EDIT_MODAL_TYPE, RESIDENCE_BILL_DELETE_MODAL_TYPE } from '@/app/lib/definitions';
+import { User, Account, ResidenceBill, ResidenceBillAddManualModalData, ResidenceBillAddDocumentModalData, ResidenceBillPayModalData, ResidenceBillEditModalData, SelectOption, RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE, RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE, RESIDENCE_BILL_PAY_MODAL_TYPE, RESIDENCE_BILL_EDIT_MODAL_TYPE, RESIDENCE_BILL_DELETE_MODAL_TYPE, ResidenceBillPaymentData, ResidencePayment } from '@/app/lib/definitions';
 import { validDollarAmount, reformatDate } from '@/app/lib/utils';
 import Modal from '@/app/ui/modal';
 import Input from '@/app/ui/input';
 import Select from '@/app/ui/select';
 import Button from '@/app/ui/button';
 import Warning from '@/app/ui/warning';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 const initialManualModalData: ResidenceBillAddManualModalData = {
   total: '0',
@@ -33,25 +34,35 @@ type ResidenceBillModalProps = {
   type: number;
   isOpen: boolean;
   residenceBill: ResidenceBill | null;
+  residents: User[];
+  payments: ResidencePayment[];
   accounts: Account[];
-  onManualModalSubmit: (data: ResidenceBillAddManualModalData) => void;
+  currentUserId: number;
+  onManualModalSubmit: (data: ResidenceBillAddManualModalData, payments: Record<number, ResidenceBillPaymentData>) => void;
   onDocumentModalSubmit: (data: ResidenceBillAddDocumentModalData) => void;
   onPayModalSubmit: (id: number, data: ResidenceBillPayModalData) => void;
-  onEditModalSubmit: (id: number, data: ResidenceBillEditModalData) => void
+  onEditModalSubmit: (id: number, data: ResidenceBillEditModalData, payments: Record<number, ResidenceBillPaymentData>) => void
   onDeleteModalSubmit: (id: number) => void;
   onClose: () => void;
 }
 
-export default function ResidenceBillModal({ type, isOpen, residenceBill, accounts, onManualModalSubmit, onDocumentModalSubmit, onPayModalSubmit, onEditModalSubmit, onDeleteModalSubmit, onClose }: ResidenceBillModalProps) {
+export default function ResidenceBillModal({ type, isOpen, residenceBill, residents, payments, accounts, currentUserId, onManualModalSubmit, onDocumentModalSubmit, onPayModalSubmit, onEditModalSubmit, onDeleteModalSubmit, onClose }: ResidenceBillModalProps) {
   const [residenceBillAddManualFormState, setResidenceBillAddManualFormState] = useState<ResidenceBillAddManualModalData>(initialManualModalData);
   const [residenceBillAddDocumentFormState, setResidenceBillAddDocumentFormState] = useState<ResidenceBillAddDocumentModalData>(initialDocumentModalData);
   const [residenceBillPayFormState, setResidenceBillPayFormState] = useState<ResidenceBillPayModalData>(initialPayModalData);
   const [residenceBillEditFormState, setResidenceBillEditFormState] = useState<ResidenceBillEditModalData>(initialEditModalData);
+  const [residenceBillPaymentsState, setResidenceBillPaymentsState] = useState<Record<number, ResidenceBillPaymentData>>({}); // payer_id --> payment
   const [categoryOption, setCategoryOption] = useState<string>(initialManualModalData.category);
+  const [payeeOptions, setPayeeOptions] = useState<SelectOption[]>([]);
   const [invalidDollarAmount, setInvalidDollarAmount] = useState<boolean>(false);
+  const [improperPayments, setImproperPayments] = useState<boolean>(false);
   const [alsoTransactionChecked, setAlsoTransactionChecked] = useState<boolean>(false);
   const [accountOptions, setAccountOptions] = useState<SelectOption[]>([]);
   const [transactionCategoryOption, setTransactionCategoryOption] = useState<string>(initialPayModalData.transactionCategory);
+
+  const handleOpen = () => {
+    reloadState();
+  };
 
   const handleClose = () => {
     onClose();
@@ -59,6 +70,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
     setResidenceBillAddDocumentFormState(initialDocumentModalData);
     setResidenceBillPayFormState(initialPayModalData);
     setResidenceBillEditFormState(initialEditModalData);
+    setResidenceBillPaymentsState({});
     if (type === RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE) setCategoryOption(initialManualModalData.category);
     setAlsoTransactionChecked(false);
     if (type === RESIDENCE_BILL_ADD_MANUAL_MODAL_TYPE) setTransactionCategoryOption(initialPayModalData.transactionCategory);
@@ -81,6 +93,30 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
       ...prevFormData,
       [name]: value
     }));
+  };
+
+  const handleBillPaymentsInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const name = event.target.name;
+    const id = Number(event.target.id.split('_')[2]);
+    const value = Number(event.target.value);
+
+    if (name === 'payee') {
+      setResidenceBillPaymentsState((prevState) => ({
+        ...prevState,
+        [id]: {
+          ...prevState[id],
+          payeeId: value === -1 ? null : value
+        }
+      }));
+    } else if (name === 'amount') {
+      setResidenceBillPaymentsState((prevState) => ({
+        ...prevState,
+        [id]: {
+          ...prevState[id],
+          amount: value,
+        }
+      }));
+    }
   };
 
   const handleBillPayFormInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
@@ -106,10 +142,31 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
 
   const handleBillAddManualModalFormSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
+    setInvalidDollarAmount(false);
+    setImproperPayments(false);
     if (validDollarAmount(Number(residenceBillAddManualFormState.total))) {
-      onManualModalSubmit(residenceBillAddManualFormState);
-      setResidenceBillAddManualFormState(initialManualModalData);
       setInvalidDollarAmount(false);
+
+      let billAmount: number = 0;
+      for (const payment of Object.values(residenceBillPaymentsState)) {
+        if (!validDollarAmount(payment.amount)) {
+          setInvalidDollarAmount(true);
+          break;
+        }
+        if (payment.payeeId === null) billAmount += payment.amount;
+      }
+
+      if (!invalidDollarAmount) {
+        if (billAmount === Number(residenceBillAddManualFormState.total)) {
+          onManualModalSubmit(residenceBillAddManualFormState, residenceBillPaymentsState);
+          setResidenceBillAddManualFormState(initialManualModalData);
+          setResidenceBillPaymentsState({});
+          setImproperPayments(false);
+        } else {
+          setImproperPayments(true);
+        }
+      }
+      
     } else {
       setInvalidDollarAmount(true);
     }
@@ -131,11 +188,31 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
 
   const handleBillEditModalFormSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
+    setInvalidDollarAmount(false);
+    setImproperPayments(false);
     if (residenceBill) {
       if (validDollarAmount(Number(residenceBillEditFormState.total))) {
-        onEditModalSubmit(residenceBill.id, residenceBillEditFormState);
-        setResidenceBillEditFormState(initialEditModalData);
         setInvalidDollarAmount(false);
+
+        let billAmount: number = 0;
+        for (const payment of Object.values(residenceBillPaymentsState)) {
+          if (!validDollarAmount(payment.amount)) {
+            setInvalidDollarAmount(true);
+            break;
+          }
+          if (payment.payeeId === null) billAmount += payment.amount;
+        }
+
+        if (!invalidDollarAmount) {
+          if (billAmount === Number(residenceBillEditFormState.total)) {
+            onEditModalSubmit(residenceBill.id, residenceBillEditFormState, residenceBillPaymentsState);
+            setResidenceBillEditFormState(initialEditModalData);
+            setResidenceBillPaymentsState({});
+            setImproperPayments(false);
+          } else {
+            setImproperPayments(true);
+          }
+        }
       } else {
         setInvalidDollarAmount(true);
       }
@@ -144,6 +221,16 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
 
   const handleBillDeleteModal = (): void => {
     if (residenceBill) onDeleteModalSubmit(residenceBill.id);
+  };
+
+  const reloadState = () => {
+    if (residenceBill) {
+      setResidenceBillEditFormState({
+        total: String(residenceBill.total),
+        dueDate: reformatDate(residenceBill.due_date),
+        category: residenceBill.category
+      });
+    }
   };
 
   useEffect(() => {
@@ -155,14 +242,33 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
   }, [accounts]);
 
   useEffect(() => {
-    if (residenceBill) {
-      setResidenceBillEditFormState({
-        total: String(residenceBill.total),
-        dueDate: reformatDate(residenceBill.due_date),
-        category: residenceBill.category
-      });
-    }
+    reloadState();
   }, [residenceBill]);
+
+  useEffect(() => {
+    let newState = { ...residenceBillPaymentsState };
+
+    payments.forEach(payment => {
+      newState[payment.payer_id] = {
+        payeeId: payment.payee_id,
+        amount: payment.amount
+      };
+    });
+
+    setResidenceBillPaymentsState(newState);
+  }, [payments]);
+
+  useEffect(() => {
+    const newPayeeOptions: SelectOption[] = [
+      { value: 0, text: 'None' },
+      { value: -1, text: 'Bill Directly' }
+    ];
+    residents.forEach(resident => {
+      newPayeeOptions.push({ value: resident.id, text: resident.name });
+    });
+
+    setPayeeOptions(newPayeeOptions);
+  }, [residents]);
 
   return (
     <Modal
@@ -172,6 +278,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
               type === RESIDENCE_BILL_EDIT_MODAL_TYPE ? "Edit Residence Bill Information" :
               "Are you sure you want to delete this residence bill?" }
       isOpen={isOpen}
+      onOpen={handleOpen}
       onClose={handleClose}
     >
 
@@ -184,7 +291,32 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
           <Input onChange={handleBillAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
           <Input onChange={handleBillAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
 
-          <Warning isShown={invalidDollarAmount}>Please enter a valid dollar amount!</Warning>
+          <div className="mb-2">
+            <p className="block mb-2 text-lg font-medium text-off_black pl-2">Resident Bill Payments</p>
+            <div className="w-full flex flex-row justify-center items-center gap-12 px-4 py-2 bg-gray-100 rounded-md text-off_black font-normal text-sm">
+                <p className="w-44">Resident</p>
+                <p className="w-44">To Pay</p>
+                <p className="w-36">Amount</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              { residents.map((resident) => {
+                return (
+                  <div key={resident.id} className="w-full flex flex-row justify-center items-center gap-12 px-4 py-2 text-off_black font-normal text-md">
+                    <div className="w-44 flex flex-row items-center gap-1">
+                      <UserCircleIcon className="w-6 h-6 text-gray-300"/>
+                      <p className="truncate">{ resident.name }<span className="text-xs text-off_gray">{resident.id === currentUserId ? ' (YOU)' : ''}</span></p>
+                    </div>
+
+                    <Select onChange={handleBillPaymentsInputChange} id={`add_payee_${String(resident.id)}`} name="payee" options={payeeOptions.filter((option) => option.value !== resident.id)} className="w-44"/>
+
+                    <input onChange={handleBillPaymentsInputChange} id={`add_amount_${String(resident.id)}`} name="amount" className="w-36 bg-gray-200 rounded-full px-4 py-1 focus:outline-none" type="number" placeholder="Enter amount"/>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <Warning isShown={invalidDollarAmount || improperPayments}>{ invalidDollarAmount ? 'Please enter a valid dollar amount!' : improperPayments ? 'Please ensure direct payments add up to bill amount!' : '' }</Warning>
 
           <div className="flex flex-row justify-center mt-8">
             <Button type="submit" size="md">Enter</Button> 
@@ -226,9 +358,35 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, accoun
           <Input onChange={handleBillEditFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
           <Input onChange={handleBillEditFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
 
-          {/* { partOfResidence && <Input onChange={handleBillEditFormInputChange} id="residence" name="residence" type="checkbox" label="Add this as a residence bill?" sideLabel="Yes" checked={residenceChecked}/> } */}
+          <div className="mb-2">
+            <p className="block mb-2 text-lg font-medium text-off_black pl-2">Resident Bill Payments</p>
+            <div className="w-full flex flex-row justify-center items-center gap-12 px-4 py-2 bg-gray-100 rounded-md text-off_black font-normal text-sm">
+                <p className="w-44">Resident</p>
+                <p className="w-44">To Pay</p>
+                <p className="w-36">Amount</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              { residents.map((resident) => {
+                const payeeIdValue = resident.id in residenceBillPaymentsState ? residenceBillPaymentsState[resident.id].payeeId ?? -1 : 0; 
+                const amountValue = resident.id in residenceBillPaymentsState ? residenceBillPaymentsState[resident.id].amount : "";
 
-          <Warning isShown={invalidDollarAmount}>Please enter a valid dollar amount!</Warning>
+                return (
+                  <div key={resident.id} className="w-full flex flex-row justify-center items-center gap-12 px-4 py-2 text-off_black font-normal text-md">
+                    <div className="w-44 flex flex-row items-center gap-1">
+                      <UserCircleIcon className="w-6 h-6 text-gray-300"/>
+                      <p className="truncate">{ resident.name }<span className="text-xs text-off_gray">{resident.id === currentUserId ? ' (YOU)' : ''}</span></p>
+                    </div>
+
+                    <Select onChange={handleBillPaymentsInputChange} id={`edit_payee_${String(resident.id)}`} name="payee" options={payeeOptions.filter((option) => option.value !== resident.id)} value={payeeIdValue} className="w-44"/>
+
+                    <input onChange={handleBillPaymentsInputChange} id={`edit_amount_${String(resident.id)}`} name="amount" defaultValue={amountValue} className="w-36 bg-gray-200 rounded-full px-4 py-1 focus:outline-none" type="number" placeholder="Enter amount"/>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <Warning isShown={invalidDollarAmount || improperPayments}>{ invalidDollarAmount ? 'Please enter a valid dollar amount!' : improperPayments ? 'Please ensure direct payments add up to bill amount!' : '' }</Warning>
 
           <div className="flex flex-row justify-center mt-8">
             <Button type="submit" size="md">Enter</Button> 

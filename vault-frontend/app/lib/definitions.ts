@@ -267,6 +267,11 @@ export type ResidenceBillPayModalData = {
 
 export type ResidenceBillEditModalData = ResidenceBillAddManualModalData;
 
+export type ResidenceBillPaymentData = {
+  payeeId: number | null;
+  amount: number;
+};
+
 export type ResidencePayment = {
   id: number;
   payer_id: number;
@@ -277,6 +282,10 @@ export type ResidencePayment = {
   created_at: string;
   updated_at: string;
 };
+
+export type ResidencePaymentData = {
+  residence_payment: ResidencePayment;
+}
 
 export type ResidencePaymentsData = {
   payments: ResidencePayment[];

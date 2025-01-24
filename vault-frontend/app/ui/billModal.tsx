@@ -55,6 +55,10 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
   const [accountOptions, setAccountOptions] = useState<SelectOption[]>([]);
   const [transactionCategoryOption, setTransactionCategoryOption] = useState<string>(initialPayModalData.transactionCategory);
 
+  const handleOpen = () => {
+    if (type === BILL_EDIT_MODAL_TYPE) reloadState();
+  };
+
   const handleClose = () => {
     onClose();
     setBillAddManualFormState(initialManualModalData);
@@ -148,6 +152,17 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
     if (bill) onDeleteModalSubmit(bill.id);
   };
 
+  const reloadState = () => {
+    if (bill) {
+      setBillEditFormState({
+        name: bill.name,
+        total: String(bill.total),
+        dueDate: reformatDate(bill.due_date),
+        category: bill.category
+      });
+    }
+  };
+
   useEffect(() => {
     let newAccountOptions: SelectOption[] = [];
     accounts.forEach(account => {
@@ -157,14 +172,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
   }, [accounts]);
 
   useEffect(() => {
-    if (bill) {
-      setBillEditFormState({
-        name: bill.name,
-        total: String(bill.total),
-        dueDate: reformatDate(bill.due_date),
-        category: bill.category
-      });
-    }
+    reloadState();
   }, [bill]);
 
   return (
@@ -175,6 +183,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
               type === BILL_EDIT_MODAL_TYPE ? "Edit Bill Information" :
               "Are you sure you want to delete this bill?" }
       isOpen={isOpen}
+      onOpen={handleOpen}
       onClose={handleClose}
     >
 
