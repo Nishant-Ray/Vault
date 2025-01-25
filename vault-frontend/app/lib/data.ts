@@ -1,6 +1,6 @@
 import { request } from '@/app/lib/api';
 import { unformatDate } from '@/app/lib/utils';
-import { IdData, NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidentData, RemoveResidentData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidencePaymentsData, ResidencePaymentData, ResidenceMessageData, ResidenceMessagesData } from '@/app/lib/definitions';
+import { IdData, NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidentData, RemoveResidentData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidencePaymentsData, ResidencePaymentData, ResidenceMessageData, ResidenceMessagesData, ChatbotMessagesData, ChatbotMessageData } from '@/app/lib/definitions';
 
 export async function fetchCurrentUserId() {
   try {
@@ -444,6 +444,28 @@ export async function createResidenceMessage(isUpdate: boolean, content: string)
   try {
     const response = await request<ResidenceMessageData>(`residence_messages/create/${isUpdate}/${encodeURIComponent(content)}`, 'POST');
     return response.data?.message;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to create residence messages.');
+  }
+}
+
+export async function fetchChatbotMessages() {
+  try {
+    const response = await request<ChatbotMessagesData>('chatbot_messages/get', 'GET');
+    return response.data?.messages;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch all residence messages.');
+  }
+}
+
+export async function createChatbotMessage(content: string) {
+  try {
+    const response = await request<ChatbotMessageData>(`chatbot_messages/ask/${encodeURIComponent(content)}`, 'POST');
+    return response.data;
 
   } catch (error) {
     console.error('Server error:', error);

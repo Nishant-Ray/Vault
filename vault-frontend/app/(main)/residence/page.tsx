@@ -660,7 +660,7 @@ export default function Page() {
                 <div className="mt-2 flex flex-col bg-off_white p-4 rounded-xl">
                   <>
                     {residenceMessages.length ? (
-                      <div className="flex flex-col gap-4 pr-4 pb-4 items-start max-h-72 overflow-y-auto" ref={containerRef}>
+                      <div className="flex flex-col gap-4 pr-4 pb-4 items-start h-72 overflow-y-auto" ref={containerRef}>
                         {residenceMessages.map((message) => {
                           if (message.is_update) {
                             return (
@@ -685,12 +685,12 @@ export default function Page() {
                         <div ref={bottomRef}/>
                       </div>
                     ) : (
-                      <p className="text-sm font-normal text-off_gray">No residence messages!</p>
+                      <div className="h-72"/>
                     )}
                   </>
                   <form onSubmit={e => {e.preventDefault(); handleResidenceMessageSend();}} className="flex flex-row items-center gap-2 h-8">
                     <input className="rounded-full bg-white border border-gray-200 w-full px-4 py-1 focus:outline-none focus:border-gray-300 text-sm text-off_black font-normal" type="text" placeholder="Enter message" value={currentResidenceMessage} onChange={handleResidenceMessageChange}/>
-                    <IconButton className="h-8" icon={PaperAirplaneIcon} onClick={handleResidenceMessageSend}></IconButton>
+                    <IconButton className="h-8" icon={PaperAirplaneIcon} onClick={handleResidenceMessageSend}/>
                   </form>
                 </div>
               </Card>

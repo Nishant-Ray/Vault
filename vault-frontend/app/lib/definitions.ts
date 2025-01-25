@@ -309,11 +309,29 @@ export type ResidenceMessage = {
 
 export type ResidenceMessageData = {
   message: ResidenceMessage;
-}
+};
 
 export type ResidenceMessagesData = {
   messages: ResidenceMessage[];
-}
+};
+
+export type ChatbotMessage = {
+  id: number;
+  content: string;
+  from_user: boolean;
+  created_at: string;
+  updated_at: string;
+  user_id: number;
+};
+
+export type ChatbotMessageData = {
+  user_message: ChatbotMessage;
+  chatbot_message: ChatbotMessage;
+};
+
+export type ChatbotMessagesData = {
+  messages: ChatbotMessage[];
+};
 
 export type HeroIconType = React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
   title?: string;

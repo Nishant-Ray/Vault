@@ -335,13 +335,14 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
           </div>
         </form>
       ) : (type === RESIDENCE_BILL_ADD_DOCUMENT_MODAL_TYPE ? (
-        <form onSubmit={handleBillAddDocumentModalFormSubmit}>
-          <Input onChange={handleBillAddDocumentFormInputChange} value={residenceBillAddDocumentFormState.nickname} id="nickname" name="nickname" type="text" label="Nickame" placeholder="Enter account nickname"/>
+        // <form onSubmit={handleBillAddDocumentModalFormSubmit}>
+        //   <Input onChange={handleBillAddDocumentFormInputChange} value={residenceBillAddDocumentFormState.nickname} id="nickname" name="nickname" type="text" label="Nickame" placeholder="Enter account nickname"/>
           
-          <div className="flex flex-row justify-center mt-8">
-            <Button type="submit" size="md">Enter</Button>
-          </div>
-        </form>
+        //   <div className="flex flex-row justify-center mt-8">
+        //     <Button type="submit" size="md">Enter</Button>
+        //   </div>
+        // </form>
+        <p className="font-normal text-md text-off_black w-full text-center">This feature is under construction!</p>
       ) : (type === RESIDENCE_BILL_PAY_MODAL_TYPE ? (
         <form onSubmit={handleBillPayModalFormSubmit}>
           <Input onChange={handleBillPayFormInputChange} id="alsoTransaction" name="alsoTransaction" type="checkbox" label="Log this as a transaction?" sideLabel="Yes" checked={alsoTransactionChecked}/>
