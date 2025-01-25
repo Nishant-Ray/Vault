@@ -14,7 +14,7 @@ export default function Page() {
           width={1479}
           height={837}
           alt="Vault landing graphic"
-          className="pointer-events-none"
+          className="pointer-events-none transition-transform animate-wiggle"
           unoptimized={true}
         />
       </div>
