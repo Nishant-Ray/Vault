@@ -79,20 +79,22 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    database: vault_rails_production
-    username: vault_rails
-    password: <%= ENV["VAULT_RAILS_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: vault_rails_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: vault_rails_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: vault_rails_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+  # primary: &primary_production
+  #   <<: *default
+  #   database: vault_rails_production
+  #   username: vault_rails
+  #   password: <%= ENV["VAULT_RAILS_DATABASE_PASSWORD"] %>
+  # cache:
+  #   <<: *primary_production
+  #   database: vault_rails_production_cache
+  #   migrations_paths: db/cache_migrate
+  # queue:
+  #   <<: *primary_production
+  #   database: vault_rails_production_queue
+  #   migrations_paths: db/queue_migrate
+  # cable:
+  #   <<: *primary_production
+  #   database: vault_rails_production_cable
+  #   migrations_paths: db/cable_migrate
