@@ -73,6 +73,14 @@ class ChatbotMessagesController < ApplicationController
       if jwt && current_user
         message_content = Transaction.where(user_id: current_user.id).order(date: :desc).limit(30).map(&:to_s).join("\n")
 
+        if message_content.blank?
+          render json: {
+            status: { code: 200, message: "No transactions found." },
+            data: { insights: "" }
+          }, status: :ok
+          return
+        end
+
         response = HTTParty.post(
           "https://vault-fastapi.onrender.com/insights",
           body: JSON.generate({ message: message_content }),
@@ -113,6 +121,14 @@ class ChatbotMessagesController < ApplicationController
       current_user = User.find(jwt_payload["sub"])
       if jwt && current_user
         message_content = Bill.where(user_id: current_user.id).order(due_date: :asc).limit(30).map(&:to_s).join("\n")
+
+        if message_content.blank?
+          render json: {
+            status: { code: 200, message: "No bills found." },
+            data: { insights: "" }
+          }, status: :ok
+          return
+        end
 
         response = HTTParty.post(
           "https://vault-fastapi.onrender.com/insights",

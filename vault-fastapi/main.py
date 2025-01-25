@@ -122,7 +122,9 @@ async def insights(payload: Message, authorization: str = Header(None)):
         help them save money and manage their personal finances better. Also, the date
         strings are formatted in YYYYMMDD, but report these in proper date formatting in 
         response. Provide REALLY short insights (<1 sentence each, not too many words, note-taking
-        type verbiage, not full sentence).\n\n{payload.message}
+        type verbiage, not full sentence). If you ever need more data, don't say "please provide the user's data."
+        Instead, say something like enter more spending / bills data so I can help. Typically, don't even ask
+        for more data unless it's really necessary\n\n{payload.message}
     '''
 
     output = model.generate_content(query)
