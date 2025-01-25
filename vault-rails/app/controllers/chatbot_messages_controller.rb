@@ -31,7 +31,7 @@ class ChatbotMessagesController < ApplicationController
                           "\n\nPROMPT: " + params[:message]
 
         response = HTTParty.post(
-          "http://127.0.0.1:8000/chatbot",
+          "https://vault-fastapi.onrender.com/chatbot",
           body: JSON.generate({ message: message_content }),
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         )
@@ -74,7 +74,7 @@ class ChatbotMessagesController < ApplicationController
         message_content = Transaction.where(user_id: current_user.id).order(date: :desc).limit(30).map(&:to_s).join("\n")
 
         response = HTTParty.post(
-          "http://127.0.0.1:8000/insights",
+          "https://vault-fastapi.onrender.com/insights",
           body: JSON.generate({ message: message_content }),
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         )
@@ -115,7 +115,7 @@ class ChatbotMessagesController < ApplicationController
         message_content = Bill.where(user_id: current_user.id).order(due_date: :asc).limit(30).map(&:to_s).join("\n")
 
         response = HTTParty.post(
-          "http://127.0.0.1:8000/insights",
+          "https://vault-fastapi.onrender.com/insights",
           body: JSON.generate({ message: message_content }),
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         )
