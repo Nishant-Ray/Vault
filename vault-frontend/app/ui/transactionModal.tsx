@@ -183,13 +183,14 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
           </div>
         </form>
       ) : (type === TRANSACTION_ADD_DOCUMENT_MODAL_TYPE ? (
-        <form onSubmit={handleTransactionAddDocumentModalFormSubmit}>
-          <Input onChange={handleTransactionAddDocumentFormInputChange} value={transactionAddDocumentFormState.nickname} id="nickname" name="nickname" type="text" label="Nickame" placeholder="Enter account nickname"/>
+        // <form onSubmit={handleTransactionAddDocumentModalFormSubmit}>
+        //   <Input onChange={handleTransactionAddDocumentFormInputChange} value={transactionAddDocumentFormState.nickname} id="nickname" name="nickname" type="text" label="Nickame" placeholder="Enter account nickname"/>
           
-          <div className="flex flex-row justify-center mt-8">
-            <Button type="submit" size="md">Enter</Button>
-          </div>
-        </form>
+        //   <div className="flex flex-row justify-center mt-8">
+        //     <Button type="submit" size="md">Enter</Button>
+        //   </div>
+        // </form>
+        <p className="font-normal text-md text-off_black w-full text-center">This feature is under construction!</p>
       ) : (type === TRANSACTION_EDIT_MODAL_TYPE ? (
         <form onSubmit={handleTransactionEditModalFormSubmit}>
           <Select onChange={handleTransactionEditFormInputChange} value={transactionEditFormState.accountID} id="accountID" name="accountID" label="Account Used" options={accountOptions}/>
