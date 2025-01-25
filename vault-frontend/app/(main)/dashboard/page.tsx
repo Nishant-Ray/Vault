@@ -9,13 +9,14 @@ import Button from '@/app/ui/button';
 import TransactionCard from '@/app/ui/transactionCard';
 import BillCard from '@/app/ui/billCard';
 import clsx from 'clsx';
-import { fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills, fetchResidenceName, fetchUpcomingResidenceBills, fetchRecentResidenceMessages } from '@/app/lib/data';
+import { fetchCurrentUserId, fetchName, fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchRecentTransactions, fetchUpcomingBills, fetchResidenceInfo, fetchUpcomingResidenceBills, fetchRecentResidenceMessages } from '@/app/lib/data';
 import { getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, formatDollarAmount, formatMonth, formatDate, isBill } from '@/app/lib/utils';
 import { SelectOption, Transaction, Bill, ResidenceBill, ResidenceMessage } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
 
 export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [currentUserId, setCurrentUserId] = useState<number>(0);
   const [name, setName] = useState<string>('');
   const last12Months: SelectOption[] = getLast12MonthsAsOptions();
   const currMonth = getCurrentMonth();
@@ -29,6 +30,7 @@ export default function Page() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [combinedBills, setCombinedBills] = useState<(Bill | ResidenceBill)[]>([]);
   const [residenceName, setResidenceName] = useState<string>('');
+  const [residentIdMapping, setResidentIdMapping] = useState<Record<number, string>>({});
   const [residenceMessages, setResidenceMessages] = useState<ResidenceMessage[]>([]);
 
   const onMonthChange = async (month: number) => {
@@ -56,6 +58,9 @@ export default function Page() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
+
+      const fetchedUserId = await fetchCurrentUserId();
+      if (fetchedUserId) setCurrentUserId(fetchedUserId);
 
       const fetchedName = await fetchName();
       if (fetchedName) setName(fetchedName);
@@ -85,9 +90,15 @@ export default function Page() {
 
       const fetchedBills = await fetchUpcomingBills();
 
-      const fetchedResidenceName = await fetchResidenceName();
-      if (fetchedResidenceName) {
-        setResidenceName(fetchedResidenceName);
+      const fetchedResidenceInfo = await fetchResidenceInfo();
+      if (fetchedResidenceInfo) {
+        setResidenceName(fetchedResidenceInfo.residence.name);
+
+        let newResidentIdMapping: Record<number, string> = {};
+        fetchedResidenceInfo.users.forEach(user => {
+          newResidentIdMapping[user.id] = user.name;
+        });
+        setResidentIdMapping(newResidentIdMapping);
 
         const fetchedResidenceBills = await fetchUpcomingResidenceBills();
 
@@ -155,12 +166,25 @@ export default function Page() {
               {residenceName ? (
                 <>
                   {residenceMessages.length ? (
-                    <div className="bg-off_white px-4 py-2 rounded-lg flex flex-col gap-4">
-                      {residenceMessages.map((message, i) => {
+                    <div className="flex flex-col gap-4 pr-4 pb-4 items-start max-h-72">
+                      {residenceMessages.map((message) => {
+                        if (message.is_update) {
+                          return (
+                            <div key={message.id} className="self-center">
+                              <h6 className="text-sm font-normal text-off_gray text-center">{message.content}</h6>
+                            </div>
+                          );
+                        }
+
                         return (
-                          <div key={i}>
-                            <p className="ml-3 mb-1 text-xs font-normal text-off_gray">User {message.user_id}</p>
-                            <h6 className="bg-white max-w-fit rounded-full px-3 py-1 text-md font-normal text-off_black">{message.content}</h6>
+                          <div key={message.id} className={clsx({"self-end": message.user_id === currentUserId})}>
+                            { message.user_id !== currentUserId && <p className="ml-3 mb-1 text-xs font-normal text-off_gray">{residentIdMapping[message.user_id]}</p> }
+                            <h6 className={clsx("max-w-fit rounded-full px-3 py-1 text-md font-normal",
+                              {
+                                "bg-white text-off_black": message.user_id !== currentUserId,
+                                "bg-accent text-white": message.user_id === currentUserId
+                              }
+                            )}>{message.content}</h6>
                           </div>
                         );
                       })}
@@ -190,8 +214,8 @@ export default function Page() {
               {transactions.length ? (
                 <div className="flex flex-col mt-3 mb-6 text-off_black">
                   <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
-                    <h4 className="w-24 text-right">Amount</h4>
-                    <h4 className="w-24">Category</h4>
+                    <h4 className="w-20 text-right">Amount</h4>
+                    <h4 className="w-28">Category</h4>
                     <h4 className="w-24">Account</h4>
                     <h4 className="w-24 text-right">Date</h4>
                   </div>
@@ -217,7 +241,7 @@ export default function Page() {
                 <div className="flex flex-col mt-3 mb-6 text-off_black">
                   <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
                     <h4 className="w-24 text-right">Total</h4>
-                    <h4 className="w-24">Category</h4>
+                    <h4 className="w-28">Category</h4>
                     <h4 className="w-24">Name</h4>
                     <h4 className="w-24 text-right">Due Date</h4>
                   </div>

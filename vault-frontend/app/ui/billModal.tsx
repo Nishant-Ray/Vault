@@ -11,7 +11,7 @@ const initialManualModalData: BillAddManualModalData = {
   name: '',
   total: '0',
   dueDate: '',
-  category: 'category1'
+  category: 'Banking'
 };
 
 const initialDocumentModalData: BillAddDocumentModalData = {
@@ -21,14 +21,14 @@ const initialDocumentModalData: BillAddDocumentModalData = {
 const initialPayModalData: BillPayModalData = {
   alsoTransaction: false,
   accountID: '',
-  transactionCategory: 'category1',
+  transactionCategory: 'Home',
 }
 
 const initialEditModalData: BillEditModalData = {
   name: '',
   total: '0',
   dueDate: '',
-  category: 'category1'
+  category: 'Banking'
 }
 
 type BillModalProps = {
@@ -160,6 +160,8 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
         dueDate: reformatDate(bill.due_date),
         category: bill.category
       });
+
+      setCategoryOption(bill.category);
     }
   };
 
@@ -193,9 +195,14 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
           <Input onChange={handleBillAddManualFormInputChange} value={String(billAddManualFormState.total)} id="total" name="total" type="number" label="Total ($)" placeholder="Enter bill total"/>
           <Input onChange={handleBillAddManualFormInputChange} value={String(billAddManualFormState.dueDate)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
 
-          <Input onChange={handleBillAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption === 'category1'} standalone={false}/>
-          <Input onChange={handleBillAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
-          <Input onChange={handleBillAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
+          <Input onChange={handleBillAddManualFormInputChange} id="Banking" name="category" type="radio" value="Banking" label="Category" sideLabel="Banking" checked={categoryOption === 'Banking'} standalone={false}/>
+          <Input onChange={handleBillAddManualFormInputChange} id="Cellular" name="category" type="radio" value="Cellular" sideLabel="Cellular" checked={categoryOption === 'Cellular'} standalone={false} />
+          <Input onChange={handleBillAddManualFormInputChange} id="Insurance" name="category" type="radio" value="Insurance" sideLabel="Insurance" checked={categoryOption === 'Insurance'} standalone={false}/>
+          <Input onChange={handleBillAddManualFormInputChange} id="Medical" name="category" type="radio" value="Medical" sideLabel="Medical" checked={categoryOption === 'Medical'} standalone={false}/>
+          <Input onChange={handleBillAddManualFormInputChange} id="Entertainment" name="category" type="radio" value="Entertainment" sideLabel="Entertainment" checked={categoryOption === 'Entertainment'} standalone={false}/>
+          <Input onChange={handleBillAddManualFormInputChange} id="Travel" name="category" type="radio" value="Travel" sideLabel="Travel" checked={categoryOption === 'Travel'} standalone={false}/>
+          <Input onChange={handleBillAddManualFormInputChange} id="Fitness" name="category" type="radio" value="Fitness" sideLabel="Fitness" checked={categoryOption === 'Fitness'} standalone={false}/>
+          <Input onChange={handleBillAddManualFormInputChange} id="Misc" name="category" type="radio" value="Misc" sideLabel="Misc" checked={categoryOption === 'Misc'}/>
 
           <Warning isShown={invalidDollarAmount}>Please enter a valid dollar amount!</Warning>
 
@@ -236,9 +243,14 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
           <Input onChange={handleBillEditFormInputChange} value={String(billEditFormState.total)} id="total" name="total" type="number" label="Total ($)" placeholder="Enter bill total"/>
           <Input onChange={handleBillEditFormInputChange} value={String(billEditFormState.dueDate)} id="dueDate" name="dueDate" type="date" label="Due Date of Bill"/>
 
-          <Input onChange={handleBillEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption === 'category1'} standalone={false}/>
-          <Input onChange={handleBillEditFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
-          <Input onChange={handleBillEditFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
+          <Input onChange={handleBillEditFormInputChange} id="Banking" name="category" type="radio" value="Banking" label="Category" sideLabel="Banking" checked={categoryOption === 'Banking'} standalone={false}/>
+          <Input onChange={handleBillEditFormInputChange} id="Cellular" name="category" type="radio" value="Cellular" sideLabel="Cellular" checked={categoryOption === 'Cellular'} standalone={false} />
+          <Input onChange={handleBillEditFormInputChange} id="Insurance" name="category" type="radio" value="Insurance" sideLabel="Insurance" checked={categoryOption === 'Insurance'} standalone={false}/>
+          <Input onChange={handleBillEditFormInputChange} id="Medical" name="category" type="radio" value="Medical" sideLabel="Medical" checked={categoryOption === 'Medical'} standalone={false}/>
+          <Input onChange={handleBillEditFormInputChange} id="Entertainment" name="category" type="radio" value="Entertainment" sideLabel="Entertainment" checked={categoryOption === 'Entertainment'} standalone={false}/>
+          <Input onChange={handleBillEditFormInputChange} id="Travel" name="category" type="radio" value="Travel" sideLabel="Travel" checked={categoryOption === 'Travel'} standalone={false}/>
+          <Input onChange={handleBillEditFormInputChange} id="Fitness" name="category" type="radio" value="Fitness" sideLabel="Fitness" checked={categoryOption === 'Fitness'} standalone={false}/>
+          <Input onChange={handleBillEditFormInputChange} id="Misc" name="category" type="radio" value="Misc" sideLabel="Misc" checked={categoryOption === 'Misc'}/>
 
           {/* { partOfResidence && <Input onChange={handleBillEditFormInputChange} id="residence" name="residence" type="checkbox" label="Add this as a residence bill?" sideLabel="Yes" checked={residenceChecked}/> } */}
 

@@ -21,9 +21,20 @@ export default function TransactionCard({ full = true, id, amount, date, account
     return (
       <div {...rest} className="mt-4 rounded-md">
         <div className="flex flex-row items-center gap-12 px-4 py-3 border transition-all duration-150 ease-in-out bg-white border-gray-200 text-off_black rounded-md">
-          <p className="w-24 font-medium text-md text-right">{amount}</p>
-          <div className="w-24">
-            <p className="max-w-fit rounded-md px-2 py-1 font-medium text-sm bg-positive text-positive_text">{category}</p>
+          <p className="w-20 font-medium text-md text-right">{amount}</p>
+          <div className="w-28">
+            <p className={clsx("max-w-fit rounded-md px-2 py-1 font-medium text-sm",
+              {
+                "bg-blue-100 text-blue-400": category === 'Home',
+                "bg-positive text-positive_text": category === 'Dining',
+                "bg-amber-100 text-yellow-600": category === 'Groceries',
+                "bg-teal-100 text-teal-500": category === 'Retail',
+                "bg-orange-100 text-orange-600": category === 'Entertainment',
+                "bg-gray-100 text-gray-500": category === 'Travel',
+                "bg-negative text-negative_text": category === 'Health',
+                "bg-gray-400 text-white": category === 'Misc'
+              }
+            )}>{category}</p>
           </div>
           <p className="w-24 font-normal text-md truncate">{account}</p>
           <p className="w-24 font-normal text-md text-right">{date}</p>
@@ -51,11 +62,18 @@ export default function TransactionCard({ full = true, id, amount, date, account
           }
         )}
       >
-        <p className="w-24 font-medium text-md text-right">{amount}</p>
-        <div className="w-24">
+        <p className="w-20 font-medium text-md text-right">{amount}</p>
+        <div className="w-28">
           <p className={clsx("max-w-fit rounded-md px-2 py-1 font-medium text-sm",
             {
-              "bg-positive text-positive_text": !cardOpen,
+              "bg-blue-100 text-blue-400": !cardOpen && category === 'Home',
+              "bg-positive text-positive_text": !cardOpen && category === 'Dining',
+              "bg-amber-100 text-yellow-600": !cardOpen && category === 'Groceries',
+              "bg-teal-100 text-teal-500": !cardOpen && category === 'Retail',
+              "bg-orange-100 text-orange-600": !cardOpen && category === 'Entertainment',
+              "bg-gray-100 text-gray-500": !cardOpen && category === 'Travel',
+              "bg-negative text-negative_text": !cardOpen && category === 'Health',
+              "bg-gray-400 text-white": !cardOpen && category === 'Misc',
               "bg-white/20 text-white": cardOpen
             }
           )}>{category}</p>

@@ -21,7 +21,7 @@ const initialDocumentModalData: ResidenceBillAddDocumentModalData = {
 const initialPayModalData: ResidenceBillPayModalData = {
   alsoTransaction: false,
   accountID: '',
-  transactionCategory: 'category1',
+  transactionCategory: 'Home',
 }
 
 const initialEditModalData: ResidenceBillEditModalData = {

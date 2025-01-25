@@ -10,7 +10,7 @@ import ResidenceModal from '@/app/ui/residenceModal';
 import ResidenceBillModal from '@/app/ui/residenceBillModal';
 import ResidenceBillCard from '@/app/ui/residenceBillCard';
 import ResidenceGraph from '@/app/ui/residenceGraph';
-import { PaperAirplaneIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { PencilIcon, PaperAirplaneIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { dmSans } from '@/app/ui/fonts';
 import clsx from 'clsx';
 import { fetchCurrentUserId, fetchAccounts, addTransaction, fetchResidenceInfo, createResidence, editResidence, leaveResidence, deleteResidence, fetchAllResidenceBills, addResidenceBill, editResidenceBill, removeResidenceBill, fetchResidencePayments, addResidencePayment, editResidencePayment, deleteResidencePayment, payResidencePayment, fetchAllResidenceMessages, createResidenceMessage } from '@/app/lib/data';
@@ -578,7 +578,10 @@ export default function Page() {
               </Card>
 
               <Card>
-                <h3 className="text-lg font-medium text-off_black">Manage Residence</h3>
+                <div className="flex flex-row justify-between">
+                  <h3 className="text-lg font-medium text-off_black">Manage Residence</h3>
+                  <IconButton icon={PencilIcon} onClick={handleEditResidenceClick}/>
+                </div>
 
                 <div className="flex flex-col my-2 gap-4">
                   <div>
@@ -606,12 +609,9 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center mt-4 gap-2">
-                  <Button onClick={handleEditResidenceClick} size="sm">Edit Residence</Button>
-                  <div className="flex flex-row gap-2">
-                    <Button onClick={handleLeaveResidenceClick} size="sm">Leave Residence</Button>
-                    <Button onClick={handleDeleteResidenceClick} size="sm">Delete Residence</Button>
-                  </div>
+                <div className="flex flex-row justify-center mt-4 gap-4">
+                  <Button onClick={handleLeaveResidenceClick} size="sm">Leave Residence</Button>
+                  <Button onClick={handleDeleteResidenceClick} size="sm">Delete Residence</Button>
                 </div>
               </Card>
               
@@ -665,7 +665,7 @@ export default function Page() {
                           if (message.is_update) {
                             return (
                               <div key={message.id} className="self-center">
-                                <h6 className="text-sm font-normal text-off_gray">{message.content}</h6>
+                                <h6 className="text-sm font-normal text-off_gray text-center">{message.content}</h6>
                               </div>
                             );
                           }
@@ -685,7 +685,7 @@ export default function Page() {
                         <div ref={bottomRef}/>
                       </div>
                     ) : (
-                      <p className="text-sm font-normal text-off_gray">No recent messages</p>
+                      <p className="text-sm font-normal text-off_gray">No residence messages!</p>
                     )}
                   </>
                   <form onSubmit={e => {e.preventDefault(); handleResidenceMessageSend();}} className="flex flex-row items-center gap-2 h-8">

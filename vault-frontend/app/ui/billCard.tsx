@@ -24,8 +24,20 @@ export default function BillCard({ full = true, isResidenceBill = false, id, nam
       <div {...rest} className="mt-4 rounded-md">
         <div className="flex flex-row items-center gap-12 px-4 py-3 border transition-all duration-150 ease-in-out bg-white border-gray-200 text-off_black rounded-md">
           <p className="w-24 font-medium text-md text-right">{total}</p>
-          <div className="w-24">
-            <p className="max-w-fit rounded-md px-2 py-1 font-medium text-sm bg-positive text-positive_text">{category}</p>
+          <div className="w-28">
+            <p className={clsx("max-w-fit rounded-md px-2 py-1 font-medium text-sm",
+              {
+                "bg-accent text-white": category === 'Residence',
+                "bg-blue-100 text-blue-400": category === 'Banking',
+                "bg-positive text-positive_text": category === 'Cellular',
+                "bg-amber-100 text-yellow-600": category === 'Insurance',
+                "bg-negative text-negative_text": category === 'Medical',
+                "bg-orange-100 text-orange-600": category === 'Entertainment',
+                "bg-gray-100 text-gray-500": category === 'Travel',
+                "bg-teal-100 text-teal-500": category === 'Fitness',
+                "bg-gray-400 text-white": category === 'Misc'
+              }
+            )}>{category}</p>
           </div>
           <p className="w-24 font-normal text-md truncate">{name}</p>
           <p className="w-24 font-normal text-md text-right">{dueDate}</p>
@@ -46,7 +58,7 @@ export default function BillCard({ full = true, isResidenceBill = false, id, nam
       )}
     >
       <div
-        className={clsx("flex flex-row items-center gap-12 px-4 py-3 border transition-all duration-150 ease-in-out",
+        className={clsx("flex flex-row justify-center items-center gap-12 px-4 py-3 border transition-all duration-150 ease-in-out",
           {
             "bg-white border-gray-200 text-off_black rounded-md": !cardOpen,
             "bg-negative_text border-negative_text text-white rounded-t-md": cardOpen
@@ -54,10 +66,18 @@ export default function BillCard({ full = true, isResidenceBill = false, id, nam
         )}
       >
         <p className="w-24 font-medium text-md text-right">{total}</p>
-        <div className="w-24">
+        <div className="w-28">
           <p className={clsx("max-w-fit rounded-md px-2 py-1 font-medium text-sm",
             {
-              "bg-positive text-positive_text": !cardOpen,
+              "bg-accent text-white": !cardOpen && category === 'Residence',
+              "bg-blue-100 text-blue-400": !cardOpen && category === 'Banking',
+              "bg-positive text-positive_text": !cardOpen && category === 'Cellular',
+              "bg-amber-100 text-yellow-600": !cardOpen && category === 'Insurance',
+              "bg-negative text-negative_text": !cardOpen && category === 'Medical',
+              "bg-orange-100 text-orange-600": !cardOpen && category === 'Entertainment',
+              "bg-gray-100 text-gray-500": !cardOpen && category === 'Travel',
+              "bg-teal-100 text-teal-500": !cardOpen && category === 'Fitness',
+              "bg-gray-400 text-white": !cardOpen && category === 'Misc',
               "bg-white/20 text-white": cardOpen
             }
           )}>{category}</p>
@@ -90,8 +110,8 @@ export default function BillCard({ full = true, isResidenceBill = false, id, nam
           </div>
 
           { isResidenceBill ? (
-            <div onClick={() => redirect('/residence')} className="w-36 py-1 flex flex-row justify-center gap-1 text-lg text-off_gray rounded-md cursor-pointer hover:bg-gray-100 focus:outline-none transition-all duration-150 ease-in-out">
-              <p className="font-normal text-md">Residence Bill</p>
+            <div onClick={() => redirect('/residence')} className="w-36 py-1 flex flex-row justify-center gap-1 text-md text-off_gray rounded-md cursor-pointer hover:bg-gray-100 focus:outline-none transition-all duration-150 ease-in-out">
+              <p className="font-normal">Residence Bill</p>
               <HomeIcon className="w-4"></HomeIcon>
             </div>
           ) : (

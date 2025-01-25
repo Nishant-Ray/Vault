@@ -93,7 +93,7 @@ export default function Page() {
   function hopefulBillEdit(id: number, data: BillEditModalData) {
     const newCombinedBills = [...combinedBills];
 
-    const index = newCombinedBills.findIndex(item => isBill(bill) && item.id === id);
+    const index = newCombinedBills.findIndex(item => isBill(item) && item.id === id);
     const bill = newCombinedBills[index] as Bill;
 
     bill.name = data.name;
@@ -217,7 +217,7 @@ export default function Page() {
                 <div className="flex flex-col mt-3 text-off_black">
                   <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
                     <h4 className="w-24 text-right">Total</h4>
-                    <h4 className="w-24">Category</h4>
+                    <h4 className="w-28">Category</h4>
                     <h4 className="w-24">Name</h4>
                     <h4 className="w-24 text-right">Due Date</h4>
                     <div className="w-8 bg-gray-100"/>

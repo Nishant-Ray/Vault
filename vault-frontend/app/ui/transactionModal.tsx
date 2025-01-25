@@ -11,7 +11,7 @@ const initialManualModalData: TransactionAddManualModalData = {
   accountID: '',
   date: '',
   amount: '0',
-  category: 'category1',
+  category: 'Home',
   description: ''
 };
 
@@ -23,7 +23,7 @@ const initialEditModalData: TransactionEditModalData = {
   accountID: '',
   date: '',
   amount: '0',
-  category: 'category1',
+  category: 'Home',
   description: ''
 }
 
@@ -131,6 +131,8 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
         category: transaction.category,
         description: transaction.description
       });
+
+      setCategoryOption(transaction.category);
     }
   };
 
@@ -163,9 +165,14 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
           <Input onChange={handleTransactionAddManualFormInputChange} value={String(transactionAddManualFormState.date)} max={new Date().toJSON().slice(0, 10)} id="date" name="date" type="date" label="Date of Transaction"/>
           <Input onChange={handleTransactionAddManualFormInputChange} value={String(transactionAddManualFormState.amount)} id="amount" name="amount" type="number" label="Amount ($)" placeholder="Enter transaction amount"/>
           
-          <Input onChange={handleTransactionAddManualFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption === 'category1'} standalone={false}/>
-          <Input onChange={handleTransactionAddManualFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
-          <Input onChange={handleTransactionAddManualFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="Home" name="category" type="radio" value="Home" label="Category" sideLabel="Home" checked={categoryOption === 'Home'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="Dining" name="category" type="radio" value="Dining" sideLabel="Dining" checked={categoryOption === 'Dining'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="Groceries" name="category" type="radio" value="Groceries" sideLabel="Groceries" checked={categoryOption === 'Groceries'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="Retail" name="category" type="radio" value="Retail" sideLabel="Retail" checked={categoryOption === 'Retail'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="Entertainment" name="category" type="radio" value="Entertainment" sideLabel="Entertainment" checked={categoryOption === 'Entertainment'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="Travel" name="category" type="radio" value="Travel" sideLabel="Travel" checked={categoryOption === 'Travel'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="Health" name="category" type="radio" value="Health" sideLabel="Health" checked={categoryOption === 'Health'} standalone={false}/>
+          <Input onChange={handleTransactionAddManualFormInputChange} id="Misc" name="category" type="radio" value="Misc" sideLabel="Misc" checked={categoryOption === 'Misc'}/>
           
           <Input onChange={handleTransactionAddManualFormInputChange} value={transactionAddManualFormState.description} id="description" name="description" type="text" label="Description" placeholder="Enter transaction description"/>
           
@@ -189,9 +196,14 @@ export default function TransactionModal({ type, isOpen, accounts, transaction, 
           <Input onChange={handleTransactionEditFormInputChange} value={transactionEditFormState.date} max={new Date().toJSON().slice(0, 10)} id="date" name="date" type="date" label="Date of Transaction"/>
           <Input onChange={handleTransactionEditFormInputChange} value={String(transactionEditFormState.amount)} id="amount" name="amount" type="number" label="Amount ($)" placeholder="Enter transaction amount"/>
           
-          <Input onChange={handleTransactionEditFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={categoryOption === 'category1'} standalone={false}/>
-          <Input onChange={handleTransactionEditFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={categoryOption === 'category2'} standalone={false} />
-          <Input onChange={handleTransactionEditFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={categoryOption === 'category3'}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="Home" name="category" type="radio" value="Home" label="Category" sideLabel="Home" checked={categoryOption === 'Home'} standalone={false}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="Dining" name="category" type="radio" value="Dining" sideLabel="Dining" checked={categoryOption === 'Dining'} standalone={false}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="Groceries" name="category" type="radio" value="Groceries" sideLabel="Groceries" checked={categoryOption === 'Groceries'} standalone={false}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="Retail" name="category" type="radio" value="Retail" sideLabel="Retail" checked={categoryOption === 'Retail'} standalone={false}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="Entertainment" name="category" type="radio" value="Entertainment" sideLabel="Entertainment" checked={categoryOption === 'Entertainment'} standalone={false}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="Travel" name="category" type="radio" value="Travel" sideLabel="Travel" checked={categoryOption === 'Travel'} standalone={false}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="Health" name="category" type="radio" value="Health" sideLabel="Health" checked={categoryOption === 'Health'} standalone={false}/>
+          <Input onChange={handleTransactionEditFormInputChange} id="Misc" name="category" type="radio" value="Misc" sideLabel="Misc" checked={categoryOption === 'Misc'}/>
           
           <Input onChange={handleTransactionEditFormInputChange} value={transactionEditFormState.description} id="description" name="description" type="text" label="Description" placeholder="Enter transaction description"/>
           

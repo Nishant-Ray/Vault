@@ -164,7 +164,7 @@ export default function Page() {
 
   const handleDeleteModalSubmit = async (id: number) => {
     const index = transactions.findIndex(item => item.id === id);
-    setMonthlySpending(monthlySpending - transactions[index].amount);
+    if (getMonthFromDate(transactions[index].date) === selectedMonthlySpendingMonth) setMonthlySpending(monthlySpending - transactions[index].amount);
     setTransactions((prevTransactions) => prevTransactions.filter((_, i) => i !== index));
     await removeTransaction(id);
 
@@ -280,8 +280,8 @@ export default function Page() {
               {transactions.length ? (
                 <div className="flex flex-col mt-3 text-off_black">
                   <div className="flex flex-row items-center gap-12 bg-gray-100 rounded-md px-4 py-2 font-normal text-sm">
-                    <h4 className="w-24 text-right">Amount</h4>
-                    <h4 className="w-24">Category</h4>
+                    <h4 className="w-20 text-right">Amount</h4>
+                    <h4 className="w-28">Category</h4>
                     <h4 className="w-24">Account</h4>
                     <h4 className="w-24 text-right">Date</h4>
                   </div>
