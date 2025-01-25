@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SignUpFormElement } from '@/app/lib/definitions';
 import { signUp } from '@/app/lib/auth';
 import { redirect } from 'next/navigation';
@@ -34,6 +34,10 @@ export default function Page() {
 
     setSignUpFailed(true);
   };
+
+  useEffect(() => {
+    document.title = 'Sign Up | Vault';
+  }, []);
 
   return (
     <main className="bg-white-400 w-1/2">

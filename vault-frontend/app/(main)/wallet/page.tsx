@@ -35,6 +35,8 @@ export default function Page() {
   };
 
   useEffect(() => {
+    document.title = 'Wallet | Vault';
+
     const fetchWalletData = async () => {
       setLoading(true);
 

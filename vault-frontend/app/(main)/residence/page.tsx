@@ -443,6 +443,8 @@ export default function Page() {
   }, [residenceMessages]);
 
   useEffect(() => {
+    document.title = 'Residence | Vault';
+
     const fetchResidenceData = async () => {
       setLoading(true);
 
@@ -673,12 +675,14 @@ export default function Page() {
                           return (
                             <div key={message.id} className={clsx({"self-end": message.user_id === currentUserId})}>
                               { message.user_id !== currentUserId && <p className="ml-3 mb-1 text-xs font-normal text-off_gray">{residentIdMapping[message.user_id]}</p> }
-                              <h6 className={clsx("max-w-fit rounded-full px-3 py-1 text-md font-normal",
+                              <div className={clsx("max-w-md rounded-3xl px-4 py-2 overflow-hidden break-words",
                                 {
                                   "bg-white text-off_black": message.user_id !== currentUserId,
                                   "bg-accent text-white": message.user_id === currentUserId
                                 }
-                              )}>{message.content}</h6>
+                              )}>
+                                <p className="text-md font-normal">{message.content}</p>
+                              </div>
                             </div>
                           );
                         })}

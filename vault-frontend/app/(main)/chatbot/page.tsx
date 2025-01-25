@@ -58,6 +58,8 @@ export default function Page() {
   }, [chatbotMessages]);
 
   useEffect(() => {
+    document.title = 'Chatbot | Vault';
+
     const fetchChatbotData = async () => {
       setLoading(true);
 
@@ -84,7 +86,7 @@ export default function Page() {
                   return (
                     <div key={message.id} className={clsx({"self-end": message.from_user})}>
                       { !message.from_user && <p className="ml-3 mb-1 text-xs font-normal text-off_gray">Chatbot</p> }
-                      <div className={clsx("max-w-3xl rounded-3xl px-4 py-2",
+                      <div className={clsx("max-w-3xl rounded-3xl px-4 py-2 overflow-hidden break-words",
                         {
                           "bg-white text-off_black": !message.from_user,
                           "bg-accent text-white": message.from_user

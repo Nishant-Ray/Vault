@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LoginFormElement } from '@/app/lib/definitions';
 import { login } from '@/app/lib/auth';
 import { redirect } from 'next/navigation';
@@ -11,6 +11,7 @@ import { dmSans } from '@/app/ui/fonts';
 import Link from 'next/link';
 
 export default function Page() {
+
   const [loginFailed, setLoginFailed] = useState(false);
 
   const handleLogin = async (event: React.FormEvent<LoginFormElement>) => {
@@ -23,6 +24,10 @@ export default function Page() {
 
     setLoginFailed(true);
   };
+
+  useEffect(() => {
+    document.title = 'Login | Vault';
+  }, []);
 
   return (
     <main className="bg-white-400 w-1/2">

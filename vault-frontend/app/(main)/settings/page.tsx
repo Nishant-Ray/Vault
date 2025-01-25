@@ -16,6 +16,8 @@ export default function Page() {
   };
 
   useEffect(() => {
+    document.title = 'Settings | Vault';
+
     const fetchSettingsData = async () => {
       setLoading(true);
       
@@ -29,8 +31,9 @@ export default function Page() {
 
   return (
     <main>
-      <Card>
-        <Button onClick={logout} size="xl">Logout</Button>
+      <Card className="w-2/5">
+        <h3 className="text-lg font-medium text-off_black mb-4">Account Settings</h3>
+        <Button onClick={logout} size="md">Logout</Button>
       </Card>
     </main>
   );

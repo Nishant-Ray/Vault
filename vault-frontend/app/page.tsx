@@ -1,3 +1,5 @@
+export const metadata = { title: 'Vault' };
+
 import { dmSans } from '@/app/ui/fonts';
 import Button from '@/app/ui/button';
 import Image from 'next/image';
@@ -5,6 +7,7 @@ import Image from 'next/image';
 export default function Page() {
   return (
     <main className="flex flex-row">
+      
       <div className="pl-16 bg-white w-full h-screen flex items-center justify-center">
         <Image
           src="/landing.png"

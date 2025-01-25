@@ -7,7 +7,7 @@ import BillCard from '@/app/ui/billCard';
 import BillModal from '@/app/ui/billModal';
 import IconButton from '@/app/ui/iconButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { fetchAccounts, addTransaction, fetchAllBills, addBill, editBill, removeBill, fetchResidenceName, fetchAllResidenceBills } from '@/app/lib/data';
+import { fetchAccounts, addTransaction, fetchAllBills, addBill, editBill, removeBill, fetchResidenceName, fetchAllResidenceBills, fetchBillInsights } from '@/app/lib/data';
 import { formatDollarAmount, formatDate, unformatDate, isBill } from '@/app/lib/utils';
 import { Account, Bill, BILL_ADD_MANUAL_MODAL_TYPE, BILL_ADD_DOCUMENT_MODAL_TYPE, BILL_PAY_MODAL_TYPE, BILL_EDIT_MODAL_TYPE, BILL_DELETE_MODAL_TYPE, TransactionAddManualModalData, BillAddManualModalData, BillPayModalData, BillEditModalData, ResidenceBill } from '@/app/lib/definitions';
 
@@ -20,6 +20,7 @@ export default function Page() {
   const [billModalOpen, setBillModalOpen] = useState<boolean>(false);
   const [billSelected, setBillSelected] = useState<Bill | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [insights, setInsights] = useState<string[]>([]);
 
   const openBillAddOptions = () => {
     setBillAddOptionsOpen(true);
@@ -143,6 +144,8 @@ export default function Page() {
   };
 
   useEffect(() => {
+    document.title = 'Bills | Vault';
+
     const fetchBillsData = async () => {
       setLoading(true);
       
@@ -171,6 +174,11 @@ export default function Page() {
         else if (fetchedResidenceBills) setCombinedBills(fetchedResidenceBills);
 
       } else if (fetchedBills) setCombinedBills(fetchedBills);
+      
+      const fetchedInsights = await fetchBillInsights();
+      if (fetchedInsights) {
+        setInsights(fetchedInsights.split('|'));
+      }
 
       setLoading(false);
     };
@@ -256,8 +264,16 @@ export default function Page() {
         <div className="flex flex-col gap-8 w-2/5">
           <Card>
             <h3 className="text-lg font-medium text-off_black">AI Insights</h3>
-
-            <p className="text-md font-normal text-off_gray mt-1">No insights!</p>
+            { insights.length > 0 ? (
+              <ul className="text-off_black text-md font-normal list-disc pl-5">
+                { insights.map((insight, i) => {
+                  return <li key={i}>{insight}</li>;
+                })}
+              </ul>
+            ) : (
+              <p className="text-md font-normal text-off_gray mt-1">No insights!</p>
+            )}
+            
           </Card>
         </div>
       </div>

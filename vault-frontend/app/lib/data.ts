@@ -1,6 +1,6 @@
 import { request } from '@/app/lib/api';
 import { unformatDate } from '@/app/lib/utils';
-import { IdData, NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidentData, RemoveResidentData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidencePaymentsData, ResidencePaymentData, ResidenceMessageData, ResidenceMessagesData, ChatbotMessagesData, ChatbotMessageData } from '@/app/lib/definitions';
+import { IdData, NameData, MonthlySpendingData, YearlySpendingData, AccountsData, AccountAddModalData, AccountData, TransactionData, TransactionsData, TransactionAddManualModalData, TransactionEditModalData, BillData, BillsData, BillAddManualModalData, BillEditModalData, ResidenceData, ResidenceCreateModalData, ResidenceEditModalData, ResidentData, RemoveResidentData, ResidenceBillData, ResidenceBillsData, ResidenceBillEditModalData, ResidencePaymentsData, ResidencePaymentData, ResidenceMessageData, ResidenceMessagesData, ChatbotMessagesData, ChatbotMessageData, InsightsData } from '@/app/lib/definitions';
 
 export async function fetchCurrentUserId() {
   try {
@@ -470,5 +470,27 @@ export async function createChatbotMessage(content: string) {
   } catch (error) {
     console.error('Server error:', error);
     throw new Error('Failed to create residence messages.');
+  }
+}
+
+export async function fetchTransactionInsights() {
+  try {
+    const response = await request<InsightsData>('chatbot_messages/get_transaction_insights', 'GET');
+    return response.data?.insights;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch transaction insights.');
+  }
+}
+
+export async function fetchBillInsights() {
+  try {
+    const response = await request<InsightsData>('chatbot_messages/get_bill_insights', 'GET');
+    return response.data?.insights;
+
+  } catch (error) {
+    console.error('Server error:', error);
+    throw new Error('Failed to fetch bill insights.');
   }
 }

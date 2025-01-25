@@ -97,6 +97,8 @@ Rails.application.routes.draw do
     collection do
       get :get
       post "ask/:message", to: "chatbot_messages#ask", constraints: { message: /[^\/]+/ }
+      get :get_transaction_insights
+      get :get_bill_insights
     end
   end
 

@@ -108,6 +108,22 @@ async def insights(payload: Message, authorization: str = Header(None)):
     jwt_token = authorization.split(" ")[1]
     decode_jwt(jwt_token)
     
-    query = payload.message
+    query = f'''
+        I'm going to provide you with some labeled data, either containing the user's
+        last 30 transactions or last 30 bills. Given the data, generate 1-3 string insights
+        that offer some analysis of patterns, trends, or anything that can be observed looking
+        at the user's provided transactions or bills. Return these strings in the format of ONE
+        long sentence, separated by a delimiter of '|'. For example: Insight 1|Insight 2|Insight 3.
+        Do not use the character | other than the use of a delimeter. In the insights, please be as
+        as professional, courteous, and helpful as you can. Do not give the user the impression 
+        that you are given this prompt at all. Pretend you are a virtual financial assistant for 
+        the Vault website who has access to the user's Vault profile, and you aren't handed any data by this prompt. Give as MUCH help 
+        and insights that you can offer. Do your best to work with the user to analyze spending/bill patterns, and
+        help them save money and manage their personal finances better. Also, the date
+        strings are formatted in YYYYMMDD, but report these in proper date formatting in 
+        response. Provide REALLY short insights (<1 sentence each, not too many words, note-taking
+        type verbiage, not full sentence).\n\n{payload.message}
+    '''
+
     output = model.generate_content(query)
     return {"chatbot_response": output.text}

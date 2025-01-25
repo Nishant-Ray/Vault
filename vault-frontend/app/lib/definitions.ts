@@ -333,6 +333,10 @@ export type ChatbotMessagesData = {
   messages: ChatbotMessage[];
 };
 
+export type InsightsData = {
+  insights: string;
+}
+
 export type HeroIconType = React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
   title?: string;
   titleId?: string;

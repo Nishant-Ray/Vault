@@ -10,7 +10,7 @@ import Select from '@/app/ui/select';
 import IconButton from '@/app/ui/iconButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
-import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions, addTransaction, editTransaction, removeTransaction } from '@/app/lib/data';
+import { fetchMonthlySpending, fetchPercentChange, fetchAccounts, fetchMonthlyTransactions, addTransaction, editTransaction, removeTransaction, fetchTransactionInsights } from '@/app/lib/data';
 import { formatDollarAmount, getLast12MonthsAsOptions, getCurrentMonth, getPreviousMonth, getPreviousMonthFromMonth, getLast5YearsAsOptions, getCurrentYear, getMonthFromDate, formatMonth, formatDate, unformatDate } from '@/app/lib/utils';
 import { SelectOption, Account, Transaction, TransactionAddManualModalData, TransactionAddDocumentModalData, TransactionEditModalData, TRANSACTION_ADD_MANUAL_MODAL_TYPE, TRANSACTION_ADD_DOCUMENT_MODAL_TYPE, TRANSACTION_EDIT_MODAL_TYPE, TRANSACTION_DELETE_MODAL_TYPE } from '@/app/lib/definitions';
 import SpendingGraph from '@/app/ui/spendingGraph';
@@ -35,6 +35,7 @@ export default function Page() {
   const [modalType, setModalType] = useState<number>(TRANSACTION_ADD_MANUAL_MODAL_TYPE);
   const [transactionModalOpen, setTransactionModalOpen] = useState<boolean>(false);
   const [transactionSelected, setTransactionSelected] = useState<Transaction | null>(null);
+  const [insights, setInsights] = useState<string[]>([]);
 
   const onSpendingMonthChange = async (month: number) => {
     setSelectedMonthlySpendingMonth(month);
@@ -176,6 +177,8 @@ export default function Page() {
   };
 
   useEffect(() => {
+    document.title = 'Spending | Vault';
+
     const fetchSpendingData = async () => {
       setLoading(true);
       
@@ -202,6 +205,11 @@ export default function Page() {
 
       const fetchedTransactions = await fetchMonthlyTransactions(currMonth);
       if (fetchedTransactions) setTransactions(fetchedTransactions);
+
+      const fetchedInsights = await fetchTransactionInsights();
+      if (fetchedInsights) {
+        setInsights(fetchedInsights.split('|'));
+      }
 
       setLoading(false);
     };
@@ -255,8 +263,16 @@ export default function Page() {
 
           <Card>
             <h3 className="text-lg font-medium text-off_black">AI Insights</h3>
-
-            <p className="text-md font-normal text-off_gray mt-1">No insights!</p>
+            { insights.length > 0 ? (
+              <ul className="text-off_black text-md font-normal list-disc pl-5">
+                { insights.map((insight, i) => {
+                  return <li key={i}>{insight}</li>;
+                })}
+              </ul>
+            ) : (
+              <p className="text-md font-normal text-off_gray mt-1">No insights!</p>
+            )}
+            
           </Card>
         </div>
 

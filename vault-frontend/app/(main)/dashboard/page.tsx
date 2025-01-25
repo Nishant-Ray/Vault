@@ -56,6 +56,8 @@ export default function Page() {
   };
 
   useEffect(() => {
+    document.title = 'Dashboard | Vault';
+
     const fetchDashboardData = async () => {
       setLoading(true);
 
@@ -166,7 +168,7 @@ export default function Page() {
               {residenceName ? (
                 <>
                   {residenceMessages.length ? (
-                    <div className="flex flex-col gap-4 pr-4 pb-4 items-start max-h-72">
+                    <div className="flex flex-col gap-4 pr-4 pb-4 items-start">
                       {residenceMessages.map((message) => {
                         if (message.is_update) {
                           return (
@@ -179,12 +181,14 @@ export default function Page() {
                         return (
                           <div key={message.id} className={clsx({"self-end": message.user_id === currentUserId})}>
                             { message.user_id !== currentUserId && <p className="ml-3 mb-1 text-xs font-normal text-off_gray">{residentIdMapping[message.user_id]}</p> }
-                            <h6 className={clsx("max-w-fit rounded-full px-3 py-1 text-md font-normal",
+                            <div className={clsx("max-w-xs rounded-3xl px-4 py-2 overflow-hidden break-words",
                               {
                                 "bg-white text-off_black": message.user_id !== currentUserId,
                                 "bg-accent text-white": message.user_id === currentUserId
                               }
-                            )}>{message.content}</h6>
+                            )}>
+                              <p className="text-md font-normal">{message.content}</p>
+                            </div>
                           </div>
                         );
                       })}
