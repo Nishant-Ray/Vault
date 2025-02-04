@@ -2,7 +2,7 @@ import { AuthRequestBody, AuthResponse, RequestMethod, ResponseBody } from './de
 import { redirect } from 'next/navigation';
 
 export async function jwtRequest(jwt: string): Promise<number> {
-  const response = await fetch('https://vault-rails.onrender.com/current_user', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_RAILS_URL}/current_user`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ export async function jwtRequest(jwt: string): Promise<number> {
 
 export async function authRequest(url: string, requestJSON: AuthRequestBody): Promise<AuthResponse> {
   try {
-    const response = await fetch(`https://vault-rails.onrender.com/${url}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_RAILS_URL}/${url}`, {
       method: 'POST',
       body: JSON.stringify(requestJSON),
       headers: {
@@ -39,7 +39,7 @@ export async function request<TData>(url: string, method: RequestMethod): Promis
 
   if (!jwt) redirect('/login');
 
-  const response = await fetch(`https://vault-rails.onrender.com/${url}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_RAILS_URL}/${url}`, {
     method: method,
     headers: {
       'Content-Type': 'application/json',

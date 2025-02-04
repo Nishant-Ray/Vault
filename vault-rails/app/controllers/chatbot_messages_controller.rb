@@ -31,7 +31,7 @@ class ChatbotMessagesController < ApplicationController
                           "\n\nPROMPT: " + params[:message]
 
         response = HTTParty.post(
-          "https://vault-fastapi.onrender.com/chatbot",
+          "#{ENV['FASTAPI_URL']}/chatbot",
           body: JSON.generate({ message: message_content }),
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         )
@@ -82,7 +82,7 @@ class ChatbotMessagesController < ApplicationController
         end
 
         response = HTTParty.post(
-          "https://vault-fastapi.onrender.com/insights",
+          "#{ENV['FASTAPI_URL']}/insights",
           body: JSON.generate({ message: message_content }),
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         )
@@ -131,7 +131,7 @@ class ChatbotMessagesController < ApplicationController
         end
 
         response = HTTParty.post(
-          "https://vault-fastapi.onrender.com/insights",
+          "#{ENV['FASTAPI_URL']}/insights",
           body: JSON.generate({ message: message_content }),
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         )
