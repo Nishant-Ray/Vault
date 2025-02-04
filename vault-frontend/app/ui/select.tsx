@@ -38,7 +38,7 @@ export default function Select({ options, value, defaultValue, label, id, name, 
           onChange={onChange}
           required
           className={clsx(
-            "border-r-8 mb-5 w-full px-4 py-3 bg-gray-200 text-off_black text-sm font-medium rounded-full focus:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2",
+            "border-r-8 mb-5 w-full px-4 py-3 bg-gray-200 text-off_black text-sm font-medium rounded-full focus:shadow-sm focus-visible:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2",
             className
           )}>
           <option value="" disabled>Select an account</option>
@@ -68,7 +68,7 @@ export default function Select({ options, value, defaultValue, label, id, name, 
         onChange={onOptionSelect}
         required
         className={clsx(
-          "bg-white border-white border-r-8 px-3 py-1 text-off_black text-md font-normal text-off_gray rounded-full focus:outline-none cursor-pointer ring-1 ring-gray-200 hover:shadow-sm hover:ring-gray-300 transition-all duration-150 ease-in-out",
+          "bg-white border-white border-r-8 px-3 py-1 text-off_black text-md font-normal text-off_gray rounded-full focus-visible:outline-none cursor-pointer ring-1 ring-gray-200 hover:shadow-sm hover:ring-gray-300 transition-all duration-150 ease-in-out",
           className
         )}>
         

@@ -93,7 +93,7 @@ export default function ResidenceBillCard({ id, category, dueDate, total, paymen
 
         <button
           onClick={handleCardOpen}
-          className={clsx("w-8 rounded-md p-2 focus:outline-none transition-all duration-150 ease-in-out",
+          className={clsx("w-8 rounded-md p-2 focus-visible:outline-none transition-all duration-150 ease-in-out",
             {
               "text-off_gray bg-black/5 hover:bg-black/10 focus:bg-black/10": !cardOpen,
               "text-white bg-white/20 hover:bg-white/30 focus:bg-white/30": cardOpen

@@ -54,7 +54,7 @@ export default function Page() {
         
         <Button type="submit" size="lg" buttonType="auth">Sign Up</Button>
 
-        <p className="text-md text-off_black font-medium">Already have an account? <Link href={"/login"} className="text-primary hover:underline focus:underline focus:outline-none">Login</Link></p>
+        <p className="text-md text-off_black font-medium">Already have an account? <Link href={"/login"} className="text-primary hover:underline focus:underline focus-visible:outline-none">Login</Link></p>
       </form>
 
     </main>

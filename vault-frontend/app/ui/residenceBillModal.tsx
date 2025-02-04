@@ -317,7 +317,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
 
                     <Select onChange={handleBillPaymentsInputChange} id={`add_payee_${String(resident.id)}`} name="payee" options={payeeOptions.filter((option) => option.value !== resident.id)} value={payeeIdValue} className="w-44"/>
 
-                    <input onChange={handleBillPaymentsInputChange} id={`add_amount_${String(resident.id)}`} name="amount" defaultValue={amountValue} className="w-36 bg-gray-200 rounded-full px-4 py-1 focus:outline-none" type="number" placeholder="Enter amount"/>
+                    <input onChange={handleBillPaymentsInputChange} id={`add_amount_${String(resident.id)}`} name="amount" defaultValue={amountValue} className="w-36 bg-gray-200 rounded-full px-4 py-1 focus-visible:outline-none" type="number" placeholder="Enter amount"/>
                   </div>
                 );
               })}
@@ -388,7 +388,7 @@ export default function ResidenceBillModal({ type, isOpen, residenceBill, reside
 
                     <Select onChange={handleBillPaymentsInputChange} id={`edit_payee_${String(resident.id)}`} name="payee" options={payeeOptions.filter((option) => option.value !== resident.id)} value={payeeIdValue} className="w-44"/>
 
-                    <input onChange={handleBillPaymentsInputChange} id={`edit_amount_${String(resident.id)}`} name="amount" defaultValue={amountValue} className="w-36 bg-gray-200 rounded-full px-4 py-1 focus:outline-none" type="number" placeholder="Enter amount"/>
+                    <input onChange={handleBillPaymentsInputChange} id={`edit_amount_${String(resident.id)}`} name="amount" defaultValue={amountValue} className="w-36 bg-gray-200 rounded-full px-4 py-1 focus-visible:outline-none" type="number" placeholder="Enter amount"/>
                   </div>
                 );
               })}

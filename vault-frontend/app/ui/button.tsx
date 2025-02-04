@@ -32,7 +32,7 @@ type ButtonProps = LinkButtonProps | ActionButtonProps | FormButtonProps;
 
 const Button = React.forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(({ children, href, onClick, size = 'xl', buttonType = 'action', type, className, ...rest }, ref) => {
   const buttonClasses = clsx(
-    `${dmSans.className} tracking-tight flex items-center justify-center font-bold rounded-full hover:shadow-sm transition-all duration-150 ease-in-out focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
+    `${dmSans.className} tracking-tight flex items-center justify-center font-bold rounded-full hover:shadow-sm transition-all duration-150 ease-in-out focus-visible:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
     {
       "h-12 px-10 text-2xl": size === 'xl',
       "h-12 text-xl": size === 'lg',

@@ -10,7 +10,7 @@ export default function SideNav() {
   const pathname = usePathname();
   return (
     <div className="flex flex-col">
-      <Link href={"/"} className={`${dmSans.className} antialiased tracking-tighter mb-4 text-primary font-bold text-5xl focus:outline-none hover:drop-shadow-md focus:drop-shadow-md transition-all duration-150 ease-in-out`}>Vault</Link>
+      <Link href={"/"} className={`${dmSans.className} antialiased tracking-tighter mb-4 text-primary font-bold text-5xl focus-visible:outline-none hover:drop-shadow-md focus:drop-shadow-md transition-all duration-150 ease-in-out`}>Vault</Link>
       {pages.map((page) => {
         const LinkIcon = pathname === page.href ? page.solidIcon : page.icon;
         return (

@@ -108,7 +108,7 @@ export default function Page() {
             )}
           </>
           <form onSubmit={e => {e.preventDefault(); handleChatbotMessageSend();}} className="flex flex-row items-center gap-2 h-8">
-            <input className="rounded-full bg-white border border-gray-200 w-full px-4 py-1 focus:outline-none focus:border-gray-300 text-sm text-off_black font-normal" type="text" placeholder="Enter message" value={currentMessage} onChange={handleResidenceMessageChange}/>
+            <input className="rounded-full bg-white border border-gray-200 w-full px-4 py-1 focus-visible:outline-none focus:border-gray-300 text-sm text-off_black font-normal" type="text" placeholder="Enter message" value={currentMessage} onChange={handleResidenceMessageChange}/>
             <IconButton className="h-8" icon={PaperAirplaneIcon} onClick={handleChatbotMessageSend}/>
           </form>
         </div>

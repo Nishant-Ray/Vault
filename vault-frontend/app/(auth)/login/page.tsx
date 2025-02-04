@@ -42,7 +42,7 @@ export default function Page() {
         
         <Button type="submit" size="lg" buttonType="auth">Login</Button>
 
-        <p className="text-md text-off_black font-medium">Don't have an account? <Link href={"/signup"} className="text-primary hover:underline focus:underline focus:outline-none">Sign up</Link></p>
+        <p className="text-md text-off_black font-medium">Don't have an account? <Link href={"/signup"} className="text-primary hover:underline focus:underline focus-visible:outline-none">Sign up</Link></p>
       </form>
 
     </main>

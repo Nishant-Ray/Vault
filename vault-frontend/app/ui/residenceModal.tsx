@@ -193,7 +193,7 @@ export default function ResidenceModal({ type, isOpen, residenceData, currentUse
           <div>
             <p className="block mb-2 text-lg font-medium text-off_black pl-2">Add Resident</p>
             <div className="w-full flex flex-row justify-start items-center gap-2">
-              <input className="w-full bg-gray-100 rounded-md text-sm font-normal text-off_black px-4 h-8 focus:outline-none" placeholder="Enter resident email" onChange={handleAddResidentInputChange} value={newResidentEmail}/>
+              <input className="w-full bg-gray-100 rounded-md text-sm font-normal text-off_black px-4 h-8 focus-visible:outline-none" placeholder="Enter resident email" onChange={handleAddResidentInputChange} value={newResidentEmail}/>
               <IconButton icon={PlusIcon} onClick={handleAddResident} blank={false}/>
             </div>
 

@@ -87,7 +87,7 @@ export default function BillCard({ full = true, isResidenceBill = false, id, nam
 
         <button
           onClick={() => setCardOpen(!cardOpen)}
-          className={clsx("w-8 rounded-md p-2 focus:outline-none transition-all duration-150 ease-in-out",
+          className={clsx("w-8 rounded-md p-2 focus-visible:outline-none transition-all duration-150 ease-in-out",
             {
               "text-off_gray bg-black/5 hover:bg-black/10 focus:bg-black/10": !cardOpen,
               "text-white bg-white/20 hover:bg-white/30 focus:bg-white/30": cardOpen
@@ -110,7 +110,7 @@ export default function BillCard({ full = true, isResidenceBill = false, id, nam
           </div>
 
           { isResidenceBill ? (
-            <div onClick={() => redirect('/residence')} className="w-36 py-1 flex flex-row justify-center gap-1 text-md text-off_gray rounded-md cursor-pointer hover:bg-gray-100 focus:outline-none transition-all duration-150 ease-in-out">
+            <div onClick={() => redirect('/residence')} className="w-36 py-1 flex flex-row justify-center gap-1 text-md text-off_gray rounded-md cursor-pointer hover:bg-gray-100 focus-visible:outline-none transition-all duration-150 ease-in-out">
               <p className="font-normal">Residence Bill</p>
               <HomeIcon className="w-4"></HomeIcon>
             </div>
