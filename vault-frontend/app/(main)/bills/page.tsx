@@ -72,7 +72,7 @@ export default function Page() {
         accountID: data.accountID,
         date: (new Date()).toDateString(),
         amount: String(billSelected?.total),
-        category: data.transactionCategory,
+        category: 'Home',
         description: `${billSelected?.name} Bill Payment`
       };
       

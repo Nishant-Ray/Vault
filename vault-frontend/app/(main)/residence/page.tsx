@@ -231,7 +231,7 @@ export default function Page() {
         accountID: data.accountID,
         date: (new Date()).toDateString(),
         amount: String(residenceBillSelected?.total),
-        category: data.transactionCategory,
+        category: 'Home',
         description: `${residenceBillSelected?.category} Residence Bill Payment (due ${formatDate(residenceBillSelected!.due_date)})`
       };
       

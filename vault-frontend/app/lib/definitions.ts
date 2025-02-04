@@ -180,7 +180,6 @@ export type BillAddDocumentModalData = {
 export type BillPayModalData = {
   alsoTransaction: boolean;
   accountID: string;
-  transactionCategory: string;
 };
 
 export type BillEditModalData = BillAddManualModalData;
@@ -262,7 +261,6 @@ export type ResidenceBillAddDocumentModalData = {
 export type ResidenceBillPayModalData = {
   alsoTransaction: boolean;
   accountID: string;
-  transactionCategory: string;
 };
 
 export type ResidenceBillEditModalData = ResidenceBillAddManualModalData;

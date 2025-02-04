@@ -20,8 +20,7 @@ const initialDocumentModalData: BillAddDocumentModalData = {
 
 const initialPayModalData: BillPayModalData = {
   alsoTransaction: false,
-  accountID: '',
-  transactionCategory: 'Home',
+  accountID: ''
 }
 
 const initialEditModalData: BillEditModalData = {
@@ -53,7 +52,6 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
   const [invalidDollarAmount, setInvalidDollarAmount] = useState<boolean>(false);
   const [alsoTransactionChecked, setAlsoTransactionChecked] = useState<boolean>(false);
   const [accountOptions, setAccountOptions] = useState<SelectOption[]>([]);
-  const [transactionCategoryOption, setTransactionCategoryOption] = useState<string>(initialPayModalData.transactionCategory);
 
   const handleOpen = () => {
     if (type === BILL_EDIT_MODAL_TYPE) reloadState();
@@ -67,7 +65,6 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
     setBillEditFormState(initialEditModalData);
     if (type === BILL_ADD_MANUAL_MODAL_TYPE) setCategoryOption(initialManualModalData.category);
     setAlsoTransactionChecked(false);
-    if (type === BILL_ADD_MANUAL_MODAL_TYPE) setTransactionCategoryOption(initialPayModalData.transactionCategory);
     setInvalidDollarAmount(false);
   };
 
@@ -96,8 +93,7 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
       [name]: name === 'accountID' ? Number(value) : ((name === 'alsoTransaction' && event.target instanceof HTMLInputElement) ? event.target.checked : value)
     }));
 
-    if (name === 'transactionCategory') setTransactionCategoryOption(value);
-    else if (name === 'alsoTransaction' && event.target instanceof HTMLInputElement) setAlsoTransactionChecked(event.target.checked);
+    if (name === 'alsoTransaction' && event.target instanceof HTMLInputElement) setAlsoTransactionChecked(event.target.checked);
   };
 
   const handleBillEditFormInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
@@ -226,10 +222,6 @@ export default function BillModal({ type, isOpen, bill, accounts, onManualModalS
           { billPayFormState.alsoTransaction && (
             <>
               <Select onChange={handleBillPayFormInputChange} value={billPayFormState.accountID} id="accountID" name="accountID" label="Account Used" options={accountOptions}/>
-
-              <Input onChange={handleBillPayFormInputChange} id="category1" name="category" type="radio" value="category1" label="Category" sideLabel="Category 1" checked={transactionCategoryOption === 'category1'} standalone={false}/>
-              <Input onChange={handleBillPayFormInputChange} id="category2" name="category" type="radio" value="category2" sideLabel="Category 2" checked={transactionCategoryOption === 'category2'} standalone={false} />
-              <Input onChange={handleBillPayFormInputChange} id="category3" name="category" type="radio" value="category3" sideLabel="Category 3" checked={transactionCategoryOption === 'category3'}/>
             </>
           )}
 
